@@ -23,6 +23,7 @@
 #include "SkPictureUtils.h"
 #include "SkPixelRef.h"
 #include "SkPixelSerializer.h"
+#include "SkMiniRecorder.h"
 #include "SkRRect.h"
 #include "SkRandom.h"
 #include "SkRecord.h"
@@ -1301,4 +1302,14 @@ DEF_TEST(Picture_getRecordingCanvas, r) {
         rec.endRecording()->unref();
         REPORTER_ASSERT(r, !rec.getRecordingCanvas());
     }
+}
+
+DEF_TEST(MiniRecorderLeftHanging, r) {
+    // Any shader or other ref-counted effect will do just fine here.
+    SkPaint paint;
+    paint.setShader(SkShader::CreateColorShader(SK_ColorRED))->unref();
+
+    SkMiniRecorder rec;
+    REPORTER_ASSERT(r, rec.drawRect(SkRect::MakeWH(20,30), paint));
+    // Don't call rec.detachPicture().  Test succeeds by not asserting or leaking the shader.
 }

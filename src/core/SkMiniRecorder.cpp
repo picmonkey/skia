@@ -58,7 +58,11 @@ private:
 
 SkMiniRecorder::SkMiniRecorder() : fState(State::kEmpty) {}
 SkMiniRecorder::~SkMiniRecorder() {
-    // We've done something wrong if no one's called detachAsPicture().
+    if (fState != State::kEmpty) {
+        // We have internal state pending.
+        // Detaching then deleting a picture is an easy way to clean up.
+        SkDELETE(this->detachAsPicture(SkRect::MakeEmpty()));
+    }
     SkASSERT(fState == State::kEmpty);
 }
 

@@ -124,6 +124,11 @@ void SkScalerContext::getAdvance(SkGlyph* glyph) {
 }
 
 void SkScalerContext::getMetrics(SkGlyph* glyph) {
+    // If the mask format is not already known, default it to the rec format.
+    // The call to generateMetrics may change the glyph format freely.
+    if (SkMask::kCountMaskFormats <= glyph->fMaskFormat) {
+        glyph->fMaskFormat = fRec.fMaskFormat;
+    }
     generateMetrics(glyph);
 
     // for now we have separate cache entries for devkerning on and off
@@ -141,8 +146,12 @@ void SkScalerContext::getMetrics(SkGlyph* glyph) {
         glyph->fHeight  = 0;
         glyph->fTop     = 0;
         glyph->fLeft    = 0;
-        glyph->fMaskFormat = 0;
         return;
+    }
+
+    // If we are going to create the mask, then we cannot keep the color
+    if ((fGenerateImageFromPath || fMaskFilter) && SkMask::kARGB32_Format == glyph->fMaskFormat) {
+        glyph->fMaskFormat = SkMask::kA8_Format;
     }
 
     if (fGenerateImageFromPath) {
@@ -187,16 +196,6 @@ void SkScalerContext::getMetrics(SkGlyph* glyph) {
                 }
             }
         }
-    }
-
-    if (SkMask::kARGB32_Format != glyph->fMaskFormat) {
-        glyph->fMaskFormat = fRec.fMaskFormat;
-    }
-
-    // If we are going to create the mask, then we cannot keep the color
-    if ((fGenerateImageFromPath || fMaskFilter) &&
-            SkMask::kARGB32_Format == glyph->fMaskFormat) {
-        glyph->fMaskFormat = SkMask::kA8_Format;
     }
 
     if (fMaskFilter) {

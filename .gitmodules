@@ -31,3 +31,6 @@
 [submodule "third_party/externals/zlib"]
 	path = third_party/externals/zlib
 	url = https://chromium.googlesource.com/chromium/src/third_party/zlib
+[submodule "SkiaLibs"]
+	path = SkiaLibs
+	url = https://github.com/picmonkey/SkiaLibs.git

@@ -65,6 +65,15 @@ if (skia_use_system_libjpeg_turbo) {
       "../externals/libjpeg-turbo/jquant1.c",
       "../externals/libjpeg-turbo/jquant2.c",
       "../externals/libjpeg-turbo/jutils.c",
+      "../externals/libjpeg-turbo/turbojpeg.c",
+      "../externals/libjpeg-turbo/jdatadst-tj.c",
+      "../externals/libjpeg-turbo/jdatasrc-tj.c",
+      "../externals/libjpeg-turbo/transupp.c",
+      "../externals/libjpeg-turbo/rdbmp.c",
+      "../externals/libjpeg-turbo/wrbmp.c",
+      "../externals/libjpeg-turbo/jdtrans.c",
+      "../externals/libjpeg-turbo/jctrans.c",
+
     ]
 
     if (current_cpu == "arm" && !is_ios) {

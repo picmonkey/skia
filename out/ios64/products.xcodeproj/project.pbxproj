@@ -9249,6 +9249,7 @@
 					"../../third_party/externals/spirv-tools/source",
 					"../../out/ios64/spirv-tools",
 					"../../third_party/externals/libjpeg-turbo",
+					../../third_party/externals/expat/lib,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				PRODUCT_NAME = libSkia;
@@ -9306,6 +9307,7 @@
 					"../../third_party/externals/spirv-tools/source",
 					"../../out/ios64/spirv-tools",
 					"../../third_party/externals/libjpeg-turbo",
+					../../third_party/externals/expat/lib,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				PRODUCT_NAME = libSkia;

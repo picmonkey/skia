@@ -34,3 +34,6 @@
 [submodule "SkiaLibs"]
 	path = SkiaLibs
 	url = git@github.com:picmonkey/SkiaLibs
+[submodule "third_party/externals/icu"]
+	path = third_party/externals/icu
+	url = https://chromium.googlesource.com/chromium/deps/icu.git

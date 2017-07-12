@@ -1048,6 +1048,40 @@
 		DDDFB1E79B04E4364FC0EF53 /* dng_ref_counted_block.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABEB533E312F7EC7222DB7A /* dng_ref_counted_block.cpp */; };
 		DE0885521F16E19B00EDAAF8 /* SkJumper_generated.s in Sources */ = {isa = PBXBuildFile; fileRef = 164AF4CC726C62728873E976 /* SkJumper_generated.s */; };
 		DE0885541F16E2EC00EDAAF8 /* icudt56l_dat.s in Sources */ = {isa = PBXBuildFile; fileRef = DE0885531F16E2EC00EDAAF8 /* icudt56l_dat.s */; };
+		DE4F3ED71F16EE1300C0312C /* hb-blob.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EB61F16EE1300C0312C /* hb-blob.cc */; };
+		DE4F3ED81F16EE1300C0312C /* hb-buffer-serialize.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EB71F16EE1300C0312C /* hb-buffer-serialize.cc */; };
+		DE4F3ED91F16EE1300C0312C /* hb-buffer.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EB81F16EE1300C0312C /* hb-buffer.cc */; };
+		DE4F3EDA1F16EE1300C0312C /* hb-common.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EB91F16EE1300C0312C /* hb-common.cc */; };
+		DE4F3EDB1F16EE1300C0312C /* hb-coretext.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EBA1F16EE1300C0312C /* hb-coretext.cc */; };
+		DE4F3EDC1F16EE1300C0312C /* hb-face.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EBB1F16EE1300C0312C /* hb-face.cc */; };
+		DE4F3EDD1F16EE1300C0312C /* hb-fallback-shape.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EBC1F16EE1300C0312C /* hb-fallback-shape.cc */; };
+		DE4F3EDE1F16EE1300C0312C /* hb-font.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EBD1F16EE1300C0312C /* hb-font.cc */; };
+		DE4F3EDF1F16EE1300C0312C /* hb-icu.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EBE1F16EE1300C0312C /* hb-icu.cc */; };
+		DE4F3EE01F16EE1300C0312C /* hb-ot-font.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EBF1F16EE1300C0312C /* hb-ot-font.cc */; };
+		DE4F3EE11F16EE1300C0312C /* hb-ot-layout.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EC01F16EE1300C0312C /* hb-ot-layout.cc */; };
+		DE4F3EE21F16EE1300C0312C /* hb-ot-map.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EC11F16EE1300C0312C /* hb-ot-map.cc */; };
+		DE4F3EE31F16EE1300C0312C /* hb-ot-shape-complex-arabic.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EC21F16EE1300C0312C /* hb-ot-shape-complex-arabic.cc */; };
+		DE4F3EE41F16EE1300C0312C /* hb-ot-shape-complex-default.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EC31F16EE1300C0312C /* hb-ot-shape-complex-default.cc */; };
+		DE4F3EE51F16EE1300C0312C /* hb-ot-shape-complex-hangul.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EC41F16EE1300C0312C /* hb-ot-shape-complex-hangul.cc */; };
+		DE4F3EE61F16EE1300C0312C /* hb-ot-shape-complex-hebrew.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EC51F16EE1300C0312C /* hb-ot-shape-complex-hebrew.cc */; };
+		DE4F3EE71F16EE1300C0312C /* hb-ot-shape-complex-indic-table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EC61F16EE1300C0312C /* hb-ot-shape-complex-indic-table.cc */; };
+		DE4F3EE81F16EE1300C0312C /* hb-ot-shape-complex-indic.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EC71F16EE1300C0312C /* hb-ot-shape-complex-indic.cc */; };
+		DE4F3EE91F16EE1300C0312C /* hb-ot-shape-complex-myanmar.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EC81F16EE1300C0312C /* hb-ot-shape-complex-myanmar.cc */; };
+		DE4F3EEA1F16EE1300C0312C /* hb-ot-shape-complex-thai.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EC91F16EE1300C0312C /* hb-ot-shape-complex-thai.cc */; };
+		DE4F3EEB1F16EE1300C0312C /* hb-ot-shape-complex-tibetan.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3ECA1F16EE1300C0312C /* hb-ot-shape-complex-tibetan.cc */; };
+		DE4F3EEC1F16EE1300C0312C /* hb-ot-shape-complex-use-table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3ECB1F16EE1300C0312C /* hb-ot-shape-complex-use-table.cc */; };
+		DE4F3EED1F16EE1300C0312C /* hb-ot-shape-complex-use.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3ECC1F16EE1300C0312C /* hb-ot-shape-complex-use.cc */; };
+		DE4F3EEE1F16EE1300C0312C /* hb-ot-shape-fallback.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3ECD1F16EE1300C0312C /* hb-ot-shape-fallback.cc */; };
+		DE4F3EEF1F16EE1300C0312C /* hb-ot-shape-normalize.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3ECE1F16EE1300C0312C /* hb-ot-shape-normalize.cc */; };
+		DE4F3EF01F16EE1300C0312C /* hb-ot-shape.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3ECF1F16EE1300C0312C /* hb-ot-shape.cc */; };
+		DE4F3EF11F16EE1300C0312C /* hb-ot-tag.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3ED01F16EE1300C0312C /* hb-ot-tag.cc */; };
+		DE4F3EF21F16EE1300C0312C /* hb-ot-var.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3ED11F16EE1300C0312C /* hb-ot-var.cc */; };
+		DE4F3EF31F16EE1300C0312C /* hb-set.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3ED21F16EE1300C0312C /* hb-set.cc */; };
+		DE4F3EF41F16EE1300C0312C /* hb-shape.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3ED31F16EE1300C0312C /* hb-shape.cc */; };
+		DE4F3EF51F16EE1300C0312C /* hb-shaper.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3ED41F16EE1300C0312C /* hb-shaper.cc */; };
+		DE4F3EF61F16EE1300C0312C /* hb-unicode.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3ED51F16EE1300C0312C /* hb-unicode.cc */; };
+		DE4F3EF71F16EE1300C0312C /* hb-warning.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3ED61F16EE1300C0312C /* hb-warning.cc */; };
+		DE4F3EF91F16EE5000C0312C /* hb-shape-plan.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EF81F16EE5000C0312C /* hb-shape-plan.cc */; };
 		DE6092E8CAB3B61132B5648D /* utrace.c in Sources */ = {isa = PBXBuildFile; fileRef = 3BCB1DD2B97728C0CC8B9DB4 /* utrace.c */; };
 		DE96B4B81854C75491DD2C7A /* SkWriteBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F84240719EF903312238199D /* SkWriteBuffer.cpp */; };
 		DEA1CEBDA22C609D6C6B2CE3 /* small_glyph_metrics.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8F8682AB8C22AC8776741330 /* small_glyph_metrics.cc */; };
@@ -1471,7 +1505,7 @@
 		21D2B9B254CDC967DCA6CA91 /* cost_mips32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = cost_mips32.c; path = third_party/externals/libwebp/src/dsp/cost_mips32.c; sourceTree = "<group>"; };
 		21DDEE98CEF3BF605AAD211A /* SkPDFMetadata.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkPDFMetadata.cpp; path = src/pdf/SkPDFMetadata.cpp; sourceTree = "<group>"; };
 		21F0C07A0773C661F78E101A /* basic_block.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = basic_block.cpp; path = "third_party/externals/spirv-tools/source/val/basic_block.cpp"; sourceTree = "<group>"; };
-		2206E12899496516372CDC36 /* libsources.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsources.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2206E12899496516372CDC36 /* libsources.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libsources.a; path = liblibSkia.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		22251AD5F6DA943AFEEC35C4 /* dng_memory_stream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dng_memory_stream.cpp; path = third_party/externals/dng_sdk/source/dng_memory_stream.cpp; sourceTree = "<group>"; };
 		2226CC23EF84CE0815193611 /* SkNextID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkNextID.h; path = src/core/SkNextID.h; sourceTree = "<group>"; };
 		2242EBD6D401B3D56EA6E986 /* dng_point.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dng_point.cpp; path = third_party/externals/dng_sdk/source/dng_point.cpp; sourceTree = "<group>"; };
@@ -2853,6 +2887,40 @@
 		DE156F2C930E2DB07713FE67 /* SkBlurImageFilter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkBlurImageFilter.cpp; path = src/core/SkBlurImageFilter.cpp; sourceTree = "<group>"; };
 		DE2AAEFD980A2146B2582DC3 /* GrAAStrokeRectOp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GrAAStrokeRectOp.cpp; path = src/gpu/ops/GrAAStrokeRectOp.cpp; sourceTree = "<group>"; };
 		DE2C6A2B85BA77D42A7F5386 /* SkLayerRasterizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkLayerRasterizer.h; path = include/effects/SkLayerRasterizer.h; sourceTree = "<group>"; };
+		DE4F3EB61F16EE1300C0312C /* hb-blob.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-blob.cc"; path = "third_party/externals/harfbuzz/src/hb-blob.cc"; sourceTree = "<group>"; };
+		DE4F3EB71F16EE1300C0312C /* hb-buffer-serialize.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-buffer-serialize.cc"; path = "third_party/externals/harfbuzz/src/hb-buffer-serialize.cc"; sourceTree = "<group>"; };
+		DE4F3EB81F16EE1300C0312C /* hb-buffer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-buffer.cc"; path = "third_party/externals/harfbuzz/src/hb-buffer.cc"; sourceTree = "<group>"; };
+		DE4F3EB91F16EE1300C0312C /* hb-common.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-common.cc"; path = "third_party/externals/harfbuzz/src/hb-common.cc"; sourceTree = "<group>"; };
+		DE4F3EBA1F16EE1300C0312C /* hb-coretext.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-coretext.cc"; path = "third_party/externals/harfbuzz/src/hb-coretext.cc"; sourceTree = "<group>"; };
+		DE4F3EBB1F16EE1300C0312C /* hb-face.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-face.cc"; path = "third_party/externals/harfbuzz/src/hb-face.cc"; sourceTree = "<group>"; };
+		DE4F3EBC1F16EE1300C0312C /* hb-fallback-shape.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-fallback-shape.cc"; path = "third_party/externals/harfbuzz/src/hb-fallback-shape.cc"; sourceTree = "<group>"; };
+		DE4F3EBD1F16EE1300C0312C /* hb-font.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-font.cc"; path = "third_party/externals/harfbuzz/src/hb-font.cc"; sourceTree = "<group>"; };
+		DE4F3EBE1F16EE1300C0312C /* hb-icu.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-icu.cc"; path = "third_party/externals/harfbuzz/src/hb-icu.cc"; sourceTree = "<group>"; };
+		DE4F3EBF1F16EE1300C0312C /* hb-ot-font.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-font.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-font.cc"; sourceTree = "<group>"; };
+		DE4F3EC01F16EE1300C0312C /* hb-ot-layout.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-layout.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-layout.cc"; sourceTree = "<group>"; };
+		DE4F3EC11F16EE1300C0312C /* hb-ot-map.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-map.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-map.cc"; sourceTree = "<group>"; };
+		DE4F3EC21F16EE1300C0312C /* hb-ot-shape-complex-arabic.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-arabic.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-arabic.cc"; sourceTree = "<group>"; };
+		DE4F3EC31F16EE1300C0312C /* hb-ot-shape-complex-default.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-default.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-default.cc"; sourceTree = "<group>"; };
+		DE4F3EC41F16EE1300C0312C /* hb-ot-shape-complex-hangul.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-hangul.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-hangul.cc"; sourceTree = "<group>"; };
+		DE4F3EC51F16EE1300C0312C /* hb-ot-shape-complex-hebrew.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-hebrew.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-hebrew.cc"; sourceTree = "<group>"; };
+		DE4F3EC61F16EE1300C0312C /* hb-ot-shape-complex-indic-table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-indic-table.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-indic-table.cc"; sourceTree = "<group>"; };
+		DE4F3EC71F16EE1300C0312C /* hb-ot-shape-complex-indic.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-indic.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-indic.cc"; sourceTree = "<group>"; };
+		DE4F3EC81F16EE1300C0312C /* hb-ot-shape-complex-myanmar.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-myanmar.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-myanmar.cc"; sourceTree = "<group>"; };
+		DE4F3EC91F16EE1300C0312C /* hb-ot-shape-complex-thai.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-thai.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-thai.cc"; sourceTree = "<group>"; };
+		DE4F3ECA1F16EE1300C0312C /* hb-ot-shape-complex-tibetan.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-tibetan.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-tibetan.cc"; sourceTree = "<group>"; };
+		DE4F3ECB1F16EE1300C0312C /* hb-ot-shape-complex-use-table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-use-table.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-use-table.cc"; sourceTree = "<group>"; };
+		DE4F3ECC1F16EE1300C0312C /* hb-ot-shape-complex-use.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-use.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-use.cc"; sourceTree = "<group>"; };
+		DE4F3ECD1F16EE1300C0312C /* hb-ot-shape-fallback.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-fallback.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-fallback.cc"; sourceTree = "<group>"; };
+		DE4F3ECE1F16EE1300C0312C /* hb-ot-shape-normalize.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-normalize.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-normalize.cc"; sourceTree = "<group>"; };
+		DE4F3ECF1F16EE1300C0312C /* hb-ot-shape.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape.cc"; sourceTree = "<group>"; };
+		DE4F3ED01F16EE1300C0312C /* hb-ot-tag.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-tag.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-tag.cc"; sourceTree = "<group>"; };
+		DE4F3ED11F16EE1300C0312C /* hb-ot-var.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-var.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-var.cc"; sourceTree = "<group>"; };
+		DE4F3ED21F16EE1300C0312C /* hb-set.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-set.cc"; path = "third_party/externals/harfbuzz/src/hb-set.cc"; sourceTree = "<group>"; };
+		DE4F3ED31F16EE1300C0312C /* hb-shape.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-shape.cc"; path = "third_party/externals/harfbuzz/src/hb-shape.cc"; sourceTree = "<group>"; };
+		DE4F3ED41F16EE1300C0312C /* hb-shaper.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-shaper.cc"; path = "third_party/externals/harfbuzz/src/hb-shaper.cc"; sourceTree = "<group>"; };
+		DE4F3ED51F16EE1300C0312C /* hb-unicode.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-unicode.cc"; path = "third_party/externals/harfbuzz/src/hb-unicode.cc"; sourceTree = "<group>"; };
+		DE4F3ED61F16EE1300C0312C /* hb-warning.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-warning.cc"; path = "third_party/externals/harfbuzz/src/hb-warning.cc"; sourceTree = "<group>"; };
+		DE4F3EF81F16EE5000C0312C /* hb-shape-plan.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-shape-plan.cc"; path = "third_party/externals/harfbuzz/src/hb-shape-plan.cc"; sourceTree = "<group>"; };
 		DE8531DA3E713A71E0E7E7F4 /* InstancedRendering.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = InstancedRendering.cpp; path = src/gpu/instanced/InstancedRendering.cpp; sourceTree = "<group>"; };
 		DE98BFF4103FEC6418A78DF7 /* sk_effects.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = sk_effects.cpp; path = src/c/sk_effects.cpp; sourceTree = "<group>"; };
 		DE9F6C0EE189113B5439E190 /* GrOnFlushResourceProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrOnFlushResourceProvider.h; path = src/gpu/GrOnFlushResourceProvider.h; sourceTree = "<group>"; };
@@ -3638,6 +3706,7 @@
 		45C6CD48B9E0D98A33B0B8AF /* externals */ = {
 			isa = PBXGroup;
 			children = (
+				DE4F3DD11F16E57A00C0312C /* harfbuzz */,
 				33C01F1905B62855E06254D2 /* dng_sdk */,
 				BD5FEBC37E38E713819ED319 /* expat */,
 				E58E40FF2C5103D0B7684B15 /* icu */,
@@ -5319,6 +5388,47 @@
 			name = source;
 			sourceTree = "<group>";
 		};
+		DE4F3DD11F16E57A00C0312C /* harfbuzz */ = {
+			isa = PBXGroup;
+			children = (
+				DE4F3EF81F16EE5000C0312C /* hb-shape-plan.cc */,
+				DE4F3EB61F16EE1300C0312C /* hb-blob.cc */,
+				DE4F3EB71F16EE1300C0312C /* hb-buffer-serialize.cc */,
+				DE4F3EB81F16EE1300C0312C /* hb-buffer.cc */,
+				DE4F3EB91F16EE1300C0312C /* hb-common.cc */,
+				DE4F3EBA1F16EE1300C0312C /* hb-coretext.cc */,
+				DE4F3EBB1F16EE1300C0312C /* hb-face.cc */,
+				DE4F3EBC1F16EE1300C0312C /* hb-fallback-shape.cc */,
+				DE4F3EBD1F16EE1300C0312C /* hb-font.cc */,
+				DE4F3EBE1F16EE1300C0312C /* hb-icu.cc */,
+				DE4F3EBF1F16EE1300C0312C /* hb-ot-font.cc */,
+				DE4F3EC01F16EE1300C0312C /* hb-ot-layout.cc */,
+				DE4F3EC11F16EE1300C0312C /* hb-ot-map.cc */,
+				DE4F3EC21F16EE1300C0312C /* hb-ot-shape-complex-arabic.cc */,
+				DE4F3EC31F16EE1300C0312C /* hb-ot-shape-complex-default.cc */,
+				DE4F3EC41F16EE1300C0312C /* hb-ot-shape-complex-hangul.cc */,
+				DE4F3EC51F16EE1300C0312C /* hb-ot-shape-complex-hebrew.cc */,
+				DE4F3EC61F16EE1300C0312C /* hb-ot-shape-complex-indic-table.cc */,
+				DE4F3EC71F16EE1300C0312C /* hb-ot-shape-complex-indic.cc */,
+				DE4F3EC81F16EE1300C0312C /* hb-ot-shape-complex-myanmar.cc */,
+				DE4F3EC91F16EE1300C0312C /* hb-ot-shape-complex-thai.cc */,
+				DE4F3ECA1F16EE1300C0312C /* hb-ot-shape-complex-tibetan.cc */,
+				DE4F3ECB1F16EE1300C0312C /* hb-ot-shape-complex-use-table.cc */,
+				DE4F3ECC1F16EE1300C0312C /* hb-ot-shape-complex-use.cc */,
+				DE4F3ECD1F16EE1300C0312C /* hb-ot-shape-fallback.cc */,
+				DE4F3ECE1F16EE1300C0312C /* hb-ot-shape-normalize.cc */,
+				DE4F3ECF1F16EE1300C0312C /* hb-ot-shape.cc */,
+				DE4F3ED01F16EE1300C0312C /* hb-ot-tag.cc */,
+				DE4F3ED11F16EE1300C0312C /* hb-ot-var.cc */,
+				DE4F3ED21F16EE1300C0312C /* hb-set.cc */,
+				DE4F3ED31F16EE1300C0312C /* hb-shape.cc */,
+				DE4F3ED41F16EE1300C0312C /* hb-shaper.cc */,
+				DE4F3ED51F16EE1300C0312C /* hb-unicode.cc */,
+				DE4F3ED61F16EE1300C0312C /* hb-warning.cc */,
+			);
+			name = harfbuzz;
+			sourceTree = "<group>";
+		};
 		DFFE1DDCE030A8402FD77FFF /* common */ = {
 			isa = PBXGroup;
 			children = (
@@ -6026,9 +6136,11 @@
 				EBA46AA788DF26C458B6DD98 /* SkLiteDL.cpp in Sources */,
 				B778127FDE46ECE507BFF904 /* SkLiteRecorder.cpp in Sources */,
 				67EC9F0339A6A1FE4621D39C /* SkLocalMatrixImageFilter.cpp in Sources */,
+				DE4F3EE11F16EE1300C0312C /* hb-ot-layout.cc in Sources */,
 				06BE3953D7CD146087FB866D /* SkLocalMatrixShader.cpp in Sources */,
 				75676BDF71E120B8961CEFB0 /* SkMD5.cpp in Sources */,
 				73FF184A22679DD89D3DB9A0 /* SkMallocPixelRef.cpp in Sources */,
+				DE4F3EEA1F16EE1300C0312C /* hb-ot-shape-complex-thai.cc in Sources */,
 				099FCC50C14243718D1CDA40 /* SkMask.cpp in Sources */,
 				B7714358E5B1812D64AB2C21 /* SkMaskCache.cpp in Sources */,
 				0DD7D172AF1926D0FF8521AF /* SkMaskFilter.cpp in Sources */,
@@ -6038,6 +6150,7 @@
 				BA622D9A501509984F60266C /* SkMatrix44.cpp in Sources */,
 				FDC313DFC7A31E0774482FD6 /* SkMatrixImageFilter.cpp in Sources */,
 				996A9A67533B07B365FF0EFE /* SkMetaData.cpp in Sources */,
+				DE4F3EF11F16EE1300C0312C /* hb-ot-tag.cc in Sources */,
 				3D870E4FC0104C916CC1057C /* SkMiniRecorder.cpp in Sources */,
 				17214D1F16B9235B2790350C /* SkMipMap.cpp in Sources */,
 				7255CC9A37F8222C7E4DD1A8 /* SkModeColorFilter.cpp in Sources */,
@@ -6160,11 +6273,13 @@
 				97EBF3F34E62383CAF084F32 /* SkGaussianEdgeShader.cpp in Sources */,
 				5DB5D8648AE6C7CA85CDE33F /* SkHighContrastFilter.cpp in Sources */,
 				E319097BD896F39B6A346FC7 /* SkImageSource.cpp in Sources */,
+				DE4F3EF21F16EE1300C0312C /* hb-ot-var.cc in Sources */,
 				F37780BF5362F77DF3D60E5F /* SkLayerDrawLooper.cpp in Sources */,
 				B7ADD032ECEC17C30ECCD7F5 /* SkLayerRasterizer.cpp in Sources */,
 				B85D3A88A2553FD870871C32 /* SkLightingImageFilter.cpp in Sources */,
 				557B42A5074F71A1B4C88DD3 /* SkLumaColorFilter.cpp in Sources */,
 				CF02C5F5AF1A79667EC7C2A7 /* SkMagnifierImageFilter.cpp in Sources */,
+				DE4F3EF91F16EE5000C0312C /* hb-shape-plan.cc in Sources */,
 				2E02D775C70F22829AC8E48B /* SkMatrixConvolutionImageFilter.cpp in Sources */,
 				9132367443E08BBC604A9991 /* SkMergeImageFilter.cpp in Sources */,
 				0BCECCBCBD2C95F3714B19D9 /* SkMorphologyImageFilter.cpp in Sources */,
@@ -6206,6 +6321,7 @@
 				644AC12C1C475E6501E012E6 /* GrClipStackClip.cpp in Sources */,
 				FA4B8A3C6F748101FD0F1B25 /* GrColorSpaceXform.cpp in Sources */,
 				200C3F696137B79D26F3C997 /* GrContext.cpp in Sources */,
+				DE4F3EF31F16EE1300C0312C /* hb-set.cc in Sources */,
 				3E0ADF0635992A2322B24302 /* GrCoordTransform.cpp in Sources */,
 				B086A10D6AAC8636A7D194CB /* GrDefaultGeoProcFactory.cpp in Sources */,
 				87570054777C0E8459ED9AB7 /* GrDistanceFieldGenFromVector.cpp in Sources */,
@@ -6231,6 +6347,7 @@
 				C32841CC01A08F348F0FCE50 /* GrPathRenderer.cpp in Sources */,
 				E9F3CC56C62AD60A5E76311B /* GrPathRendererChain.cpp in Sources */,
 				D8B262104A2F79F486D929D5 /* GrPathRendering.cpp in Sources */,
+				DE4F3EDB1F16EE1300C0312C /* hb-coretext.cc in Sources */,
 				B309FA9C066785B48AA7FA31 /* GrPathRenderingRenderTargetContext.cpp in Sources */,
 				2E2A88BE2D8E0C04B6D585CF /* GrPathUtils.cpp in Sources */,
 				4DD3FC497DE7271F91D46BE1 /* GrPipeline.cpp in Sources */,
@@ -6265,6 +6382,7 @@
 				168CBCEB42DFB74EC2B55282 /* GrTestUtils.cpp in Sources */,
 				865EFAE0676925F290040F43 /* GrTexture.cpp in Sources */,
 				35CA98F4F6D53648B84C020F /* GrTextureAdjuster.cpp in Sources */,
+				DE4F3ED81F16EE1300C0312C /* hb-buffer-serialize.cc in Sources */,
 				66FCDA1EE34B82ABC0C2FD2D /* GrTextureContext.cpp in Sources */,
 				B9376AD847DF0C0FBAEE7494 /* GrTextureMaker.cpp in Sources */,
 				D25C45DC3D69704AAD8ADB1A /* GrTextureOpList.cpp in Sources */,
@@ -6313,6 +6431,7 @@
 				5D8B66EC0DCC08E477D0A678 /* GrGLGLSL.cpp in Sources */,
 				77FCF46AE1703F66CED85CAC /* GrGLGpu.cpp in Sources */,
 				F1271C24C85B1ED6C8369AE6 /* GrGLGpuProgramCache.cpp in Sources */,
+				DE4F3EE21F16EE1300C0312C /* hb-ot-map.cc in Sources */,
 				ED8814B94040EF455F62968C /* GrGLInterface.cpp in Sources */,
 				F5FB25C325EE798BBF7F611A /* GrGLPath.cpp in Sources */,
 				F2B8560EEFF6E176D39C928F /* GrGLPathRange.cpp in Sources */,
@@ -6331,6 +6450,7 @@
 				C6AF7B2A34A37C25613CE89A /* GrGLProgramBuilder.cpp in Sources */,
 				C509FD53A6331ED0B2D2625E /* GrGLShaderStringBuilder.cpp in Sources */,
 				1CD613C4E52BCADD3129028B /* GrGLCreateNativeInterface_iOS.cpp in Sources */,
+				DE4F3EED1F16EE1300C0312C /* hb-ot-shape-complex-use.cc in Sources */,
 				E42C5EFFF23FB0BA80561470 /* GrGLSL.cpp in Sources */,
 				5BB64DDB9D787DA011313A26 /* GrGLSLBlend.cpp in Sources */,
 				DB49246E1CA44BE0245A3CA8 /* GrGLSLFragmentProcessor.cpp in Sources */,
@@ -6342,6 +6462,7 @@
 				BB3C66A4646DA37D35B1A2F5 /* GrGLSLProgramDataManager.cpp in Sources */,
 				54DDB6EBBE692DA72F64381D /* GrGLSLShaderBuilder.cpp in Sources */,
 				2FE830984299CABBEAFAEE8F /* GrGLSLUtil.cpp in Sources */,
+				DE4F3EEF1F16EE1300C0312C /* hb-ot-shape-normalize.cc in Sources */,
 				6915A089F18079F6615928FD /* GrGLSLVarying.cpp in Sources */,
 				90710732838DAC1F17868475 /* GrGLSLVertexShaderBuilder.cpp in Sources */,
 				40281C029E327551EA185CC4 /* GrGLSLXferProcessor.cpp in Sources */,
@@ -6358,6 +6479,7 @@
 				AFBDAC1E33D24E0A459FECA4 /* GrAnalyticRectOp.cpp in Sources */,
 				F8194BF1295EBCCBBF8CCD16 /* GrAtlasTextOp.cpp in Sources */,
 				9B9A521D1B6994CDE9FB63EF /* GrCopySurfaceOp.cpp in Sources */,
+				DE4F3EE81F16EE1300C0312C /* hb-ot-shape-complex-indic.cc in Sources */,
 				90B9A5E42308616F7C3F4208 /* GrDashLinePathRenderer.cpp in Sources */,
 				37B75D4AEBEFFE79946ED62A /* GrDashOp.cpp in Sources */,
 				63AFB31C9B972BDB311C7065 /* GrDefaultPathRenderer.cpp in Sources */,
@@ -6411,6 +6533,7 @@
 				C3FDFD0878EFE5F46734F995 /* SkBlitRow_opts_arm_neon.cpp in Sources */,
 				7EE2EFD971F12A1C65871B43 /* SkOpts_crc32.cpp in Sources */,
 				94AB6CB5C4469A5F21908737 /* SkAddIntersections.cpp in Sources */,
+				DE4F3EF61F16EE1300C0312C /* hb-unicode.cc in Sources */,
 				93FE8413E5683F0852E1C494 /* SkDConicLineIntersection.cpp in Sources */,
 				0B5BAE911D48D59B3F5CB5B5 /* SkDCubicLineIntersection.cpp in Sources */,
 				A1053D548470BAC7EC89EE6B /* SkDCubicToQuads.cpp in Sources */,
@@ -6477,6 +6600,8 @@
 				AED50005468ADA54264EEC95 /* SkMemory_malloc.cpp in Sources */,
 				B03EC779D5C2926BAE477C49 /* SkOSFile_posix.cpp in Sources */,
 				70A043F714E3D94D18B8F35A /* SkOSFile_stdio.cpp in Sources */,
+				DE4F3EDE1F16EE1300C0312C /* hb-font.cc in Sources */,
+				DE4F3EE41F16EE1300C0312C /* hb-ot-shape-complex-default.cc in Sources */,
 				0ECF6053846D39804EC1AA30 /* SkOSLibrary_posix.cpp in Sources */,
 				155C13316F6F1E7CE8CA37E1 /* SkTLS_pthread.cpp in Sources */,
 				C2C87FEA76E986D8256CCA04 /* SkOTTable_name.cpp in Sources */,
@@ -6536,8 +6661,10 @@
 				A4AFD0B3A231356A23F4241C /* SkXMLParser.cpp in Sources */,
 				FF61FC7326E54DAE3519B100 /* SkXMLWriter.cpp in Sources */,
 				3031E02EDF8E39F7E07A5F85 /* SkXPSDevice.cpp in Sources */,
+				DE4F3EEE1F16EE1300C0312C /* hb-ot-shape-fallback.cc in Sources */,
 				D30665FF67DC0A083567C8D9 /* SkXPSDocument.cpp in Sources */,
 				3CCC343BEC1FC08314E8EE10 /* etc1.cpp in Sources */,
+				DE4F3EE31F16EE1300C0312C /* hb-ot-shape-complex-arabic.cc in Sources */,
 				AA2F05C19BB9764D3E269B66 /* dng_1d_function.cpp in Sources */,
 				E1C1CA3171E9AC0DD75BB5C7 /* dng_1d_table.cpp in Sources */,
 				FFDF122506DCC9CEAB599947 /* dng_abort_sniffer.cpp in Sources */,
@@ -6592,6 +6719,7 @@
 				D1AF7B18F99121503667D78B /* dng_safe_arithmetic.cpp in Sources */,
 				8692365DC4FCB92092453870 /* dng_shared.cpp in Sources */,
 				2FC30D2E460B2077AECAB5FB /* dng_simple_image.cpp in Sources */,
+				DE4F3EEC1F16EE1300C0312C /* hb-ot-shape-complex-use-table.cc in Sources */,
 				9DE34E78F61577CE0DEBBCB1 /* dng_spline.cpp in Sources */,
 				79F6B53ECA9AE537EB89F6E4 /* dng_stream.cpp in Sources */,
 				28A2E94A6B1FEC5BA471ABA6 /* dng_string.cpp in Sources */,
@@ -6618,6 +6746,7 @@
 				36EECF1EF85D5D6C2AA7B055 /* charstr.cpp in Sources */,
 				4097CAB604CCDED13DA84FE9 /* cmemory.c in Sources */,
 				C62B6185DF0CB667684FF526 /* cstring.c in Sources */,
+				DE4F3ED91F16EE1300C0312C /* hb-buffer.cc in Sources */,
 				C8CDD2D4C5EC0DDA9E7624FD /* cwchar.c in Sources */,
 				20413B90F4CEE856197397BB /* dictbe.cpp in Sources */,
 				5EF51D48354AC739F902BC7B /* dictionarydata.cpp in Sources */,
@@ -6667,6 +6796,8 @@
 				2C8C0376FDCC376D71BE5C75 /* servls.cpp in Sources */,
 				B8E809F34B376BD39E069E59 /* servnotf.cpp in Sources */,
 				AE2C69F62CF9A324C199D7FC /* servrbf.cpp in Sources */,
+				DE4F3ED71F16EE1300C0312C /* hb-blob.cc in Sources */,
+				DE4F3EDD1F16EE1300C0312C /* hb-fallback-shape.cc in Sources */,
 				1038C875ED07533014D866BD /* servslkf.cpp in Sources */,
 				F206487DCF8A13419CE859D7 /* sharedobject.cpp in Sources */,
 				04621A7476662E1214A6DE80 /* simplepatternformatter.cpp in Sources */,
@@ -6696,6 +6827,7 @@
 				4CFC02E7B89CD7EC8101BB76 /* ucnv_cnv.c in Sources */,
 				B42466E6A4FD7759359666C0 /* ucnv_ct.c in Sources */,
 				4DA5311AE1DB440A2179B883 /* ucnv_err.c in Sources */,
+				DE4F3EE91F16EE1300C0312C /* hb-ot-shape-complex-myanmar.cc in Sources */,
 				25E75C41F8A3EB783BB86952 /* ucnv_ext.cpp in Sources */,
 				8A06F5E41067D472BEEA4C70 /* ucnv_io.cpp in Sources */,
 				54D80E93E5F83C7FDE252CF8 /* ucnv_lmb.c in Sources */,
@@ -6736,6 +6868,7 @@
 				ACD22E7D6DE4FFCF2E101A78 /* unifilt.cpp in Sources */,
 				772B81F2BE53108171E6F0D4 /* unifunct.cpp in Sources */,
 				94F188694CECAC0F5C0725DB /* uniset.cpp in Sources */,
+				DE4F3EDF1F16EE1300C0312C /* hb-icu.cc in Sources */,
 				7F15020C063C5B4AED752053 /* uniset_closure.cpp in Sources */,
 				03D98D4A1060328D60CC3546 /* uniset_props.cpp in Sources */,
 				EF90499663105AC608A4C1EA /* unisetspan.cpp in Sources */,
@@ -6744,6 +6877,7 @@
 				8F29C8818E34B4B444459381 /* unistr_case_locale.cpp in Sources */,
 				1BF1C15CEE6B23C7D698EF05 /* unistr_cnv.cpp in Sources */,
 				CFC75BB9845660228E34A4A9 /* unistr_props.cpp in Sources */,
+				DE4F3EE71F16EE1300C0312C /* hb-ot-shape-complex-indic-table.cc in Sources */,
 				9C898FBF0252B137AF2DB92B /* unistr_titlecase_brkiter.cpp in Sources */,
 				4152594A520259C9BBCDC6F2 /* unorm.cpp in Sources */,
 				1CC6DADECA0717A52A1D4D35 /* unormcmp.cpp in Sources */,
@@ -6758,6 +6892,7 @@
 				935796AA5DE40275DB3ADE96 /* uscript_props.cpp in Sources */,
 				3EEC136C3E7C7B3312C49965 /* uset.cpp in Sources */,
 				C4EDAC5B5F6601331B143C98 /* uset_props.cpp in Sources */,
+				DE4F3EDA1F16EE1300C0312C /* hb-common.cc in Sources */,
 				22BD17F498FA912FD7861166 /* usetiter.cpp in Sources */,
 				243B62F1812445FBDBF386EE /* ushape.cpp in Sources */,
 				C928CF9DCC5570F7B9E029AB /* usprep.cpp in Sources */,
@@ -6937,6 +7072,7 @@
 				E628CD2E1B0BCBA52417532F /* muxinternal.c in Sources */,
 				113F14E7773A243FD2261ACA /* muxread.c in Sources */,
 				C8E3D9042D93FDC8B6178110 /* bit_reader_utils.c in Sources */,
+				DE4F3EF41F16EE1300C0312C /* hb-shape.cc in Sources */,
 				A648303C9FE19F069A06B6CE /* bit_writer_utils.c in Sources */,
 				306C03D6264A5E0AC74EBC71 /* color_cache_utils.c in Sources */,
 				5685EF19E67D9763F3A812D6 /* filters_utils.c in Sources */,
@@ -6951,6 +7087,7 @@
 				97FAEE5E3AB3C304C680A185 /* cached_paged_byte_array.cc in Sources */,
 				1E910F1F348F30C863CB6D49 /* range_checked_byte_ptr.cc in Sources */,
 				7D629588DF5E77315053B792 /* image_type_recognition_lite.cc in Sources */,
+				DE4F3EF51F16EE1300C0312C /* hb-shaper.cc in Sources */,
 				FBB9C7E7FF51991D7FFBCD50 /* piex.cc in Sources */,
 				4D21BEB9D7917312AC37A26A /* tiff_directory.cc in Sources */,
 				52F983588CBF40FEB0E9651D /* tiff_parser.cc in Sources */,
@@ -6967,6 +7104,7 @@
 				D59C3879CBD53FAC323F6E4D /* file_input_stream.cc in Sources */,
 				8287F8E52A70CE16BE917412 /* lock.cc in Sources */,
 				B549E836D4421E86499A19F8 /* memory_input_stream.cc in Sources */,
+				DE4F3EF01F16EE1300C0312C /* hb-ot-shape.cc in Sources */,
 				BB50597558D8DFE1ACBC75F1 /* memory_output_stream.cc in Sources */,
 				010654DE18D53D0CFFCEF350 /* big_glyph_metrics.cc in Sources */,
 				58FA681E945946C39B45BD3B /* bitmap_glyph.cc in Sources */,
@@ -7016,8 +7154,10 @@
 				DF06F9B2205327AB2B66FDC2 /* message.cpp in Sources */,
 				0FBCE1152E9818011BBC2050 /* name_mapper.cpp in Sources */,
 				BCC3D2AB379B2766EE30679A /* opcode.cpp in Sources */,
+				DE4F3EE51F16EE1300C0312C /* hb-ot-shape-complex-hangul.cc in Sources */,
 				1B48C37FAF7FB92DC05F9423 /* operand.cpp in Sources */,
 				FDCD3580ED04A14B7E17C22D /* build_module.cpp in Sources */,
+				DE4F3EEB1F16EE1300C0312C /* hb-ot-shape-complex-tibetan.cc in Sources */,
 				FA4B5A01B4AD82FFC57AB492 /* def_use_manager.cpp in Sources */,
 				BDBFD28060138C37C00007E4 /* eliminate_dead_constant_pass.cpp in Sources */,
 				1A8C683175B0952DBD4C9702 /* fold_spec_constant_op_and_composite_pass.cpp in Sources */,
@@ -7032,6 +7172,7 @@
 				B7DA8CA9911A937A40E7C56C /* set_spec_constant_default_value_pass.cpp in Sources */,
 				86453D04668785A3B3DB3321 /* strip_debug_info_pass.cpp in Sources */,
 				C46CC7EA5F4BB4FFF3EE926E /* type_manager.cpp in Sources */,
+				DE4F3EDC1F16EE1300C0312C /* hb-face.cc in Sources */,
 				7972D7E90C87D6D2AEACB5F7 /* types.cpp in Sources */,
 				74A64C2717FF835934FBAF53 /* unify_const_pass.cpp in Sources */,
 				5E3713D1D8F49BCC052383DB /* parsed_operand.cpp in Sources */,
@@ -7082,6 +7223,7 @@
 				1E9646A0A06B84A27D296117 /* pngmem.c in Sources */,
 				CBEC1BBF267BCB7E619F4513 /* pngpread.c in Sources */,
 				0FA9192C0C772E899BC754F9 /* pngread.c in Sources */,
+				DE4F3EF71F16EE1300C0312C /* hb-warning.cc in Sources */,
 				72FBF4D7772F3011C4A3FBB9 /* pngrio.c in Sources */,
 				B20476B7C207D770903353EA /* pngrtran.c in Sources */,
 				2C7228D2C577633536CE2A26 /* pngrutil.c in Sources */,
@@ -7089,8 +7231,10 @@
 				172C9BD43DE170003ED3FEF5 /* pngtrans.c in Sources */,
 				47926C0246533E01E6FD098C /* pngwio.c in Sources */,
 				11BD7E2F643E457AD0F7F72A /* pngwrite.c in Sources */,
+				DE4F3EE61F16EE1300C0312C /* hb-ot-shape-complex-hebrew.cc in Sources */,
 				506B4203DC8999DA3C82D2EB /* pngwtran.c in Sources */,
 				9CC83407075F248B1CC5A493 /* pngwutil.c in Sources */,
+				DE4F3EE01F16EE1300C0312C /* hb-ot-font.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7109,6 +7253,11 @@
 					U_STATC_IMPLEMENTATION,
 					U_COMMON_IMPLEMENTATION,
 					SFNTLY_NO_EXCEPTION,
+					HAVE_ICU,
+					HAVE_ICU_BUILTIN,
+					HAVE_OT,
+					HB_NO_MT,
+					HAVE_CORETEXT,
 				);
 				HEADER_SEARCH_PATHS = (
 					../..,
@@ -7138,6 +7287,7 @@
 					../../third_party/externals/icu/source/common,
 					../../third_party/externals/sfntly/cpp/src/sfntly,
 					../../third_party/externals/sfntly/cpp/src/,
+					../../third_party/harfbuzz,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				PRODUCT_NAME = libSkia;
@@ -7168,7 +7318,17 @@
 				CONFIGURATION_BUILD_DIR = "../../../skia/SkiaLibs/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				ENABLE_BITCODE = NO;
 				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = HAVE_EXPAT_CONFIG_H;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					HAVE_EXPAT_CONFIG_H,
+					U_STATC_IMPLEMENTATION,
+					U_COMMON_IMPLEMENTATION,
+					SFNTLY_NO_EXCEPTION,
+					HAVE_ICU,
+					HAVE_ICU_BUILTIN,
+					HAVE_OT,
+					HB_NO_MT,
+					HAVE_CORETEXT,
+				);
 				HEADER_SEARCH_PATHS = (
 					../..,
 					"../../include/**",
@@ -7197,6 +7357,7 @@
 					../../third_party/externals/icu/source/common,
 					../../third_party/externals/sfntly/cpp/src/sfntly,
 					../../third_party/externals/sfntly/cpp/src/,
+					../../third_party/harfbuzz,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				PRODUCT_NAME = libSkia;

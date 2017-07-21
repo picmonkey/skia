@@ -460,7 +460,6 @@
 		5E74280FC349E4E6BDDA512B /* GrStencilAttachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0840C69695D5C5871C97FCEE /* GrStencilAttachment.cpp */; };
 		5ED2BF7F72BB0FFCE4D4F847 /* dng_reference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 468419C1AD43674D5EAAE0B5 /* dng_reference.cpp */; };
 		5EF51D48354AC739F902BC7B /* dictionarydata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9E613C443D4A660FB347530F /* dictionarydata.cpp */; };
-		5F51A7741ABA09E6251BEF6D /* SkBlitRow_opts_arm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 98A4E01086B861A6DA7FD612 /* SkBlitRow_opts_arm.cpp */; };
 		5FC48244FCD22C750F8A7872 /* GrAAHairLinePathRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1DA9665E7D6E1E7AE201617A /* GrAAHairLinePathRenderer.cpp */; };
 		5FDBE83DA13F6CA1F829CC1B /* SkDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A494C2A999E088E5D391D48 /* SkDocument.cpp */; };
 		5FE36F0F02876B71519A57F8 /* dng_area_task.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D34027EFEF2412DFEEC58398 /* dng_area_task.cpp */; };
@@ -538,7 +537,6 @@
 		72B1EC966B6F8B0A8A945717 /* SkThreadID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FBDBA4E7C1B774CAFDAB5055 /* SkThreadID.cpp */; };
 		72C1672ACEE8C3C2CA1EFBAC /* uscript.c in Sources */ = {isa = PBXBuildFile; fileRef = 8D113C337946373E6E2E4C2A /* uscript.c */; };
 		72FBF4D7772F3011C4A3FBB9 /* pngrio.c in Sources */ = {isa = PBXBuildFile; fileRef = B8F4D22B686A71C2028618D9 /* pngrio.c */; };
-		7347A912D809D071A79E9016 /* SkBitmapProcState_arm_neon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8B9533854771F178A06B52C6 /* SkBitmapProcState_arm_neon.cpp */; };
 		736E7DC695718DE39AEC5474 /* locmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F3D05182E3FD50696FB9F60 /* locmap.c */; };
 		73990A441C983C147E9B3D0D /* GrGLBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27B409A7C21102F39C9068E7 /* GrGLBuffer.cpp */; };
 		73A3E5C32F986F1AFD022FC5 /* instruction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9201DD8C56A40BBB4B4A988 /* instruction.cpp */; };
@@ -593,10 +591,8 @@
 		7E4F3E1745F46DF175E0F4B8 /* GrXferProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 736BD89DD9F34AE30D446F18 /* GrXferProcessor.cpp */; };
 		7E8B01E3EBD371B166872C7F /* jcapimin.c in Sources */ = {isa = PBXBuildFile; fileRef = 4C89D177F145275FECD31769 /* jcapimin.c */; };
 		7E8E656980269C8A91D644C1 /* maximum_profile_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = 80A4485F51F7EE11990A854B /* maximum_profile_table.cc */; };
-		7EE2EFD971F12A1C65871B43 /* SkOpts_crc32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45136AB5E1DC8079A84206B3 /* SkOpts_crc32.cpp */; };
 		7F15020C063C5B4AED752053 /* uniset_closure.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E771E319CFF3B1B96922BD7 /* uniset_closure.cpp */; };
 		7F67CF84D538D90A41E700D5 /* SkSVGDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D1D669D630FB73615488BB3 /* SkSVGDevice.cpp */; };
-		7FB4F1592D376A579AD0C258 /* SkBlitMask_opts_arm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6865A35379826958EAA6387B /* SkBlitMask_opts_arm.cpp */; };
 		7FC9736C3DCA6FC30462C43B /* SkAmbientShadowMaskFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A179500E6018547B0698C60 /* SkAmbientShadowMaskFilter.cpp */; };
 		7FF4B38EA05F8B33027BF8D3 /* SkClipStackDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D98D6C90E886337D48CA2A53 /* SkClipStackDevice.cpp */; };
 		7FFFE5C62FA7C00735E272CF /* stringtriebuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FDF3DA585AB2AACE8380726 /* stringtriebuilder.cpp */; };
@@ -915,7 +911,6 @@
 		C3A8984BEEFC369D5FB9B9D9 /* SkParseColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7FA938229918A17A6B07321 /* SkParseColor.cpp */; };
 		C3D7C9825803948C072C730F /* SkPDFFormXObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8B6C99163896667792039272 /* SkPDFFormXObject.cpp */; };
 		C3D867BF5D338809F4A7CD73 /* SkImageGeneratorCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 881425C3BC17D8817D184EA2 /* SkImageGeneratorCG.cpp */; };
-		C3FDFD0878EFE5F46734F995 /* SkBlitRow_opts_arm_neon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF6EA712B577772590962C85 /* SkBlitRow_opts_arm_neon.cpp */; };
 		C42F18B103A61AB9D3AECDB1 /* quant_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = B6A8268E335C1FD99BB5CF5F /* quant_enc.c */; };
 		C4338823372E23BDE2FFA0C5 /* dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BBCF28E94348279C4DEFD9A /* dec.c */; };
 		C46BA721743E83CDAC7160ED /* SkATrace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D8B1B1CCD9659F7FB3DE64C /* SkATrace.cpp */; };
@@ -1086,6 +1081,8 @@
 		DE96B4B81854C75491DD2C7A /* SkWriteBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F84240719EF903312238199D /* SkWriteBuffer.cpp */; };
 		DEA1CEBDA22C609D6C6B2CE3 /* small_glyph_metrics.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8F8682AB8C22AC8776741330 /* small_glyph_metrics.cc */; };
 		DEE6AC6EA35999B941C9F818 /* dng_memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0DB846F934FFE365726BF144 /* dng_memory.cpp */; };
+		DEFBC6EC1F1D318400510863 /* opts_configuration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DEFBC6EB1F1D318400510863 /* opts_configuration.cpp */; };
+		DEFBC6ED1F1D334900510863 /* SkOpts_crc32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45136AB5E1DC8079A84206B3 /* SkOpts_crc32.cpp */; };
 		DF06F9B2205327AB2B66FDC2 /* message.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC4B181E46A66EBF373DD254 /* message.cpp */; };
 		DF11E96EE57DF170F838A4E6 /* SkPathOpsQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89DB52A398F9F938065C7407 /* SkPathOpsQuad.cpp */; };
 		DF17ABA96493EAF07A32F680 /* uiter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D655E0894A1146CE485A03D8 /* uiter.cpp */; };
@@ -1203,7 +1200,6 @@
 		F8194BF1295EBCCBBF8CCD16 /* GrAtlasTextOp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F19373220071C99EE33325D /* GrAtlasTextOp.cpp */; };
 		F8671F0DC3A231E8CE60F9D5 /* jcarith.c in Sources */ = {isa = PBXBuildFile; fileRef = E839E5163C7D55C62B6F0D0B /* jcarith.c */; };
 		F879672DE843EB1ED80B08DF /* resbund_cnv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 082E410809934BC4C7349C2E /* resbund_cnv.cpp */; };
-		F8B6D10E0E99E0280C0AB224 /* SkBlitMask_opts_arm_neon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85876FE9FAFA053148FC0FBA /* SkBlitMask_opts_arm_neon.cpp */; };
 		F8E9FBEA39CB3FF07EE05556 /* GrGLCreateNullInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514B3C8932012B7BF39B03A2 /* GrGLCreateNullInterface.cpp */; };
 		F904736574939FE59ED5E2D8 /* yuv_sse2.c in Sources */ = {isa = PBXBuildFile; fileRef = 34137312EBACC15F863E895D /* yuv_sse2.c */; };
 		F92D2244C117E8B3A9286C38 /* GrSurfaceContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A740C5F8EB4C50EFA37FD164 /* GrSurfaceContext.cpp */; };
@@ -1241,7 +1237,6 @@
 		FE2D3B382F2DB073453EAD58 /* iterator_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = E14D30A96F2147DFE0039FDF /* iterator_enc.c */; };
 		FE2F9BA9507DAF9170FFF5C5 /* GrAALinearizingConvexPathRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5817027E440F532121289D52 /* GrAALinearizingConvexPathRenderer.cpp */; };
 		FE6C5C155E98EC85845AAB21 /* dng_iptc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 854F90D669B71966B948C5B5 /* dng_iptc.cpp */; };
-		FEB01C3F697DE5CFAA456128 /* SkBitmapProcState_matrixProcs_neon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6F59949EBA565CD454E25FC /* SkBitmapProcState_matrixProcs_neon.cpp */; };
 		FF1D6DD4437890C8278E8CDE /* gzclose.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B027B22E94B91E7010A9D51 /* gzclose.c */; };
 		FF5EC09D8AA0AD5AC2AF7EA1 /* uresource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C73C539F73B6EA7589A013C /* uresource.cpp */; };
 		FF61FC7326E54DAE3519B100 /* SkXMLWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51DA1D0F08A89328ED83E17B /* SkXMLWriter.cpp */; };
@@ -2926,6 +2921,7 @@
 		DE9F6C0EE189113B5439E190 /* GrOnFlushResourceProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrOnFlushResourceProvider.h; path = src/gpu/GrOnFlushResourceProvider.h; sourceTree = "<group>"; };
 		DEBAF526A6BD1A7A7CF94C00 /* SkTypefacePriv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkTypefacePriv.h; path = src/core/SkTypefacePriv.h; sourceTree = "<group>"; };
 		DEBB4095AE2A710FF705B27A /* GrRRectEffect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrRRectEffect.h; path = src/gpu/effects/GrRRectEffect.h; sourceTree = "<group>"; };
+		DEFBC6EB1F1D318400510863 /* opts_configuration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = opts_configuration.cpp; path = src/opts/opts_configuration.cpp; sourceTree = "<group>"; };
 		DEFCA98AF39B50655F3FEFD5 /* SkXfermode_proccoeff.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkXfermode_proccoeff.h; path = src/core/SkXfermode_proccoeff.h; sourceTree = "<group>"; };
 		DF4543BEBBC7684F6129A1C7 /* GrSurfacePriv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrSurfacePriv.h; path = src/gpu/GrSurfacePriv.h; sourceTree = "<group>"; };
 		DF66759FC88D34E8DCEB5841 /* uarrsort.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = uarrsort.c; path = third_party/externals/icu/source/common/uarrsort.c; sourceTree = "<group>"; };
@@ -4804,6 +4800,7 @@
 		CB529E0A8CD73A1E21D4DB72 /* opts */ = {
 			isa = PBXGroup;
 			children = (
+				DEFBC6EB1F1D318400510863 /* opts_configuration.cpp */,
 				8B9533854771F178A06B52C6 /* SkBitmapProcState_arm_neon.cpp */,
 				D6F59949EBA565CD454E25FC /* SkBitmapProcState_matrixProcs_neon.cpp */,
 				B38E1DF0FA1965DE7F5D8890 /* SkBitmapProcState_opts_none.cpp */,
@@ -6204,6 +6201,8 @@
 				3D98E7D30224A440B2F4B951 /* SkResourceCache.cpp in Sources */,
 				A82DAF7DD26DEFE3247DABBD /* SkSRGB.cpp in Sources */,
 				167AC442662F88E2367C2156 /* SkScalar.cpp in Sources */,
+				DEFBC6ED1F1D334900510863 /* SkOpts_crc32.cpp in Sources */,
+				DEFBC6EC1F1D318400510863 /* opts_configuration.cpp in Sources */,
 				9E2EF59ACAC9B89E94B70C0D /* SkScalerContext.cpp in Sources */,
 				874CACBBB351C0E01AEFBBAC /* SkScan.cpp in Sources */,
 				038F453F982BCC7CF11C4FEB /* SkScan_AAAPath.cpp in Sources */,
@@ -6524,14 +6523,7 @@
 				8D9FF072C6D209E45F670372 /* SkJumper.cpp in Sources */,
 				07900E967437037569BCC28B /* SkJumper_stages.cpp in Sources */,
 				FA4956472826482B85A47D22 /* SkDiscardableMemoryPool.cpp in Sources */,
-				7347A912D809D071A79E9016 /* SkBitmapProcState_arm_neon.cpp in Sources */,
-				FEB01C3F697DE5CFAA456128 /* SkBitmapProcState_matrixProcs_neon.cpp in Sources */,
 				C9EEDEF8D2D223A9F0EF20BD /* SkBitmapProcState_opts_none.cpp in Sources */,
-				7FB4F1592D376A579AD0C258 /* SkBlitMask_opts_arm.cpp in Sources */,
-				F8B6D10E0E99E0280C0AB224 /* SkBlitMask_opts_arm_neon.cpp in Sources */,
-				5F51A7741ABA09E6251BEF6D /* SkBlitRow_opts_arm.cpp in Sources */,
-				C3FDFD0878EFE5F46734F995 /* SkBlitRow_opts_arm_neon.cpp in Sources */,
-				7EE2EFD971F12A1C65871B43 /* SkOpts_crc32.cpp in Sources */,
 				94AB6CB5C4469A5F21908737 /* SkAddIntersections.cpp in Sources */,
 				DE4F3EF61F16EE1300C0312C /* hb-unicode.cc in Sources */,
 				93FE8413E5683F0852E1C494 /* SkDConicLineIntersection.cpp in Sources */,
@@ -7291,6 +7283,7 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				PRODUCT_NAME = libSkia;
+				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -7361,6 +7354,7 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				PRODUCT_NAME = libSkia;
+				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

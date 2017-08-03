@@ -1,7 +1,6 @@
 #import "TargetConditionals.h"
 
 #if TARGET_OS_SIMULATOR
-#define SK_BUILD_NO_OPTS
 
 #include "SkBitmapProcState_opts_none.cpp"
 #include "SkBlitMask_opts_none.cpp"

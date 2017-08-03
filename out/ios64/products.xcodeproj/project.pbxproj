@@ -1043,6 +1043,25 @@
 		DDDFB1E79B04E4364FC0EF53 /* dng_ref_counted_block.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABEB533E312F7EC7222DB7A /* dng_ref_counted_block.cpp */; };
 		DE0885521F16E19B00EDAAF8 /* SkJumper_generated.s in Sources */ = {isa = PBXBuildFile; fileRef = 164AF4CC726C62728873E976 /* SkJumper_generated.s */; };
 		DE0885541F16E2EC00EDAAF8 /* icudt56l_dat.s in Sources */ = {isa = PBXBuildFile; fileRef = DE0885531F16E2EC00EDAAF8 /* icudt56l_dat.s */; };
+		DE2443C41F2F90C300924E01 /* SkSVGAttribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE2443991F2F90C300924E01 /* SkSVGAttribute.cpp */; };
+		DE2443C51F2F90C300924E01 /* SkSVGAttributeParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE24439B1F2F90C300924E01 /* SkSVGAttributeParser.cpp */; };
+		DE2443C61F2F90C300924E01 /* SkSVGCircle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE24439D1F2F90C300924E01 /* SkSVGCircle.cpp */; };
+		DE2443C71F2F90C300924E01 /* SkSVGClipPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE24439F1F2F90C300924E01 /* SkSVGClipPath.cpp */; };
+		DE2443C81F2F90C300924E01 /* SkSVGContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE2443A11F2F90C300924E01 /* SkSVGContainer.cpp */; };
+		DE2443C91F2F90C300924E01 /* SkSVGDOM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE2443A41F2F90C300924E01 /* SkSVGDOM.cpp */; };
+		DE2443CA1F2F90C300924E01 /* SkSVGEllipse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE2443A61F2F90C300924E01 /* SkSVGEllipse.cpp */; };
+		DE2443CB1F2F90C300924E01 /* SkSVGLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE2443AB1F2F90C300924E01 /* SkSVGLine.cpp */; };
+		DE2443CC1F2F90C300924E01 /* SkSVGLinearGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE2443AD1F2F90C300924E01 /* SkSVGLinearGradient.cpp */; };
+		DE2443CD1F2F90C300924E01 /* SkSVGNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE2443AF1F2F90C300924E01 /* SkSVGNode.cpp */; };
+		DE2443CE1F2F90C300924E01 /* SkSVGPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE2443B11F2F90C300924E01 /* SkSVGPath.cpp */; };
+		DE2443CF1F2F90C300924E01 /* SkSVGPoly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE2443B31F2F90C300924E01 /* SkSVGPoly.cpp */; };
+		DE2443D01F2F90C300924E01 /* SkSVGRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE2443B51F2F90C300924E01 /* SkSVGRect.cpp */; };
+		DE2443D11F2F90C300924E01 /* SkSVGRenderContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE2443B71F2F90C300924E01 /* SkSVGRenderContext.cpp */; };
+		DE2443D21F2F90C300924E01 /* SkSVGShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE2443B91F2F90C300924E01 /* SkSVGShape.cpp */; };
+		DE2443D31F2F90C300924E01 /* SkSVGStop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE2443BB1F2F90C300924E01 /* SkSVGStop.cpp */; };
+		DE2443D41F2F90C300924E01 /* SkSVGSVG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE2443BD1F2F90C300924E01 /* SkSVGSVG.cpp */; };
+		DE2443D51F2F90C300924E01 /* SkSVGTransformableNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE2443BF1F2F90C300924E01 /* SkSVGTransformableNode.cpp */; };
+		DE2443D61F2F90C300924E01 /* SkSVGValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE2443C21F2F90C300924E01 /* SkSVGValue.cpp */; };
 		DE4F3ED71F16EE1300C0312C /* hb-blob.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EB61F16EE1300C0312C /* hb-blob.cc */; };
 		DE4F3ED81F16EE1300C0312C /* hb-buffer-serialize.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EB71F16EE1300C0312C /* hb-buffer-serialize.cc */; };
 		DE4F3ED91F16EE1300C0312C /* hb-buffer.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EB81F16EE1300C0312C /* hb-buffer.cc */; };
@@ -2880,6 +2899,50 @@
 		DDF273968C5EEB2914EDE8F0 /* adler32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = adler32.c; path = third_party/externals/zlib/adler32.c; sourceTree = "<group>"; };
 		DE0885531F16E2EC00EDAAF8 /* icudt56l_dat.s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = icudt56l_dat.s; path = third_party/externals/icu/ios/icudt56l_dat.s; sourceTree = "<group>"; };
 		DE156F2C930E2DB07713FE67 /* SkBlurImageFilter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkBlurImageFilter.cpp; path = src/core/SkBlurImageFilter.cpp; sourceTree = "<group>"; };
+		DE2443981F2F90C300924E01 /* SkPEG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkPEG.h; path = experimental/svg/model/SkPEG.h; sourceTree = "<group>"; };
+		DE2443991F2F90C300924E01 /* SkSVGAttribute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkSVGAttribute.cpp; path = experimental/svg/model/SkSVGAttribute.cpp; sourceTree = "<group>"; };
+		DE24439A1F2F90C300924E01 /* SkSVGAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGAttribute.h; path = experimental/svg/model/SkSVGAttribute.h; sourceTree = "<group>"; };
+		DE24439B1F2F90C300924E01 /* SkSVGAttributeParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkSVGAttributeParser.cpp; path = experimental/svg/model/SkSVGAttributeParser.cpp; sourceTree = "<group>"; };
+		DE24439C1F2F90C300924E01 /* SkSVGAttributeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGAttributeParser.h; path = experimental/svg/model/SkSVGAttributeParser.h; sourceTree = "<group>"; };
+		DE24439D1F2F90C300924E01 /* SkSVGCircle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkSVGCircle.cpp; path = experimental/svg/model/SkSVGCircle.cpp; sourceTree = "<group>"; };
+		DE24439E1F2F90C300924E01 /* SkSVGCircle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGCircle.h; path = experimental/svg/model/SkSVGCircle.h; sourceTree = "<group>"; };
+		DE24439F1F2F90C300924E01 /* SkSVGClipPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkSVGClipPath.cpp; path = experimental/svg/model/SkSVGClipPath.cpp; sourceTree = "<group>"; };
+		DE2443A01F2F90C300924E01 /* SkSVGClipPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGClipPath.h; path = experimental/svg/model/SkSVGClipPath.h; sourceTree = "<group>"; };
+		DE2443A11F2F90C300924E01 /* SkSVGContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkSVGContainer.cpp; path = experimental/svg/model/SkSVGContainer.cpp; sourceTree = "<group>"; };
+		DE2443A21F2F90C300924E01 /* SkSVGContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGContainer.h; path = experimental/svg/model/SkSVGContainer.h; sourceTree = "<group>"; };
+		DE2443A31F2F90C300924E01 /* SkSVGDefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGDefs.h; path = experimental/svg/model/SkSVGDefs.h; sourceTree = "<group>"; };
+		DE2443A41F2F90C300924E01 /* SkSVGDOM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkSVGDOM.cpp; path = experimental/svg/model/SkSVGDOM.cpp; sourceTree = "<group>"; };
+		DE2443A51F2F90C300924E01 /* SkSVGDOM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGDOM.h; path = experimental/svg/model/SkSVGDOM.h; sourceTree = "<group>"; };
+		DE2443A61F2F90C300924E01 /* SkSVGEllipse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkSVGEllipse.cpp; path = experimental/svg/model/SkSVGEllipse.cpp; sourceTree = "<group>"; };
+		DE2443A71F2F90C300924E01 /* SkSVGEllipse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGEllipse.h; path = experimental/svg/model/SkSVGEllipse.h; sourceTree = "<group>"; };
+		DE2443A81F2F90C300924E01 /* SkSVGG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGG.h; path = experimental/svg/model/SkSVGG.h; sourceTree = "<group>"; };
+		DE2443A91F2F90C300924E01 /* SkSVGHiddenContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGHiddenContainer.h; path = experimental/svg/model/SkSVGHiddenContainer.h; sourceTree = "<group>"; };
+		DE2443AA1F2F90C300924E01 /* SkSVGIDMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGIDMapper.h; path = experimental/svg/model/SkSVGIDMapper.h; sourceTree = "<group>"; };
+		DE2443AB1F2F90C300924E01 /* SkSVGLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkSVGLine.cpp; path = experimental/svg/model/SkSVGLine.cpp; sourceTree = "<group>"; };
+		DE2443AC1F2F90C300924E01 /* SkSVGLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGLine.h; path = experimental/svg/model/SkSVGLine.h; sourceTree = "<group>"; };
+		DE2443AD1F2F90C300924E01 /* SkSVGLinearGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkSVGLinearGradient.cpp; path = experimental/svg/model/SkSVGLinearGradient.cpp; sourceTree = "<group>"; };
+		DE2443AE1F2F90C300924E01 /* SkSVGLinearGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGLinearGradient.h; path = experimental/svg/model/SkSVGLinearGradient.h; sourceTree = "<group>"; };
+		DE2443AF1F2F90C300924E01 /* SkSVGNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkSVGNode.cpp; path = experimental/svg/model/SkSVGNode.cpp; sourceTree = "<group>"; };
+		DE2443B01F2F90C300924E01 /* SkSVGNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGNode.h; path = experimental/svg/model/SkSVGNode.h; sourceTree = "<group>"; };
+		DE2443B11F2F90C300924E01 /* SkSVGPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkSVGPath.cpp; path = experimental/svg/model/SkSVGPath.cpp; sourceTree = "<group>"; };
+		DE2443B21F2F90C300924E01 /* SkSVGPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGPath.h; path = experimental/svg/model/SkSVGPath.h; sourceTree = "<group>"; };
+		DE2443B31F2F90C300924E01 /* SkSVGPoly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkSVGPoly.cpp; path = experimental/svg/model/SkSVGPoly.cpp; sourceTree = "<group>"; };
+		DE2443B41F2F90C300924E01 /* SkSVGPoly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGPoly.h; path = experimental/svg/model/SkSVGPoly.h; sourceTree = "<group>"; };
+		DE2443B51F2F90C300924E01 /* SkSVGRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkSVGRect.cpp; path = experimental/svg/model/SkSVGRect.cpp; sourceTree = "<group>"; };
+		DE2443B61F2F90C300924E01 /* SkSVGRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGRect.h; path = experimental/svg/model/SkSVGRect.h; sourceTree = "<group>"; };
+		DE2443B71F2F90C300924E01 /* SkSVGRenderContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkSVGRenderContext.cpp; path = experimental/svg/model/SkSVGRenderContext.cpp; sourceTree = "<group>"; };
+		DE2443B81F2F90C300924E01 /* SkSVGRenderContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGRenderContext.h; path = experimental/svg/model/SkSVGRenderContext.h; sourceTree = "<group>"; };
+		DE2443B91F2F90C300924E01 /* SkSVGShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkSVGShape.cpp; path = experimental/svg/model/SkSVGShape.cpp; sourceTree = "<group>"; };
+		DE2443BA1F2F90C300924E01 /* SkSVGShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGShape.h; path = experimental/svg/model/SkSVGShape.h; sourceTree = "<group>"; };
+		DE2443BB1F2F90C300924E01 /* SkSVGStop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkSVGStop.cpp; path = experimental/svg/model/SkSVGStop.cpp; sourceTree = "<group>"; };
+		DE2443BC1F2F90C300924E01 /* SkSVGStop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGStop.h; path = experimental/svg/model/SkSVGStop.h; sourceTree = "<group>"; };
+		DE2443BD1F2F90C300924E01 /* SkSVGSVG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkSVGSVG.cpp; path = experimental/svg/model/SkSVGSVG.cpp; sourceTree = "<group>"; };
+		DE2443BE1F2F90C300924E01 /* SkSVGSVG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGSVG.h; path = experimental/svg/model/SkSVGSVG.h; sourceTree = "<group>"; };
+		DE2443BF1F2F90C300924E01 /* SkSVGTransformableNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkSVGTransformableNode.cpp; path = experimental/svg/model/SkSVGTransformableNode.cpp; sourceTree = "<group>"; };
+		DE2443C01F2F90C300924E01 /* SkSVGTransformableNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGTransformableNode.h; path = experimental/svg/model/SkSVGTransformableNode.h; sourceTree = "<group>"; };
+		DE2443C11F2F90C300924E01 /* SkSVGTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGTypes.h; path = experimental/svg/model/SkSVGTypes.h; sourceTree = "<group>"; };
+		DE2443C21F2F90C300924E01 /* SkSVGValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkSVGValue.cpp; path = experimental/svg/model/SkSVGValue.cpp; sourceTree = "<group>"; };
+		DE2443C31F2F90C300924E01 /* SkSVGValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkSVGValue.h; path = experimental/svg/model/SkSVGValue.h; sourceTree = "<group>"; };
 		DE2AAEFD980A2146B2582DC3 /* GrAAStrokeRectOp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GrAAStrokeRectOp.cpp; path = src/gpu/ops/GrAAStrokeRectOp.cpp; sourceTree = "<group>"; };
 		DE2C6A2B85BA77D42A7F5386 /* SkLayerRasterizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkLayerRasterizer.h; path = include/effects/SkLayerRasterizer.h; sourceTree = "<group>"; };
 		DE4F3EB61F16EE1300C0312C /* hb-blob.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-blob.cc"; path = "third_party/externals/harfbuzz/src/hb-blob.cc"; sourceTree = "<group>"; };
@@ -3823,6 +3886,7 @@
 		4D1B9A2090E188E7E34B40B2 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				DE2443971F2F90AE00924E01 /* SVG */,
 				FEAB518520A28C51DB5C8158 /* include */,
 				A39922D38D6CBF047B5C942D /* src */,
 				8A1ED8BDFEBD8B9A45E57204 /* third_party */,
@@ -5385,6 +5449,57 @@
 			name = source;
 			sourceTree = "<group>";
 		};
+		DE2443971F2F90AE00924E01 /* SVG */ = {
+			isa = PBXGroup;
+			children = (
+				DE2443981F2F90C300924E01 /* SkPEG.h */,
+				DE2443991F2F90C300924E01 /* SkSVGAttribute.cpp */,
+				DE24439A1F2F90C300924E01 /* SkSVGAttribute.h */,
+				DE24439B1F2F90C300924E01 /* SkSVGAttributeParser.cpp */,
+				DE24439C1F2F90C300924E01 /* SkSVGAttributeParser.h */,
+				DE24439D1F2F90C300924E01 /* SkSVGCircle.cpp */,
+				DE24439E1F2F90C300924E01 /* SkSVGCircle.h */,
+				DE24439F1F2F90C300924E01 /* SkSVGClipPath.cpp */,
+				DE2443A01F2F90C300924E01 /* SkSVGClipPath.h */,
+				DE2443A11F2F90C300924E01 /* SkSVGContainer.cpp */,
+				DE2443A21F2F90C300924E01 /* SkSVGContainer.h */,
+				DE2443A31F2F90C300924E01 /* SkSVGDefs.h */,
+				DE2443A41F2F90C300924E01 /* SkSVGDOM.cpp */,
+				DE2443A51F2F90C300924E01 /* SkSVGDOM.h */,
+				DE2443A61F2F90C300924E01 /* SkSVGEllipse.cpp */,
+				DE2443A71F2F90C300924E01 /* SkSVGEllipse.h */,
+				DE2443A81F2F90C300924E01 /* SkSVGG.h */,
+				DE2443A91F2F90C300924E01 /* SkSVGHiddenContainer.h */,
+				DE2443AA1F2F90C300924E01 /* SkSVGIDMapper.h */,
+				DE2443AB1F2F90C300924E01 /* SkSVGLine.cpp */,
+				DE2443AC1F2F90C300924E01 /* SkSVGLine.h */,
+				DE2443AD1F2F90C300924E01 /* SkSVGLinearGradient.cpp */,
+				DE2443AE1F2F90C300924E01 /* SkSVGLinearGradient.h */,
+				DE2443AF1F2F90C300924E01 /* SkSVGNode.cpp */,
+				DE2443B01F2F90C300924E01 /* SkSVGNode.h */,
+				DE2443B11F2F90C300924E01 /* SkSVGPath.cpp */,
+				DE2443B21F2F90C300924E01 /* SkSVGPath.h */,
+				DE2443B31F2F90C300924E01 /* SkSVGPoly.cpp */,
+				DE2443B41F2F90C300924E01 /* SkSVGPoly.h */,
+				DE2443B51F2F90C300924E01 /* SkSVGRect.cpp */,
+				DE2443B61F2F90C300924E01 /* SkSVGRect.h */,
+				DE2443B71F2F90C300924E01 /* SkSVGRenderContext.cpp */,
+				DE2443B81F2F90C300924E01 /* SkSVGRenderContext.h */,
+				DE2443B91F2F90C300924E01 /* SkSVGShape.cpp */,
+				DE2443BA1F2F90C300924E01 /* SkSVGShape.h */,
+				DE2443BB1F2F90C300924E01 /* SkSVGStop.cpp */,
+				DE2443BC1F2F90C300924E01 /* SkSVGStop.h */,
+				DE2443BD1F2F90C300924E01 /* SkSVGSVG.cpp */,
+				DE2443BE1F2F90C300924E01 /* SkSVGSVG.h */,
+				DE2443BF1F2F90C300924E01 /* SkSVGTransformableNode.cpp */,
+				DE2443C01F2F90C300924E01 /* SkSVGTransformableNode.h */,
+				DE2443C11F2F90C300924E01 /* SkSVGTypes.h */,
+				DE2443C21F2F90C300924E01 /* SkSVGValue.cpp */,
+				DE2443C31F2F90C300924E01 /* SkSVGValue.h */,
+			);
+			name = SVG;
+			sourceTree = "<group>";
+		};
 		DE4F3DD11F16E57A00C0312C /* harfbuzz */ = {
 			isa = PBXGroup;
 			children = (
@@ -6017,6 +6132,7 @@
 				F478727F4C3763BF70CFD522 /* SkCodec.cpp in Sources */,
 				77DB18B651CE994A3087ECF8 /* SkCodecImageGenerator.cpp in Sources */,
 				DA9F470977A52916A74DA7F1 /* SkGifCodec.cpp in Sources */,
+				DE2443C41F2F90C300924E01 /* SkSVGAttribute.cpp in Sources */,
 				A72C078D8927A88D7B03B468 /* SkIcoCodec.cpp in Sources */,
 				729DF91926020AD8C8FB3FE0 /* SkJpegCodec.cpp in Sources */,
 				3212120F2FCDCE22A20C8B08 /* SkJpegDecoderMgr.cpp in Sources */,
@@ -6085,6 +6201,7 @@
 				5E5ABD018FFD2954B0204DE9 /* SkComposeShader.cpp in Sources */,
 				3A57D5CCA63751DFDCAC6632 /* SkConvertPixels.cpp in Sources */,
 				68CE5B877371B248D64DC79E /* SkConvolver.cpp in Sources */,
+				DE2443D11F2F90C300924E01 /* SkSVGRenderContext.cpp in Sources */,
 				1CB5D1FF2B19C65B24AC2B68 /* SkCpu.cpp in Sources */,
 				B35FC27F1AFCA9B5AF4D8B46 /* SkCubicClipper.cpp in Sources */,
 				98F2C59BAB5CE41E07DD6EB7 /* SkData.cpp in Sources */,
@@ -6121,6 +6238,7 @@
 				D6F9E7F065C7730DED6F3ED8 /* SkGraphics.cpp in Sources */,
 				0D30F7061D5AD996ECD3F4E7 /* SkHalf.cpp in Sources */,
 				C8189DB5FFA2908BA64F38B1 /* SkICC.cpp in Sources */,
+				DE2443CD1F2F90C300924E01 /* SkSVGNode.cpp in Sources */,
 				401DC1449D6DCF60F5293623 /* SkImageFilter.cpp in Sources */,
 				5D0BC3000A8187B065C9743B /* SkImageFilterCache.cpp in Sources */,
 				FB8A8D249A3864BF9CB317AB /* SkImageGenerator.cpp in Sources */,
@@ -6219,6 +6337,7 @@
 				3CF71986B0EC8B17C6988202 /* SkSpinlock.cpp in Sources */,
 				8C67F59A8F5F702F6069BDBA /* SkSpriteBlitter4f.cpp in Sources */,
 				2F1A0EC0942C52CAB3F05966 /* SkSpriteBlitter_ARGB32.cpp in Sources */,
+				DE2443C81F2F90C300924E01 /* SkSVGContainer.cpp in Sources */,
 				5C2513F7E8BC9E4BF44AF5DC /* SkSpriteBlitter_RGB16.cpp in Sources */,
 				956670A0A987FB216BF40746 /* SkStream.cpp in Sources */,
 				3CA18FCD8953D15C04AEF0DB /* SkString.cpp in Sources */,
@@ -6265,6 +6384,7 @@
 				CC6F71D732E92EA45B858D67 /* SkCornerPathEffect.cpp in Sources */,
 				AC3109F549CA0F9E311C8FAD /* SkDashPathEffect.cpp in Sources */,
 				BCF1FFF7731B4734D59B5D0A /* SkDiscretePathEffect.cpp in Sources */,
+				DE2443CA1F2F90C300924E01 /* SkSVGEllipse.cpp in Sources */,
 				25200933E49311E46E9ED2A8 /* SkDisplacementMapEffect.cpp in Sources */,
 				2DBAECA180F6EB2FE0B02CE8 /* SkDropShadowImageFilter.cpp in Sources */,
 				545FC04824B8C8834752EE7B /* SkEmbossMask.cpp in Sources */,
@@ -6362,6 +6482,7 @@
 				F9D54B3BF89BFA96DBF2A837 /* GrRenderTarget.cpp in Sources */,
 				C5C6636AD88CA14F5ADD2DAB /* GrRenderTargetContext.cpp in Sources */,
 				673EAF337323C88D4A10919C /* GrRenderTargetOpList.cpp in Sources */,
+				DE2443D41F2F90C300924E01 /* SkSVGSVG.cpp in Sources */,
 				525DED3807C6D3A8EEBBB818 /* GrRenderTargetProxy.cpp in Sources */,
 				E1068C28C663A8ED95E4D7F2 /* GrResourceCache.cpp in Sources */,
 				6F40049800FB4FB4D94FF7A8 /* GrResourceProvider.cpp in Sources */,
@@ -6467,6 +6588,7 @@
 				40281C029E327551EA185CC4 /* GrGLSLXferProcessor.cpp in Sources */,
 				18A1289624AD775098C74404 /* GLInstancedRendering.cpp in Sources */,
 				7A2E8E4285003A218CA46557 /* InstanceProcessor.cpp in Sources */,
+				DE2443CE1F2F90C300924E01 /* SkSVGPath.cpp in Sources */,
 				B215E922AB6B1FC380479FF7 /* InstancedOp.cpp in Sources */,
 				6364B5DD79A56F746D0C2358 /* InstancedRendering.cpp in Sources */,
 				6117A1F0A4811A5A88928C40 /* GrAAConvexPathRenderer.cpp in Sources */,
@@ -6494,6 +6616,7 @@
 				36EE6605BFDE35FF0B1BD705 /* GrOvalOpFactory.cpp in Sources */,
 				FA237414CABD2057EA7B62E9 /* GrRectOpFactory.cpp in Sources */,
 				BFEFD5A0C7E7040A87B40B9B /* GrRegionOp.cpp in Sources */,
+				DE2443C91F2F90C300924E01 /* SkSVGDOM.cpp in Sources */,
 				04906CD36CA2A4F6ECA76EE0 /* GrSemaphoreOp.cpp in Sources */,
 				9C497970A028902364D06990 /* GrShadowRRectOp.cpp in Sources */,
 				BDEDE14066B13280F895A361 /* GrSmallPathRenderer.cpp in Sources */,
@@ -6505,6 +6628,7 @@
 				2C71310857E0BE5C74626575 /* GrAtlasTextContext.cpp in Sources */,
 				94385CC44694041A07435FC3 /* GrDistanceFieldAdjustTable.cpp in Sources */,
 				F6E7F8C26CBA4EE733DE80EF /* GrStencilAndCoverTextContext.cpp in Sources */,
+				DE2443D31F2F90C300924E01 /* SkSVGStop.cpp in Sources */,
 				82FD38F20E5F51CEDBA63B39 /* GrTextBlobCache.cpp in Sources */,
 				FCFB3CCDA717F91DFBAF10BE /* GrTextUtils.cpp in Sources */,
 				817C6401310F643EEFF5A3CE /* SkImage.cpp in Sources */,
@@ -6514,6 +6638,7 @@
 				C9EBFDEC9AAE954B40692A84 /* SkImage_Raster.cpp in Sources */,
 				DBA633548DC1A6AE25B76630 /* SkSurface.cpp in Sources */,
 				D850B977ADB48A81BE08FB4D /* SkSurface_Gpu.cpp in Sources */,
+				DE2443C51F2F90C300924E01 /* SkSVGAttributeParser.cpp in Sources */,
 				1B68363892B7A777FF41913B /* SkSurface_Raster.cpp in Sources */,
 				E4D297826A568BBD50487A82 /* SkImageEncoder.cpp in Sources */,
 				C171ECCF379617AE958DC07B /* SkJPEGWriteUtility.cpp in Sources */,
@@ -6758,6 +6883,7 @@
 				736E7DC695718DE39AEC5474 /* locmap.c in Sources */,
 				D70D30B206C30EE0659DA7D9 /* locresdata.cpp in Sources */,
 				AC2D1CF27118C1FE5A8AEE5C /* locutil.cpp in Sources */,
+				DE2443C71F2F90C300924E01 /* SkSVGClipPath.cpp in Sources */,
 				647D1B4384ED62E36D2204D4 /* messagepattern.cpp in Sources */,
 				E3D63C913298BAAFC8DBF10C /* normalizer2.cpp in Sources */,
 				CF57CA19CB0FDD2FC9AFD911 /* normalizer2impl.cpp in Sources */,
@@ -6877,6 +7003,7 @@
 				07B6080368E0B8D10E9AC1AB /* uprops.cpp in Sources */,
 				909C719162A9E2D59D2E7951 /* ures_cnv.c in Sources */,
 				365422EFCBA0F3812B614BA3 /* uresbund.cpp in Sources */,
+				DE2443CC1F2F90C300924E01 /* SkSVGLinearGradient.cpp in Sources */,
 				79867EC0E87C9DE491E0D3B5 /* uresdata.cpp in Sources */,
 				FF5EC09D8AA0AD5AC2AF7EA1 /* uresource.cpp in Sources */,
 				71041D76B7D9A29DC8D89C60 /* usc_impl.c in Sources */,
@@ -6990,6 +7117,7 @@
 				DFE51F1418C091DC1F4FAD76 /* cost_mips_dsp_r2.c in Sources */,
 				349788B2E81921B9826CD9B0 /* cost_sse2.c in Sources */,
 				31F273CE0FC40CB63EE86FC8 /* cpu.c in Sources */,
+				DE2443D51F2F90C300924E01 /* SkSVGTransformableNode.cpp in Sources */,
 				C4338823372E23BDE2FFA0C5 /* dec.c in Sources */,
 				46E9CCB07F7D92255AD531F1 /* dec_clip_tables.c in Sources */,
 				AFF52B7D05087BE1E52556D1 /* dec_mips32.c in Sources */,
@@ -7110,6 +7238,7 @@
 				EF8E9C54FE60AFB8F96A6C7E /* index_sub_table.cc in Sources */,
 				49F5873A58313E36854A8788 /* index_sub_table_format1.cc in Sources */,
 				2642E360DD6CCA4B894B9F2C /* index_sub_table_format2.cc in Sources */,
+				DE2443D21F2F90C300924E01 /* SkSVGShape.cpp in Sources */,
 				6FE69BA1641EF9D72A602E19 /* index_sub_table_format3.cc in Sources */,
 				974AF8254C07DA5FB7358DF3 /* index_sub_table_format4.cc in Sources */,
 				F13BC698A41C8CEC74CCD2D1 /* index_sub_table_format5.cc in Sources */,
@@ -7140,6 +7269,7 @@
 				539EE99299EF3E2D70FF535A /* binary.cpp in Sources */,
 				757B5CBC7A66D5622814866D /* diagnostic.cpp in Sources */,
 				24399D67E84E101D9D103BCB /* disassemble.cpp in Sources */,
+				DE2443C61F2F90C300924E01 /* SkSVGCircle.cpp in Sources */,
 				64B8AAA1C84D9A199BFF3BBA /* ext_inst.cpp in Sources */,
 				BA473092875E7BBFAB32B619 /* extensions.cpp in Sources */,
 				5AD56CAD6983EB796374EC1B /* libspirv.cpp in Sources */,
@@ -7157,6 +7287,7 @@
 				0EFC227F0F752CD73D45EAB9 /* function.cpp in Sources */,
 				73A3E5C32F986F1AFD022FC5 /* instruction.cpp in Sources */,
 				38EF3CD6CC9818D8EDD3C891 /* ir_loader.cpp in Sources */,
+				DE2443D61F2F90C300924E01 /* SkSVGValue.cpp in Sources */,
 				DF70ADD9FBF3CAB4512FD1EC /* module.cpp in Sources */,
 				DE0885521F16E19B00EDAAF8 /* SkJumper_generated.s in Sources */,
 				C7B40767A8C8AE2A12DBBB26 /* optimizer.cpp in Sources */,
@@ -7174,6 +7305,7 @@
 				FA43450FFEE16C4320A81BFB /* spirv_target_env.cpp in Sources */,
 				2B3B39B3E30E6B703E2BB53D /* spirv_validator_options.cpp in Sources */,
 				E148ABF10D7E29B491E25458 /* table.cpp in Sources */,
+				DE2443CF1F2F90C300924E01 /* SkSVGPoly.cpp in Sources */,
 				37AAC4B01B7080A38FDAD97F /* text.cpp in Sources */,
 				A62542B537F610D87C11B3EE /* text_handler.cpp in Sources */,
 				C5FEED6E64ED096FF9AF26E3 /* parse_number.cpp in Sources */,
@@ -7204,6 +7336,7 @@
 				483C500726DFD55279968118 /* inftrees.c in Sources */,
 				BC26B3832245DE6BCF412614 /* simd_stub.c in Sources */,
 				F203B740F8F30FD654BF41B7 /* trees.c in Sources */,
+				DE2443CB1F2F90C300924E01 /* SkSVGLine.cpp in Sources */,
 				9EC087EBA3393407D4705D18 /* uncompr.c in Sources */,
 				FF90F3DDE6B84E1EE63281EE /* zutil.c in Sources */,
 				2B297EAA2A27F396FE103C56 /* SkGifImageReader.cpp in Sources */,
@@ -7218,6 +7351,7 @@
 				DE4F3EF71F16EE1300C0312C /* hb-warning.cc in Sources */,
 				72FBF4D7772F3011C4A3FBB9 /* pngrio.c in Sources */,
 				B20476B7C207D770903353EA /* pngrtran.c in Sources */,
+				DE2443D01F2F90C300924E01 /* SkSVGRect.cpp in Sources */,
 				2C7228D2C577633536CE2A26 /* pngrutil.c in Sources */,
 				7959B1D4015B9353E68C2C3E /* pngset.c in Sources */,
 				172C9BD43DE170003ED3FEF5 /* pngtrans.c in Sources */,
@@ -7250,6 +7384,18 @@
 					HAVE_OT,
 					HB_NO_MT,
 					HAVE_CORETEXT,
+				);
+				"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*]" = (
+					HAVE_EXPAT_CONFIG_H,
+					U_STATC_IMPLEMENTATION,
+					U_COMMON_IMPLEMENTATION,
+					SFNTLY_NO_EXCEPTION,
+					HAVE_ICU,
+					HAVE_ICU_BUILTIN,
+					HAVE_OT,
+					HB_NO_MT,
+					HAVE_CORETEXT,
+					SK_BUILD_NO_OPTS,
 				);
 				HEADER_SEARCH_PATHS = (
 					../..,
@@ -7321,6 +7467,18 @@
 					HAVE_OT,
 					HB_NO_MT,
 					HAVE_CORETEXT,
+				);
+				"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*]" = (
+					HAVE_EXPAT_CONFIG_H,
+					U_STATC_IMPLEMENTATION,
+					U_COMMON_IMPLEMENTATION,
+					SFNTLY_NO_EXCEPTION,
+					HAVE_ICU,
+					HAVE_ICU_BUILTIN,
+					HAVE_OT,
+					HB_NO_MT,
+					HAVE_CORETEXT,
+					SK_BUILD_NO_OPTS,
 				);
 				HEADER_SEARCH_PATHS = (
 					../..,

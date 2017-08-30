@@ -7385,6 +7385,7 @@
 					HB_NO_MT,
 					HAVE_CORETEXT,
 					SK_HAS_PNG_LIBRARY,
+					SK_HAS_WEBP_LIBRARY,
 				);
 				HEADER_SEARCH_PATHS = (
 					../..,
@@ -7457,6 +7458,7 @@
 					HB_NO_MT,
 					HAVE_CORETEXT,
 					SK_HAS_PNG_LIBRARY,
+					SK_HAS_WEBP_LIBRARY,
 				);
 				HEADER_SEARCH_PATHS = (
 					../..,

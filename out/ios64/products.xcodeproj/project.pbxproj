@@ -7388,6 +7388,7 @@
 					HAVE_CORETEXT,
 					SK_HAS_PNG_LIBRARY,
 					SK_HAS_WEBP_LIBRARY,
+					SK_DEBUG,
 				);
 				HEADER_SEARCH_PATHS = (
 					../..,
@@ -7461,6 +7462,7 @@
 					HAVE_CORETEXT,
 					SK_HAS_PNG_LIBRARY,
 					SK_HAS_WEBP_LIBRARY,
+					SK_RELEASE,
 				);
 				HEADER_SEARCH_PATHS = (
 					../..,

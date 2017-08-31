@@ -30,6 +30,7 @@ declare_args() {
   skia_use_mesa = false
   skia_use_piex = !is_win
   skia_use_zlib = true
+  skia_use_harfbuzz=true 
 
   skia_android_serial = ""
   skia_enable_android_framework_defines = false
@@ -41,6 +42,7 @@ declare_args() {
   skia_enable_tools = false
   skia_enable_vulkan_debug_layers = is_skia_dev_build && is_debug
   skia_vulkan_sdk = getenv("VULKAN_SDK")
+  skia_use_svg = true
 }
 declare_args() {
   skia_use_dng_sdk = !is_fuchsia && skia_use_libjpeg_turbo && skia_use_zlib
@@ -506,6 +508,43 @@ optional("png") {
   ]
 }
 
+optional("harfbuzz") {
+  enabled = skia_use_harfbuzz
+
+  deps = [
+         "//third_party/harfbuzz",
+      ]
+
+      sources = [
+       "tools/using_skia_and_harfbuzz.cpp",]
+}
+
+optional("svg") {
+  enabled = skia_use_svg
+
+       sources = [
+       "experimental/svg/model/SkSVGAttribute.cpp",
+       "experimental/svg/model/SkSVGAttributeParser.cpp",
+       "experimental/svg/model/SkSVGCircle.cpp",
+       "experimental/svg/model/SkSVGClipPath.cpp",
+       "experimental/svg/model/SkSVGContainer.cpp",
+       "experimental/svg/model/SkSVGDOM.cpp",
+       "experimental/svg/model/SkSVGEllipse.cpp",
+       "experimental/svg/model/SkSVGLine.cpp",
+       "experimental/svg/model/SkSVGLinearGradient.cpp",
+       "experimental/svg/model/SkSVGNode.cpp",
+       "experimental/svg/model/SkSVGPath.cpp",
+       "experimental/svg/model/SkSVGPoly.cpp",
+       "experimental/svg/model/SkSVGRect.cpp",
+       "experimental/svg/model/SkSVGRenderContext.cpp",
+       "experimental/svg/model/SkSVGSVG.cpp",
+       "experimental/svg/model/SkSVGShape.cpp",
+       "experimental/svg/model/SkSVGStop.cpp",
+       "experimental/svg/model/SkSVGTransformableNode.cpp",
+       "experimental/svg/model/SkSVGValue.cpp",
+       ]
+}
+
 optional("raw") {
   enabled = skia_use_dng_sdk && skia_use_libjpeg_turbo && skia_use_piex
   public_defines = [ "SK_CODEC_DECODES_RAW" ]
@@ -595,6 +634,8 @@ component("skia") {
     ":ssse3",
     ":webp",
     ":xml",
+    ":harfbuzz",
+    ":svg",
   ]
 
   # This file (and all GN files in Skia) are designed to work with an

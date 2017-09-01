@@ -33,13 +33,15 @@ protected:
 
     void onSetAttribute(SkSVGAttribute, const SkSVGValue&) override;
 
-private:
+
     SkSVGSVG();
 
     SkSVGLength fX      = SkSVGLength(0);
     SkSVGLength fY      = SkSVGLength(0);
     SkSVGLength fWidth  = SkSVGLength(100, SkSVGLength::Unit::kPercentage);
     SkSVGLength fHeight = SkSVGLength(100, SkSVGLength::Unit::kPercentage);
+    
+public:
 
     SkTLazy<SkSVGViewBoxType> fViewBox;
 

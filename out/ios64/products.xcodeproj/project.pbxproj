@@ -7390,6 +7390,21 @@
 					SK_HAS_WEBP_LIBRARY,
 					SK_DEBUG,
 				);
+				"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*]" = (
+					HAVE_EXPAT_CONFIG_H,
+					U_STATC_IMPLEMENTATION,
+					U_COMMON_IMPLEMENTATION,
+					SFNTLY_NO_EXCEPTION,
+					HAVE_ICU,
+					HAVE_ICU_BUILTIN,
+					HAVE_OT,
+					HB_NO_MT,
+					HAVE_CORETEXT,
+					SK_HAS_PNG_LIBRARY,
+					SK_HAS_WEBP_LIBRARY,
+					SK_DEBUG,
+					SK_BUILD_NO_OPTS,
+				);
 				HEADER_SEARCH_PATHS = (
 					../..,
 					"../../include/**",
@@ -7463,6 +7478,21 @@
 					SK_HAS_PNG_LIBRARY,
 					SK_HAS_WEBP_LIBRARY,
 					SK_RELEASE,
+				);
+				"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*]" = (
+					HAVE_EXPAT_CONFIG_H,
+					U_STATC_IMPLEMENTATION,
+					U_COMMON_IMPLEMENTATION,
+					SFNTLY_NO_EXCEPTION,
+					HAVE_ICU,
+					HAVE_ICU_BUILTIN,
+					HAVE_OT,
+					HB_NO_MT,
+					HAVE_CORETEXT,
+					SK_HAS_PNG_LIBRARY,
+					SK_HAS_WEBP_LIBRARY,
+					SK_RELEASE,
+					SK_BUILD_NO_OPTS,
 				);
 				HEADER_SEARCH_PATHS = (
 					../..,

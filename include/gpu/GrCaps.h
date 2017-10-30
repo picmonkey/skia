@@ -196,7 +196,7 @@ public:
     virtual bool initDescForDstCopy(const GrRenderTargetProxy* src, GrSurfaceDesc* desc,
                                     bool* rectsMustMatch, bool* disallowSubrect) const = 0;
 
-protected:
+public:
     /** Subclasses must call this at the end of their constructors in order to apply caps
         overrides requested by the client. Note that overrides will only reduce the caps never
         expand them. */

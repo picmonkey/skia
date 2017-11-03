@@ -62,6 +62,8 @@ public:
                        const SkSVGPresentationContext&);
     SkSVGRenderContext(const SkSVGRenderContext&);
     ~SkSVGRenderContext();
+    SkSVGRenderContext& operator=(const SkSVGRenderContext&);
+
 
     const SkSVGLengthContext& lengthContext() const { return *fLengthContext; }
     SkSVGLengthContext* writableLengthContext() { return fLengthContext.writable(); }
@@ -77,18 +79,17 @@ public:
 
     const SkSVGNode* findNodeById(const SkString&) const;
 
-    const SkPaint* fillPaint() const;
-    const SkPaint* strokePaint() const;
+    virtual const SkPaint* fillPaint() const;
+    virtual const SkPaint* strokePaint() const;
 
     // The local computed clip path (not inherited).
     const SkPath* clipPath() const { return fClipPath.getMaybeNull(); }
 
-private:
+protected:
     // Stack-only
     void* operator new(size_t)                               = delete;
     void* operator new(size_t, void*)                        = delete;
-    SkSVGRenderContext& operator=(const SkSVGRenderContext&) = delete;
-
+ 
     void applyOpacity(SkScalar opacity, uint32_t flags);
     void applyClip(const SkSVGClip&);
 

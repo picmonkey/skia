@@ -20,9 +20,11 @@ SkSVGNode::~SkSVGNode() { }
 void SkSVGNode::render(const SkSVGRenderContext& ctx) const {
     SkSVGRenderContext localContext(ctx);
 
-    if (this->onPrepareToRender(&localContext)) {
-        this->onRender(localContext);
+    if (this->onPrepareToRender((SkSVGRenderContext*)&ctx)) {
+        this->onRender(ctx);
     }
+    
+    (SkSVGRenderContext&)ctx = localContext;
 }
 
 bool SkSVGNode::asPaint(const SkSVGRenderContext& ctx, SkPaint* paint) const {

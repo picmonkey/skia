@@ -242,6 +242,18 @@ SkSVGRenderContext::~SkSVGRenderContext() {
     fCanvas->restoreToCount(fCanvasSaveCount);
 }
 
+SkSVGRenderContext& SkSVGRenderContext::operator=(const SkSVGRenderContext& other)
+{
+    // fIDMapper got constructed and doesn't change
+    fLengthContext = other.fLengthContext;
+    fPresentationContext = other.fPresentationContext;
+    fCanvas = other.fCanvas;
+    fCanvasSaveCount = other.fCanvasSaveCount;
+    
+    return *this;
+}
+
+
 const SkSVGNode* SkSVGRenderContext::findNodeById(const SkString& id) const {
     const auto* v = fIDMapper.find(id);
     return v ? v->get() : nullptr;

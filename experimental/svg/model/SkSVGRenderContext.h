@@ -61,7 +61,7 @@ public:
     SkSVGRenderContext(SkCanvas*, const SkSVGIDMapper&, const SkSVGLengthContext&,
                        const SkSVGPresentationContext&);
     SkSVGRenderContext(const SkSVGRenderContext&);
-    ~SkSVGRenderContext();
+    virtual ~SkSVGRenderContext();
     SkSVGRenderContext& operator=(const SkSVGRenderContext&);
 
 

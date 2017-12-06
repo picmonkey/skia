@@ -413,9 +413,7 @@ config("extra_flags") {
 config("debug_symbols") {
   # It's annoying to wait for full debug symbols to push over
   # to Android devices.  -gline-tables-only is a lot slimmer.
-  if (is_android) {
-    cflags = [ "-gline-tables-only" ]
-  } else if (is_win) {
+  if (is_win) {
     cflags = [ "/Zi" ]
     ldflags = [ "/DEBUG" ]
   } else {

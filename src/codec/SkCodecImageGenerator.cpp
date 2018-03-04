@@ -20,7 +20,7 @@ std::unique_ptr<SkImageGenerator> SkCodecImageGenerator::MakeFromEncodedCodec(sk
 static SkImageInfo adjust_info(const SkImageInfo& info) {
     SkImageInfo newInfo = info;
     if (kUnpremul_SkAlphaType == info.alphaType()) {
-        newInfo = newInfo.makeAlphaType(kPremul_SkAlphaType);
+ //       newInfo = newInfo.makeAlphaType(kPremul_SkAlphaType);
     }
 
     if (kIndex_8_SkColorType == info.colorType()) {

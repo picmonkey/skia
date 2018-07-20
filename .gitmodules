@@ -15,7 +15,7 @@
 	url = https://chromium.googlesource.com/external/github.com/open-source-parsers/jsoncpp.git
 [submodule "third_party/externals/libjpeg-turbo"]
 	path = third_party/externals/libjpeg-turbo
-	url = https://skia.googlesource.com/third_party/libjpeg-turbo.git
+	url = https://github.com/libjpeg-turbo/libjpeg-turbo.git
 [submodule "third_party/externals/libwebp"]
 	path = third_party/externals/libwebp
 	url = https://chromium.googlesource.com/webm/libwebp.git

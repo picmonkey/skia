@@ -1,0 +1,45 @@
+[submodule "third_party/externals/freetype"]
+	path = third_party/externals/freetype
+	url = https://skia.googlesource.com/third_party/freetype2.git
+[submodule "third_party/externals/dng_sdk"]
+	path = third_party/externals/dng_sdk
+	url = https://android.googlesource.com/platform/external/dng_sdk.git
+[submodule "third_party/externals/expat"]
+	path = third_party/externals/expat
+	url = https://android.googlesource.com/platform/external/expat.git
+[submodule "third_party/externals/harfbuzz"]
+	path = third_party/externals/harfbuzz
+	url = https://skia.googlesource.com/third_party/harfbuzz.git
+[submodule "third_party/externals/jsoncpp"]
+	path = third_party/externals/jsoncpp
+	url = https://chromium.googlesource.com/external/github.com/open-source-parsers/jsoncpp.git
+[submodule "third_party/externals/libjpeg-turbo"]
+	path = third_party/externals/libjpeg-turbo
+	url = https://github.com/libjpeg-turbo/libjpeg-turbo.git
+[submodule "third_party/externals/libwebp"]
+	path = third_party/externals/libwebp
+	url = https://chromium.googlesource.com/webm/libwebp.git
+[submodule "third_party/externals/piex"]
+	path = third_party/externals/piex
+	url = https://android.googlesource.com/platform/external/piex.git
+[submodule "third_party/externals/spirv-headers"]
+	path = third_party/externals/spirv-headers
+	url = https://github.com/KhronosGroup/SPIRV-Headers.git
+[submodule "third_party/externals/spirv-tools"]
+	path = third_party/externals/spirv-tools
+	url = https://github.com/KhronosGroup/SPIRV-Tools.git
+[submodule "third_party/externals/zlib"]
+	path = third_party/externals/zlib
+	url = https://chromium.googlesource.com/chromium/src/third_party/zlib
+[submodule "SkiaLibs"]
+	path = SkiaLibs
+	url = git@github.com:picmonkey/SkiaLibs
+[submodule "third_party/externals/icu"]
+	path = third_party/externals/icu
+	url = https://chromium.googlesource.com/chromium/deps/icu.git
+[submodule "out/ios64/freetype2-ios"]
+	path = out/ios64/freetype2-ios
+	url = https://github.com/cdave1/freetype2-ios.git
+[submodule "third_party/externals/sfntly"]
+	path = third_party/externals/sfntly
+	url = https://chromium.googlesource.com/external/github.com/googlei18n/sfntly.git

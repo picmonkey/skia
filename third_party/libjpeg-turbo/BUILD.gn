@@ -20,7 +20,7 @@ if (skia_use_system_libjpeg_turbo) {
       "../externals/libjpeg-turbo",
     ]
 
-    defines = [ "TURBO_FOR_WINDOWS" ]
+    defines = [ "TURBO_FOR_WINDOWS", "PPM_SUPPORTED", "BMP_SUPPORTED" ]
 
     sources = [
       "../externals/libjpeg-turbo/jaricom.c",
@@ -68,6 +68,16 @@ if (skia_use_system_libjpeg_turbo) {
       "../externals/libjpeg-turbo/jquant1.c",
       "../externals/libjpeg-turbo/jquant2.c",
       "../externals/libjpeg-turbo/jutils.c",
+      "../externals/libjpeg-turbo/turbojpeg.c",
+      "../externals/libjpeg-turbo/jdatadst-tj.c",
+      "../externals/libjpeg-turbo/jdatasrc-tj.c",
+      "../externals/libjpeg-turbo/transupp.c",
+      "../externals/libjpeg-turbo/rdbmp.c",
+      "../externals/libjpeg-turbo/wrbmp.c",
+      "../externals/libjpeg-turbo/jdtrans.c",
+      "../externals/libjpeg-turbo/jctrans.c",
+      "../externals/libjpeg-turbo/wrppm.c",
+      "../externals/libjpeg-turbo/rdppm.c",
     ]
 
     if (current_cpu == "arm" && !is_ios) {

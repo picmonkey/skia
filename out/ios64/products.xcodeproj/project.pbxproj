@@ -1097,6 +1097,8 @@
 		DE4F3EF61F16EE1300C0312C /* hb-unicode.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3ED51F16EE1300C0312C /* hb-unicode.cc */; };
 		DE4F3EF71F16EE1300C0312C /* hb-warning.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3ED61F16EE1300C0312C /* hb-warning.cc */; };
 		DE4F3EF91F16EE5000C0312C /* hb-shape-plan.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE4F3EF81F16EE5000C0312C /* hb-shape-plan.cc */; };
+		DE5532F72106815500B50E2B /* wrppm.c in Sources */ = {isa = PBXBuildFile; fileRef = DE5532F62106815500B50E2B /* wrppm.c */; };
+		DE5532F92106838C00B50E2B /* rdppm.c in Sources */ = {isa = PBXBuildFile; fileRef = DE5532F82106838C00B50E2B /* rdppm.c */; };
 		DE6092E8CAB3B61132B5648D /* utrace.c in Sources */ = {isa = PBXBuildFile; fileRef = 3BCB1DD2B97728C0CC8B9DB4 /* utrace.c */; };
 		DE96B4B81854C75491DD2C7A /* SkWriteBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F84240719EF903312238199D /* SkWriteBuffer.cpp */; };
 		DEA1CEBDA22C609D6C6B2CE3 /* small_glyph_metrics.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8F8682AB8C22AC8776741330 /* small_glyph_metrics.cc */; };
@@ -2980,6 +2982,8 @@
 		DE4F3ED51F16EE1300C0312C /* hb-unicode.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-unicode.cc"; path = "third_party/externals/harfbuzz/src/hb-unicode.cc"; sourceTree = "<group>"; };
 		DE4F3ED61F16EE1300C0312C /* hb-warning.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-warning.cc"; path = "third_party/externals/harfbuzz/src/hb-warning.cc"; sourceTree = "<group>"; };
 		DE4F3EF81F16EE5000C0312C /* hb-shape-plan.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-shape-plan.cc"; path = "third_party/externals/harfbuzz/src/hb-shape-plan.cc"; sourceTree = "<group>"; };
+		DE5532F62106815500B50E2B /* wrppm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wrppm.c; path = "third_party/externals/libjpeg-turbo/wrppm.c"; sourceTree = "<group>"; };
+		DE5532F82106838C00B50E2B /* rdppm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = rdppm.c; path = "third_party/externals/libjpeg-turbo/rdppm.c"; sourceTree = "<group>"; };
 		DE8531DA3E713A71E0E7E7F4 /* InstancedRendering.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = InstancedRendering.cpp; path = src/gpu/instanced/InstancedRendering.cpp; sourceTree = "<group>"; };
 		DE98BFF4103FEC6418A78DF7 /* sk_effects.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = sk_effects.cpp; path = src/c/sk_effects.cpp; sourceTree = "<group>"; };
 		DE9F6C0EE189113B5439E190 /* GrOnFlushResourceProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrOnFlushResourceProvider.h; path = src/gpu/GrOnFlushResourceProvider.h; sourceTree = "<group>"; };
@@ -3846,9 +3850,11 @@
 				D9547824495F0392B7039BCA /* jsimd_none.c */,
 				5E62AF69FA8C46905EA7B451 /* jutils.c */,
 				BDBF49DF96744A5F8FF90CC0 /* rdbmp.c */,
+				DE5532F82106838C00B50E2B /* rdppm.c */,
 				EBC5D5478CBF3515A52F8703 /* transupp.c */,
 				D9A88175AABFE20C9EE854D5 /* turbojpeg.c */,
 				9020CDA7D8569A0FD53E6C64 /* wrbmp.c */,
+				DE5532F62106815500B50E2B /* wrppm.c */,
 			);
 			name = "libjpeg-turbo";
 			sourceTree = "<group>";
@@ -6158,6 +6164,7 @@
 				94B9B1E5C341969760A7D0C3 /* SkArenaAlloc.cpp in Sources */,
 				65E51310FF1031F14C04911A /* SkAutoPixmapStorage.cpp in Sources */,
 				08A0CC8E11D6BA6EB52F82E4 /* SkBBHFactory.cpp in Sources */,
+				DE5532F72106815500B50E2B /* wrppm.c in Sources */,
 				17EFF4014C55EA1D1C5FBDB0 /* SkBigPicture.cpp in Sources */,
 				63F84101D6DA47FD755A0EF7 /* SkBitmap.cpp in Sources */,
 				754E3BEB0158E5BC12D8EA8B /* SkBitmapCache.cpp in Sources */,
@@ -6398,6 +6405,7 @@
 				B85D3A88A2553FD870871C32 /* SkLightingImageFilter.cpp in Sources */,
 				557B42A5074F71A1B4C88DD3 /* SkLumaColorFilter.cpp in Sources */,
 				CF02C5F5AF1A79667EC7C2A7 /* SkMagnifierImageFilter.cpp in Sources */,
+				DE5532F92106838C00B50E2B /* rdppm.c in Sources */,
 				DE4F3EF91F16EE5000C0312C /* hb-shape-plan.cc in Sources */,
 				2E02D775C70F22829AC8E48B /* SkMatrixConvolutionImageFilter.cpp in Sources */,
 				9132367443E08BBC604A9991 /* SkMergeImageFilter.cpp in Sources */,
@@ -7389,6 +7397,8 @@
 					SK_HAS_PNG_LIBRARY,
 					SK_HAS_WEBP_LIBRARY,
 					SK_DEBUG,
+					BMP_SUPPORTED,
+					PPM_SUPPORTED,
 				);
 				"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*]" = (
 					HAVE_EXPAT_CONFIG_H,
@@ -7478,6 +7488,8 @@
 					SK_HAS_PNG_LIBRARY,
 					SK_HAS_WEBP_LIBRARY,
 					SK_RELEASE,
+					BMP_SUPPORTED,
+					PPM_SUPPORTED,
 				);
 				"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*]" = (
 					HAVE_EXPAT_CONFIG_H,

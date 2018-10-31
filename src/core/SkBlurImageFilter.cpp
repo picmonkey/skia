@@ -163,9 +163,11 @@ sk_sp<SkSpecialImage> SkBlurImageFilterImpl::onFilterImage(SkSpecialImage* sourc
                                                                 std::move(inputTexture),
                                                                 sk_ref_sp(input->getColorSpace()),
                                                                 dstBounds,
-                                                                &inputBounds,
+                                                                inputBounds,
                                                                 sigma.x(),
-                                                                sigma.y()));
+                                                                sigma.y(),
+                                                                GrTextureDomain::kClamp_Mode,
+                                                                input->alphaType()));
         if (!renderTargetContext) {
             return nullptr;
         }

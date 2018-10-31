@@ -1148,8 +1148,12 @@ static sk_sp<GrTextureProxy> find_or_create_rrect_blur_mask(GrContext* context,
                                                                        SkIRect::MakeWH(
                                                                                     size.fWidth,
                                                                                     size.fHeight),
-                                                                       nullptr,
+                                                                       SkIRect::MakeWH(
+                                                                                      srcProxy->width(),
+                                                                                      srcProxy->height()),
                                                                        xformedSigma, xformedSigma,
+                                                                       GrTextureDomain::kClamp_Mode,
+                                                                       SkAlphaType::kPremul_SkAlphaType,
                                                                        SkBackingFit::kExact));
         if (!rtc2) {
             return nullptr;
@@ -1509,9 +1513,13 @@ sk_sp<GrTextureProxy> SkBlurMaskFilterImpl::filterMaskGPU(GrContext* context,
     sk_sp<GrRenderTargetContext> renderTargetContext(SkGpuBlurUtils::GaussianBlur(context,
                                                                                   srcProxy,
                                                                                   nullptr, clipRect,
-                                                                                  nullptr,
+                                                                                  SkIRect::MakeWH(
+                                                                                                  srcProxy->width(),
+                                                                                                  srcProxy->height()),
                                                                                   xformedSigma,
-                                                                                  xformedSigma));
+                                                                                  xformedSigma,
+                                                                                  GrTextureDomain::kClamp_Mode,
+                                                                                  SkAlphaType::kPremul_SkAlphaType));
     if (!renderTargetContext) {
         return nullptr;
     }

@@ -1522,7 +1522,7 @@
 		21D2B9B254CDC967DCA6CA91 /* cost_mips32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = cost_mips32.c; path = third_party/externals/libwebp/src/dsp/cost_mips32.c; sourceTree = "<group>"; };
 		21DDEE98CEF3BF605AAD211A /* SkPDFMetadata.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkPDFMetadata.cpp; path = src/pdf/SkPDFMetadata.cpp; sourceTree = "<group>"; };
 		21F0C07A0773C661F78E101A /* basic_block.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = basic_block.cpp; path = "third_party/externals/spirv-tools/source/val/basic_block.cpp"; sourceTree = "<group>"; };
-		2206E12899496516372CDC36 /* libsources.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libsources.a; path = liblibSkia.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2206E12899496516372CDC36 /* liblibSkia.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblibSkia.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		22251AD5F6DA943AFEEC35C4 /* dng_memory_stream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dng_memory_stream.cpp; path = third_party/externals/dng_sdk/source/dng_memory_stream.cpp; sourceTree = "<group>"; };
 		2226CC23EF84CE0815193611 /* SkNextID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkNextID.h; path = src/core/SkNextID.h; sourceTree = "<group>"; };
 		2242EBD6D401B3D56EA6E986 /* dng_point.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dng_point.cpp; path = third_party/externals/dng_sdk/source/dng_point.cpp; sourceTree = "<group>"; };
@@ -4275,7 +4275,7 @@
 		8131629533D2B47559C56290 /* Product */ = {
 			isa = PBXGroup;
 			children = (
-				2206E12899496516372CDC36 /* libsources.a */,
+				2206E12899496516372CDC36 /* liblibSkia.a */,
 			);
 			name = Product;
 			sourceTree = "<group>";
@@ -6075,7 +6075,7 @@
 			);
 			name = sources;
 			productName = sources;
-			productReference = 2206E12899496516372CDC36 /* libsources.a */;
+			productReference = 2206E12899496516372CDC36 /* liblibSkia.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -7440,18 +7440,21 @@
 					../../tools/debugger,
 					"../../third_party/externals/spirv-tools/source",
 					"../../out/ios64/spirv-tools",
-					"../../third_party/libjpeg-turbo",
 					../../third_party/externals/expat/lib,
 					../../third_party/externals/freetype/include,
 					../../third_party/externals/icu/source/common,
 					../../third_party/externals/sfntly/cpp/src/sfntly,
 					../../third_party/externals/sfntly/cpp/src/,
 					../../third_party/harfbuzz,
+					../../third_party/externals/harfbuzz/src,
+					../../third_party/gif,
+					../../third_party/libpng,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				PRODUCT_NAME = libSkia;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				USER_HEADER_SEARCH_PATHS = "../../third_party/externals/libjpeg-turbo ../../third_party/libjpeg-turbo";
 			};
 			name = Debug;
 		};
@@ -7468,6 +7471,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = libSkia;
+				USER_HEADER_SEARCH_PATHS = "../../third_party/externals/libjpeg-turbo ../../third_party/libjpeg-turbo";
 			};
 			name = ios64;
 		};
@@ -7541,12 +7545,16 @@
 					../../third_party/externals/sfntly/cpp/src/sfntly,
 					../../third_party/externals/sfntly/cpp/src/,
 					../../third_party/harfbuzz,
+					../../third_party/externals/harfbuzz/src,
+					../../third_party/gif,
+					"../../third_party/libjpeg-turbo",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				PRODUCT_NAME = libSkia;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "../../third_party/externals/libjpeg-turbo ../../third_party/libjpeg-turbo";
 			};
 			name = Release;
 		};

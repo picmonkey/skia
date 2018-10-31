@@ -10,6 +10,7 @@
 
 #if SK_SUPPORT_GPU
 #include "GrRenderTargetContext.h"
+#include "effects/GrTextureDomain.h"
 
 class GrContext;
 class GrTexture;
@@ -34,12 +35,14 @@ namespace SkGpuBlurUtils {
     * @return                The renderTargetContext containing the blurred result.
     */
     sk_sp<GrRenderTargetContext> GaussianBlur(GrContext* context,
-                                              sk_sp<GrTextureProxy> src,
+                                              sk_sp<GrTextureProxy> srcProxy,
                                               sk_sp<SkColorSpace> colorSpace,
                                               const SkIRect& dstBounds,
-                                              const SkIRect* srcBounds,
+                                              const SkIRect& srcBounds,
                                               float sigmaX,
                                               float sigmaY,
+                                              GrTextureDomain::Mode mode,
+                                              SkAlphaType at,
                                               SkBackingFit fit = SkBackingFit::kApprox);
 };
 

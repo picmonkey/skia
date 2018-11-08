@@ -7548,6 +7548,7 @@
 					../../third_party/externals/harfbuzz/src,
 					../../third_party/gif,
 					"../../third_party/libjpeg-turbo",
+					../../third_party/libpng,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				PRODUCT_NAME = libSkia;
@@ -7577,7 +7578,7 @@
 				DE0885501F16DF0100EDAAF8 /* ios64 */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		D074211518C7A934BCAAF9EF /* Build configuration list for PBXProject "products" */ = {
 			isa = XCConfigurationList;
@@ -7585,7 +7586,7 @@
 				E624E083A7589A73C36ED7FB /* ios64 */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		EDDC7550F481EB46199E80BC /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
@@ -7593,7 +7594,7 @@
 				C47DEA4A3ED20837E8E3DEAD /* ios64 */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

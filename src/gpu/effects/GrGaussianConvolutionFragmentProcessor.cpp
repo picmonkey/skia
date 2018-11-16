@@ -63,7 +63,7 @@ void GrGLConvolutionEffect::emitCode(EmitArgs& args) {
     const GrShaderVar& kernel = uniformHandler->getUniformVariable(fKernelUni);
     const char* imgInc = uniformHandler->getUniformCStr(fImageIncrementUni);
 
-    fragBuilder->codeAppendf("vec2 coord = %s - (%d.0+.5) * %s;", coords2D.c_str(), ce.radius(), imgInc);
+    fragBuilder->codeAppendf("vec2 coord = %s - %d.0 * %s;", coords2D.c_str(), ce.radius(), imgInc);
 
     // Manually unroll loop because some drivers don't; yields 20-30% speedup.
     const char* kVecSuffix[4] = {".x", ".y", ".z", ".w"};
@@ -146,7 +146,6 @@ void GrGLConvolutionEffect::GenKey(const GrProcessor& processor, const GrShaderC
     }
     b->add32(key);
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 static void fill_in_1D_guassian_kernel(float* kernel, int width, float gaussianSigma, int radius) {

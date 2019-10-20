@@ -6091,6 +6091,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 82FE471A07420F6D260D2EDC;
@@ -7562,6 +7563,7 @@
 		E624E083A7589A73C36ED7FB /* ios64 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -7586,7 +7588,7 @@
 				E624E083A7589A73C36ED7FB /* ios64 */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = ios64;
 		};
 		EDDC7550F481EB46199E80BC /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;

@@ -5,7 +5,7 @@
 #include "SkBitmapProcState_opts_none.cpp"
 #include "SkBlitMask_opts_none.cpp"
 #include "SkBlitRow_opts_none.cpp"
-#include "SkOpts.cpp"
+//#include "SkOpts.cpp"
 //#include "SkOpts_ssse3.cpp"
 //#include "SkOpts_sse41.cpp"
 

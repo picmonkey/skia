@@ -4679,7 +4679,6 @@
 		A39922D38D6CBF047B5C942D /* src */ = {
 			isa = PBXGroup;
 			children = (
-				DE16F3A51F50EA05002BEC8E /* New Group */,
 				0B97C74065A267B466BBEE43 /* android */,
 				45D050B54B964801CE5783CF /* c */,
 				328C0F32FE452B596DCDBAAB /* codec */,
@@ -5498,13 +5497,6 @@
 				2CBC981169EFE822F02DA973 /* validate_type_unique.cpp */,
 			);
 			name = source;
-			sourceTree = "<group>";
-		};
-		DE16F3A51F50EA05002BEC8E /* New Group */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "New Group";
 			sourceTree = "<group>";
 		};
 		DE2AC1F81F5791E800B0E6E4 /* ios */ = {

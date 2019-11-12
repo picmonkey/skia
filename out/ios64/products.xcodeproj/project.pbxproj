@@ -373,6 +373,11 @@
 		49F5873A58313E36854A8788 /* index_sub_table_format1.cc in Sources */ = {isa = PBXBuildFile; fileRef = B2BE62C7C866BA113D09A77C /* index_sub_table_format1.cc */; };
 		4A0C6CB2F912E65D08041324 /* SkRegion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 801A4473898033EC43B9DE15 /* SkRegion.cpp */; };
 		4A7BF13366FD7931BEC5D7E2 /* SkPDFFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1C1ECEBFB441CF48240C3D5 /* SkPDFFont.cpp */; };
+		4AAEC876237B4D710081395C /* SkOpts_ssse3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4AAEC875237B4D710081395C /* SkOpts_ssse3.cpp */; };
+		4AAEC878237B4D990081395C /* SkOpts_sse41.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4AAEC877237B4D990081395C /* SkOpts_sse41.cpp */; };
+		4AAEC87B237B4DB20081395C /* SkOpts_sse42.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4AAEC879237B4DB10081395C /* SkOpts_sse42.cpp */; };
+		4AAEC87C237B4DB20081395C /* SkOpts_avx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4AAEC87A237B4DB10081395C /* SkOpts_avx.cpp */; };
+		4AAEC87E237B4DD10081395C /* SkOpts_hsw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4AAEC87D237B4DD10081395C /* SkOpts_hsw.cpp */; };
 		4BBDDEB74D905EF0E4316EEE /* dng_mosaic_info.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F820219A99310A67830E395 /* dng_mosaic_info.cpp */; };
 		4CFC02E7B89CD7EC8101BB76 /* ucnv_cnv.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D7BB2F77A7CF5B9AD55FCA9 /* ucnv_cnv.c */; };
 		4CFD2313E61618205550524D /* GrBlurredEdgeFragmentProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D7C72F9ECF9D19337125AB8 /* GrBlurredEdgeFragmentProcessor.cpp */; };
@@ -1819,6 +1824,11 @@
 		4A5142E5C8941F14DE0B83A3 /* SkPDFMakeToUnicodeCmap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkPDFMakeToUnicodeCmap.h; path = src/pdf/SkPDFMakeToUnicodeCmap.h; sourceTree = "<group>"; };
 		4A59C12C186A7641CEB398A1 /* horizontal_metrics_table.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = horizontal_metrics_table.cc; path = third_party/externals/sfntly/cpp/src/sfntly/table/core/horizontal_metrics_table.cc; sourceTree = "<group>"; };
 		4A6DE41C25A40FBD2FE2D954 /* SkEmptyShader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkEmptyShader.h; path = src/core/SkEmptyShader.h; sourceTree = "<group>"; };
+		4AAEC875237B4D710081395C /* SkOpts_ssse3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkOpts_ssse3.cpp; path = src/opts/SkOpts_ssse3.cpp; sourceTree = "<group>"; };
+		4AAEC877237B4D990081395C /* SkOpts_sse41.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkOpts_sse41.cpp; path = src/opts/SkOpts_sse41.cpp; sourceTree = "<group>"; };
+		4AAEC879237B4DB10081395C /* SkOpts_sse42.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkOpts_sse42.cpp; path = src/opts/SkOpts_sse42.cpp; sourceTree = "<group>"; };
+		4AAEC87A237B4DB10081395C /* SkOpts_avx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkOpts_avx.cpp; path = src/opts/SkOpts_avx.cpp; sourceTree = "<group>"; };
+		4AAEC87D237B4DD10081395C /* SkOpts_hsw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkOpts_hsw.cpp; path = src/opts/SkOpts_hsw.cpp; sourceTree = "<group>"; };
 		4ABD87941C07549F74F708C9 /* SkMultiPictureDocument.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkMultiPictureDocument.cpp; path = src/utils/SkMultiPictureDocument.cpp; sourceTree = "<group>"; };
 		4AC99D8FD55929B32CAB5616 /* jcphuff.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jcphuff.c; path = "third_party/externals/libjpeg-turbo/jcphuff.c"; sourceTree = "<group>"; };
 		4AFE6B87C5E1F5356F02AF3B /* SkBlurDrawLooper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkBlurDrawLooper.h; path = include/effects/SkBlurDrawLooper.h; sourceTree = "<group>"; };
@@ -4914,6 +4924,11 @@
 		CB529E0A8CD73A1E21D4DB72 /* opts */ = {
 			isa = PBXGroup;
 			children = (
+				4AAEC87D237B4DD10081395C /* SkOpts_hsw.cpp */,
+				4AAEC87A237B4DB10081395C /* SkOpts_avx.cpp */,
+				4AAEC879237B4DB10081395C /* SkOpts_sse42.cpp */,
+				4AAEC877237B4D990081395C /* SkOpts_sse41.cpp */,
+				4AAEC875237B4D710081395C /* SkOpts_ssse3.cpp */,
 				DEFBC6EB1F1D318400510863 /* opts_configuration.cpp */,
 				8B9533854771F178A06B52C6 /* SkBitmapProcState_arm_neon.cpp */,
 				D6F59949EBA565CD454E25FC /* SkBitmapProcState_matrixProcs_neon.cpp */,
@@ -6237,6 +6252,7 @@
 				806F56CAB0EA9032482D24DF /* SkGlyphCache.cpp in Sources */,
 				C57A1291F5857B6C239C813A /* SkGpuBlurUtils.cpp in Sources */,
 				D6F9E7F065C7730DED6F3ED8 /* SkGraphics.cpp in Sources */,
+				4AAEC87B237B4DB20081395C /* SkOpts_sse42.cpp in Sources */,
 				0D30F7061D5AD996ECD3F4E7 /* SkHalf.cpp in Sources */,
 				C8189DB5FFA2908BA64F38B1 /* SkICC.cpp in Sources */,
 				DE16F3DB1F50EA19002BEC8E /* SkSVGNode.cpp in Sources */,
@@ -6317,6 +6333,7 @@
 				69100A0FF8A541E526C8FD17 /* SkRefDict.cpp in Sources */,
 				4A0C6CB2F912E65D08041324 /* SkRegion.cpp in Sources */,
 				340E271FABCCCE1204C3CB82 /* SkRegion_path.cpp in Sources */,
+				4AAEC876237B4D710081395C /* SkOpts_ssse3.cpp in Sources */,
 				3D98E7D30224A440B2F4B951 /* SkResourceCache.cpp in Sources */,
 				A82DAF7DD26DEFE3247DABBD /* SkSRGB.cpp in Sources */,
 				167AC442662F88E2367C2156 /* SkScalar.cpp in Sources */,
@@ -6446,6 +6463,7 @@
 				3E0ADF0635992A2322B24302 /* GrCoordTransform.cpp in Sources */,
 				B086A10D6AAC8636A7D194CB /* GrDefaultGeoProcFactory.cpp in Sources */,
 				87570054777C0E8459ED9AB7 /* GrDistanceFieldGenFromVector.cpp in Sources */,
+				4AAEC878237B4D990081395C /* SkOpts_sse41.cpp in Sources */,
 				D7FEA4DE292781AE1AB9EBE2 /* GrDrawOpAtlas.cpp in Sources */,
 				5B73E6115CEDD6927E368CE9 /* GrDrawOpTest.cpp in Sources */,
 				47B6184AA7E966A012B399DC /* GrDrawingManager.cpp in Sources */,
@@ -6515,6 +6533,7 @@
 				7E4F3E1745F46DF175E0F4B8 /* GrXferProcessor.cpp in Sources */,
 				E24E4022CB9EAD27A18D9E3A /* GrYUVProvider.cpp in Sources */,
 				848D3E9D4D9B9798F9B003D9 /* SkGpuDevice.cpp in Sources */,
+				4AAEC87E237B4DD10081395C /* SkOpts_hsw.cpp in Sources */,
 				426B04D96894CA472A0D3DB3 /* SkGpuDevice_drawTexture.cpp in Sources */,
 				E56E739F63DF75A7C54C147E /* SkGr.cpp in Sources */,
 				1212E679CB98AED0DC1A82DC /* GrBezierEffect.cpp in Sources */,
@@ -6702,6 +6721,7 @@
 				79F514A927DFA91C390CBD5E /* SkPDFShader.cpp in Sources */,
 				4DAF4EE84E0166FE53C0293D /* SkPDFTypes.cpp in Sources */,
 				F1841A9A81893CA50B0BB8D5 /* SkPDFUtils.cpp in Sources */,
+				4AAEC87C237B4DB20081395C /* SkOpts_avx.cpp in Sources */,
 				35FCA63C572BA8D0457BB233 /* SkPipeCanvas.cpp in Sources */,
 				EEFBF197242E92FFB11CAB81 /* SkPipeReader.cpp in Sources */,
 				D32DB53B1B1C20F5D498943B /* SkDebug_stdio.cpp in Sources */,
@@ -7396,23 +7416,6 @@
 					PPM_SUPPORTED,
 					SK_HAS_JPEG_LIBRARY,
 				);
-				"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*]" = (
-					HAVE_EXPAT_CONFIG_H,
-					U_STATC_IMPLEMENTATION,
-					U_COMMON_IMPLEMENTATION,
-					SFNTLY_NO_EXCEPTION,
-					HAVE_ICU,
-					HAVE_ICU_BUILTIN,
-					HAVE_OT,
-					HB_NO_MT,
-					HAVE_CORETEXT,
-					SK_HAS_PNG_LIBRARY,
-					SK_HAS_WEBP_LIBRARY,
-					SK_DEBUG,
-					SK_BUILD_NO_OPTS,
-					BMP_SUPPORTED,
-					PPM_SUPPORTED,
-				);
 				HEADER_SEARCH_PATHS = (
 					../..,
 					"../../include/**",
@@ -7496,23 +7499,6 @@
 					BMP_SUPPORTED,
 					PPM_SUPPORTED,
 					SK_HAS_JPEG_LIBRARY,
-				);
-				"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*]" = (
-					HAVE_EXPAT_CONFIG_H,
-					U_STATC_IMPLEMENTATION,
-					U_COMMON_IMPLEMENTATION,
-					SFNTLY_NO_EXCEPTION,
-					HAVE_ICU,
-					HAVE_ICU_BUILTIN,
-					HAVE_OT,
-					HB_NO_MT,
-					HAVE_CORETEXT,
-					SK_HAS_PNG_LIBRARY,
-					SK_HAS_WEBP_LIBRARY,
-					SK_RELEASE,
-					SK_BUILD_NO_OPTS,
-					BMP_SUPPORTED,
-					PPM_SUPPORTED,
 				);
 				HEADER_SEARCH_PATHS = (
 					../..,

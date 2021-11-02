@@ -5,11 +5,25 @@
  * found in the LICENSE file.
  */
 
-#include "GrPaint.h"
-#include "GrXferProcessor.h"
-#include "effects/GrCoverageSetOpXP.h"
-#include "effects/GrPorterDuffXferProcessor.h"
-#include "effects/GrSimpleTextureEffect.h"
+#include "src/gpu/GrPaint.h"
+#include "src/gpu/GrXferProcessor.h"
+#include "src/gpu/effects/GrCoverageSetOpXP.h"
+#include "src/gpu/effects/GrPorterDuffXferProcessor.h"
+#include "src/gpu/effects/GrTextureEffect.h"
+
+GrPaint::GrPaint(const GrPaint& that)
+        : fXPFactory(that.fXPFactory)
+        , fTrivial(that.fTrivial)
+        , fColor(that.fColor) {
+    if (that.fColorFragmentProcessor) {
+        fColorFragmentProcessor = that.fColorFragmentProcessor->clone();
+        SkASSERT(fColorFragmentProcessor);
+    }
+    if (that.fCoverageFragmentProcessor) {
+        fCoverageFragmentProcessor = that.fCoverageFragmentProcessor->clone();
+        SkASSERT(fCoverageFragmentProcessor);
+    }
+}
 
 void GrPaint::setPorterDuffXPFactory(SkBlendMode mode) {
     this->setXPFactory(GrPorterDuffXPFactory::Get(mode));
@@ -19,57 +33,20 @@ void GrPaint::setCoverageSetOpXPFactory(SkRegion::Op regionOp, bool invertCovera
     this->setXPFactory(GrCoverageSetOpXPFactory::Get(regionOp, invertCoverage));
 }
 
-void GrPaint::addColorTextureProcessor(GrResourceProvider* resourceProvider,
-                                       sk_sp<GrTextureProxy> proxy,
-                                       sk_sp<GrColorSpaceXform> colorSpaceXform,
-                                       const SkMatrix& matrix) {
-    this->addColorFragmentProcessor(GrSimpleTextureEffect::Make(resourceProvider, std::move(proxy),
-                                                                std::move(colorSpaceXform),
-                                                                matrix));
-}
-
-void GrPaint::addColorTextureProcessor(GrResourceProvider* resourceProvider,
-                                       sk_sp<GrTextureProxy> proxy,
-                                       sk_sp<GrColorSpaceXform> colorSpaceXform,
-                                       const SkMatrix& matrix,
-                                       const GrSamplerParams& params) {
-    this->addColorFragmentProcessor(GrSimpleTextureEffect::Make(resourceProvider,
-                                                                std::move(proxy),
-                                                                std::move(colorSpaceXform),
-                                                                matrix, params));
-}
-
-void GrPaint::addCoverageTextureProcessor(GrResourceProvider* resourceProvider,
-                                          sk_sp<GrTextureProxy> proxy,
-                                          const SkMatrix& matrix) {
-    this->addCoverageFragmentProcessor(GrSimpleTextureEffect::Make(resourceProvider,
-                                                                   std::move(proxy),
-                                                                   nullptr, matrix));
-}
-
-void GrPaint::addCoverageTextureProcessor(GrResourceProvider* resourceProvider,
-                                          sk_sp<GrTextureProxy> proxy,
-                                          const SkMatrix& matrix,
-                                          const GrSamplerParams& params) {
-    this->addCoverageFragmentProcessor(GrSimpleTextureEffect::Make(resourceProvider,
-                                                                   std::move(proxy),
-                                                                   nullptr, matrix, params));
-}
-
-bool GrPaint::isConstantBlendedColor(GrColor* constantColor) const {
+bool GrPaint::isConstantBlendedColor(SkPMColor4f* constantColor) const {
     // This used to do a more sophisticated analysis but now it just explicitly looks for common
     // cases.
     static const GrXPFactory* kSrc = GrPorterDuffXPFactory::Get(SkBlendMode::kSrc);
     static const GrXPFactory* kClear = GrPorterDuffXPFactory::Get(SkBlendMode::kClear);
     if (kClear == fXPFactory) {
-        *constantColor = GrColor_TRANSPARENT_BLACK;
+        *constantColor = SK_PMColor4fTRANSPARENT;
         return true;
     }
-    if (this->numColorFragmentProcessors()) {
+    if (this->hasColorFragmentProcessor()) {
         return false;
     }
     if (kSrc == fXPFactory || (!fXPFactory && fColor.isOpaque())) {
-        *constantColor = fColor.toGrColor();
+        *constantColor = fColor;
         return true;
     }
     return false;

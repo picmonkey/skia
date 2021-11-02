@@ -4,13 +4,28 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
-#include "gm.h"
-#include "sk_tool_utils.h"
-#include "SkBitmap.h"
-#include "SkPath.h"
-#include "SkRandom.h"
-#include "SkShader.h"
-#include "SkSurface.h"
+
+#include "gm/gm.h"
+#include "include/core/SkBlendMode.h"
+#include "include/core/SkCanvas.h"
+#include "include/core/SkColor.h"
+#include "include/core/SkColorSpace.h"
+#include "include/core/SkFont.h"
+#include "include/core/SkImageInfo.h"
+#include "include/core/SkMatrix.h"
+#include "include/core/SkPaint.h"
+#include "include/core/SkPathBuilder.h"
+#include "include/core/SkPoint.h"
+#include "include/core/SkRect.h"
+#include "include/core/SkRefCnt.h"
+#include "include/core/SkScalar.h"
+#include "include/core/SkSize.h"
+#include "include/core/SkString.h"
+#include "include/core/SkSurface.h"
+#include "include/core/SkTypeface.h"
+#include "include/core/SkTypes.h"
+#include "include/utils/SkRandom.h"
+#include "tools/ToolUtils.h"
 
 namespace skiagm {
 
@@ -56,36 +71,39 @@ protected:
                 if (fConvexPath.isEmpty()) {
                     SkPoint points[4];
                     kRect.toQuad(points);
-                    fConvexPath.moveTo(points[0]);
-                    fConvexPath.quadTo(points[1], points[2]);
-                    fConvexPath.quadTo(points[3], points[0]);
+                    fConvexPath = SkPathBuilder().moveTo(points[0])
+                                                 .quadTo(points[1], points[2])
+                                                 .quadTo(points[3], points[0])
+                                                 .detach();
                     SkASSERT(fConvexPath.isConvex());
                 }
                 canvas->drawPath(fConvexPath, *paint);
                 break;
             case kConcavePath_ShapeType:
                 if (fConcavePath.isEmpty()) {
+                    SkPathBuilder b;
                     SkPoint points[5] = {{50.f, 0.f}};
                     SkMatrix rot;
                     rot.setRotate(360.f / 5, 50.f, 70.f);
                     for (int i = 1; i < 5; ++i) {
                         rot.mapPoints(points + i, points + i - 1, 1);
                     }
-                    fConcavePath.moveTo(points[0]);
+                    b.moveTo(points[0]);
                     for (int i = 0; i < 5; ++i) {
-                        fConcavePath.lineTo(points[(2 * i) % 5]);
+                        b.lineTo(points[(2 * i) % 5]);
                     }
-                    fConcavePath.setFillType(SkPath::kEvenOdd_FillType);
+                    fConcavePath = b.setFillType(SkPathFillType::kEvenOdd)
+                                    .detach();
                     SkASSERT(!fConcavePath.isConvex());
                 }
                 canvas->drawPath(fConcavePath, *paint);
                 break;
             case kText_ShapeType: {
                 const char* text = "N";
-                paint->setTextSize(100.f);
-                paint->setFakeBoldText(true);
-                sk_tool_utils::set_portable_typeface(paint);
-                canvas->drawString(text, 0.f, 100.f, *paint);
+                SkFont      font(ToolUtils::create_portable_typeface(), 100);
+                font.setEmbolden(true);
+                canvas->drawString(text, 0.f, 100.f, font, *paint);
+                break;
             }
             default:
                 break;
@@ -93,7 +111,7 @@ protected:
     }
 
     static SkColor GetColor(SkRandom* random) {
-        SkColor color = sk_tool_utils::color_to_565(random->nextU() | 0xFF000000);
+        SkColor color = ToolUtils::color_to_565(random->nextU() | 0xFF000000);
         return SkColorSetA(color, 0x80);
     }
 
@@ -166,6 +184,7 @@ protected:
                                          canvas->imageInfo().refColorSpace());
             }
             surf = SkSurface::MakeRaster(info);
+            SkASSERT(surf);
         }
         canvas->scale(5.f, 5.f);
         canvas->translate(67.f, 10.f);
@@ -177,12 +196,11 @@ private:
     static constexpr SkColor kBackground = SK_ColorLTGRAY;
     SkPath fConcavePath;
     SkPath fConvexPath;
-    typedef GM INHERITED;
+    using INHERITED = GM;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
-static GM* MyFactory(void*) { return new DstReadShuffle; }
-static GMRegistry reg(MyFactory);
+DEF_GM( return new DstReadShuffle; )
 
-}
+}  // namespace skiagm

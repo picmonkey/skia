@@ -8,7 +8,8 @@
 #ifndef SkPngEncoder_DEFINED
 #define SkPngEncoder_DEFINED
 
-#include "SkEncoder.h"
+#include "include/core/SkDataTable.h"
+#include "include/encode/SkEncoder.h"
 
 class SkPngEncoderMgr;
 class SkWStream;
@@ -53,11 +54,11 @@ public:
         int fZLibLevel = 6;
 
         /**
-         *  If the input is premultiplied, this controls the unpremultiplication behavior.
-         *  The encoder can convert to linear before unpremultiplying or ignore the transfer
-         *  function and unpremultiply the input as is.
+         *  Represents comments in the tEXt ancillary chunk of the png.
+         *  The 2i-th entry is the keyword for the i-th comment,
+         *  and the (2i + 1)-th entry is the text for the i-th comment.
          */
-        SkTransferFunctionBehavior fUnpremulBehavior = SkTransferFunctionBehavior::kRespect;
+        sk_sp<SkDataTable> fComments;
     };
 
     /**
@@ -87,7 +88,7 @@ protected:
     SkPngEncoder(std::unique_ptr<SkPngEncoderMgr>, const SkPixmap& src);
 
     std::unique_ptr<SkPngEncoderMgr> fEncoderMgr;
-    typedef SkEncoder INHERITED;
+    using INHERITED = SkEncoder;
 };
 
 static inline SkPngEncoder::FilterFlag operator|(SkPngEncoder::FilterFlag x,

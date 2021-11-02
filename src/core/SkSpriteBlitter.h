@@ -8,9 +8,9 @@
 #ifndef SkSpriteBlitter_DEFINED
 #define SkSpriteBlitter_DEFINED
 
-#include "SkBlitter.h"
-#include "SkPixmap.h"
-#include "SkShader.h"
+#include "include/core/SkPixmap.h"
+#include "include/core/SkShader.h"
+#include "src/core/SkBlitter.h"
 
 class SkPaint;
 
@@ -21,7 +21,7 @@ class SkSpriteBlitter : public SkBlitter {
 public:
     SkSpriteBlitter(const SkPixmap& source);
 
-    virtual void setup(const SkPixmap& dst, int left, int top, const SkPaint&);
+    virtual bool setup(const SkPixmap& dst, int left, int top, const SkPaint&);
 
     // blitH, blitAntiH, blitV and blitMask should not be called on an SkSpriteBlitter.
     void blitH(int x, int y, int width) override;
@@ -32,10 +32,9 @@ public:
     // A SkSpriteBlitter must implement blitRect.
     void blitRect(int x, int y, int width, int height) override = 0;
 
-    static SkSpriteBlitter* ChooseD16(const SkPixmap& source, const SkPaint&, SkArenaAlloc*);
     static SkSpriteBlitter* ChooseL32(const SkPixmap& source, const SkPaint&, SkArenaAlloc*);
-    static SkSpriteBlitter* ChooseS32(const SkPixmap& source, const SkPaint&, SkArenaAlloc*);
-    static SkSpriteBlitter* ChooseF16(const SkPixmap& source, const SkPaint&, SkArenaAlloc*);
+    static SkSpriteBlitter* ChooseL565(const SkPixmap& source, const SkPaint&, SkArenaAlloc*);
+    static SkSpriteBlitter* ChooseLA8(const SkPixmap& source, const SkPaint&, SkArenaAlloc*);
 
 protected:
     SkPixmap        fDst;
@@ -44,7 +43,7 @@ protected:
     const SkPaint*  fPaint;
 
 private:
-    typedef SkBlitter INHERITED;
+    using INHERITED = SkBlitter;
 };
 
 #endif

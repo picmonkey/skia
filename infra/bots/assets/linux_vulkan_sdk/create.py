@@ -10,15 +10,31 @@
 
 
 import argparse
-import shutil
-import sys
 import os
+import subprocess
+import sys
+
+FILE_DIR = os.path.dirname(os.path.abspath(__file__))
+INFRA_BOTS_DIR = os.path.realpath(os.path.join(FILE_DIR, os.pardir, os.pardir))
+sys.path.insert(0, INFRA_BOTS_DIR)
+import utils
 
 
+SDK_VERSION='1.2.141.0'
+SDK_URL=('https://sdk.lunarg.com/sdk/download/%s/linux/'
+         'vulkansdk-linux-x86_64-%s.tar.gz' % (SDK_VERSION, SDK_VERSION))
 
-def create_asset(target_dir, sdk_path):
+
+def create_asset(target_dir):
   """Create the asset."""
-  shutil.copytree(sdk_path, target_dir)
+  with utils.tmp_dir():
+    tarball = 'vulkansdk-linux.tar.gz'
+    subprocess.check_call(['curl', SDK_URL, '--output', tarball])
+    subprocess.check_call(['tar', '--extract', '--verbose',
+                           '--file=%s' % tarball, '--gunzip',
+                           '--directory=%s' % target_dir,
+                           '--strip-components=2',
+                           '%s/x86_64' % SDK_VERSION])
 
 
 def main():
@@ -27,9 +43,8 @@ def main():
     sys.exit(1)
   parser = argparse.ArgumentParser()
   parser.add_argument('--target_dir', '-t', required=True)
-  parser.add_argument('--sdk_path', '-s', required=True)
   args = parser.parse_args()
-  create_asset(args.target_dir, args.sdk_path)
+  create_asset(args.target_dir)
 
 
 if __name__ == '__main__':

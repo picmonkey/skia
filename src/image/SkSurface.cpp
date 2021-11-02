@@ -5,53 +5,25 @@
  * found in the LICENSE file.
  */
 
-#include "SkAtomics.h"
-#include "SkSurface_Base.h"
-#include "SkImagePriv.h"
-#include "SkCanvas.h"
-
-#include "SkFontLCDConfig.h"
-static SkPixelGeometry compute_default_geometry() {
-    SkFontLCDConfig::LCDOrder order = SkFontLCDConfig::GetSubpixelOrder();
-    if (SkFontLCDConfig::kNONE_LCDOrder == order) {
-        return kUnknown_SkPixelGeometry;
-    } else {
-        // Bit0 is RGB(0), BGR(1)
-        // Bit1 is H(0), V(1)
-        const SkPixelGeometry gGeo[] = {
-            kRGB_H_SkPixelGeometry,
-            kBGR_H_SkPixelGeometry,
-            kRGB_V_SkPixelGeometry,
-            kBGR_V_SkPixelGeometry,
-        };
-        int index = 0;
-        if (SkFontLCDConfig::kBGR_LCDOrder == order) {
-            index |= 1;
-        }
-        if (SkFontLCDConfig::kVertical_LCDOrientation == SkFontLCDConfig::GetSubpixelOrientation()){
-            index |= 2;
-        }
-        return gGeo[index];
-    }
-}
+#include <atomic>
+#include <cmath>
+#include "include/core/SkCanvas.h"
+#include "include/gpu/GrBackendSurface.h"
+#include "src/core/SkAutoPixmapStorage.h"
+#include "src/core/SkImagePriv.h"
+#include "src/core/SkPaintPriv.h"
+#include "src/image/SkImage_Base.h"
+#include "src/image/SkRescaleAndReadPixels.h"
+#include "src/image/SkSurface_Base.h"
 
 SkSurfaceProps::SkSurfaceProps() : fFlags(0), fPixelGeometry(kUnknown_SkPixelGeometry) {}
-
-SkSurfaceProps::SkSurfaceProps(InitType) : fFlags(0), fPixelGeometry(compute_default_geometry()) {}
-
-SkSurfaceProps::SkSurfaceProps(uint32_t flags, InitType)
-    : fFlags(flags)
-    , fPixelGeometry(compute_default_geometry())
-{}
 
 SkSurfaceProps::SkSurfaceProps(uint32_t flags, SkPixelGeometry pg)
     : fFlags(flags), fPixelGeometry(pg)
 {}
 
-SkSurfaceProps::SkSurfaceProps(const SkSurfaceProps& other)
-    : fFlags(other.fFlags)
-    , fPixelGeometry(other.fPixelGeometry)
-{}
+SkSurfaceProps::SkSurfaceProps(const SkSurfaceProps&) = default;
+SkSurfaceProps& SkSurfaceProps::operator=(const SkSurfaceProps&) = default;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -68,13 +40,72 @@ SkSurface_Base::~SkSurface_Base() {
     if (fCachedCanvas) {
         fCachedCanvas->setSurfaceBase(nullptr);
     }
+#if SK_SUPPORT_GPU
+    if (fCachedImage) {
+        as_IB(fCachedImage.get())->generatingSurfaceIsDeleted();
+    }
+#endif
 }
 
-void SkSurface_Base::onDraw(SkCanvas* canvas, SkScalar x, SkScalar y, const SkPaint* paint) {
+GrRecordingContext* SkSurface_Base::onGetRecordingContext() {
+    return nullptr;
+}
+
+GrBackendTexture SkSurface_Base::onGetBackendTexture(BackendHandleAccess) {
+    return GrBackendTexture(); // invalid
+}
+
+GrBackendRenderTarget SkSurface_Base::onGetBackendRenderTarget(BackendHandleAccess) {
+    return GrBackendRenderTarget(); // invalid
+}
+
+bool SkSurface_Base::onReplaceBackendTexture(const GrBackendTexture&,
+                                             GrSurfaceOrigin, ContentChangeMode,
+                                             TextureReleaseProc,
+                                             ReleaseContext) {
+    return false;
+}
+
+void SkSurface_Base::onDraw(SkCanvas* canvas, SkScalar x, SkScalar y,
+                            const SkSamplingOptions& sampling, const SkPaint* paint) {
     auto image = this->makeImageSnapshot();
     if (image) {
-        canvas->drawImage(image, x, y, paint);
+        canvas->drawImage(image.get(), x, y, sampling, paint);
     }
+}
+
+void SkSurface_Base::onAsyncRescaleAndReadPixels(const SkImageInfo& info,
+                                                 const SkIRect& origSrcRect,
+                                                 SkSurface::RescaleGamma rescaleGamma,
+                                                 RescaleMode rescaleMode,
+                                                 SkSurface::ReadPixelsCallback callback,
+                                                 SkSurface::ReadPixelsContext context) {
+    SkBitmap src;
+    SkPixmap peek;
+    SkIRect srcRect;
+    if (this->peekPixels(&peek)) {
+        src.installPixels(peek);
+        srcRect = origSrcRect;
+    } else {
+        src.setInfo(this->imageInfo().makeDimensions(origSrcRect.size()));
+        src.allocPixels();
+        if (!this->readPixels(src, origSrcRect.x(), origSrcRect.y())) {
+            callback(context, nullptr);
+            return;
+        }
+        srcRect = SkIRect::MakeSize(src.dimensions());
+    }
+    return SkRescaleAndReadPixels(src, info, srcRect, rescaleGamma, rescaleMode, callback,
+                                  context);
+}
+
+void SkSurface_Base::onAsyncRescaleAndReadPixelsYUV420(
+        SkYUVColorSpace yuvColorSpace, sk_sp<SkColorSpace> dstColorSpace, const SkIRect& srcRect,
+        const SkISize& dstSize, RescaleGamma rescaleGamma, RescaleMode,
+        ReadPixelsCallback callback, ReadPixelsContext context) {
+    // TODO: Call non-YUV asyncRescaleAndReadPixels and then make our callback convert to YUV and
+    // call client's callback.
+    callback(context, nullptr);
 }
 
 bool SkSurface_Base::outstandingImageSnapshot() const {
@@ -112,12 +143,16 @@ void SkSurface_Base::aboutToDraw(ContentChangeMode mode) {
 
 uint32_t SkSurface_Base::newGenerationID() {
     SkASSERT(!fCachedCanvas || fCachedCanvas->getSurfaceBase() == this);
-    static int32_t gID;
-    return sk_atomic_inc(&gID) + 1;
+    static std::atomic<uint32_t> nextID{1};
+    return nextID.fetch_add(1, std::memory_order_relaxed);
 }
 
 static SkSurface_Base* asSB(SkSurface* surface) {
     return static_cast<SkSurface_Base*>(surface);
+}
+
+static const SkSurface_Base* asConstSB(const SkSurface* surface) {
+    return static_cast<const SkSurface_Base*>(surface);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -136,6 +171,11 @@ SkSurface::SkSurface(const SkImageInfo& info, const SkSurfaceProps* props)
     SkASSERT(fWidth > 0);
     SkASSERT(fHeight > 0);
     fGenerationID = 0;
+}
+
+SkImageInfo SkSurface::imageInfo() {
+    // TODO: do we need to go through canvas for this?
+    return this->getCanvas()->imageInfo();
 }
 
 uint32_t SkSurface::generationID() {
@@ -157,85 +197,224 @@ sk_sp<SkImage> SkSurface::makeImageSnapshot() {
     return asSB(this)->refCachedImage();
 }
 
+sk_sp<SkImage> SkSurface::makeImageSnapshot(const SkIRect& srcBounds) {
+    const SkIRect surfBounds = { 0, 0, fWidth, fHeight };
+    SkIRect bounds = srcBounds;
+    if (!bounds.intersect(surfBounds)) {
+        return nullptr;
+    }
+    SkASSERT(!bounds.isEmpty());
+    if (bounds == surfBounds) {
+        return this->makeImageSnapshot();
+    } else {
+        return asSB(this)->onNewImageSnapshot(&bounds);
+    }
+}
+
 sk_sp<SkSurface> SkSurface::makeSurface(const SkImageInfo& info) {
     return asSB(this)->onNewSurface(info);
 }
 
-void SkSurface::draw(SkCanvas* canvas, SkScalar x, SkScalar y,
+sk_sp<SkSurface> SkSurface::makeSurface(int width, int height) {
+    return this->makeSurface(this->imageInfo().makeWH(width, height));
+}
+
+void SkSurface::draw(SkCanvas* canvas, SkScalar x, SkScalar y, const SkSamplingOptions& sampling,
                      const SkPaint* paint) {
-    return asSB(this)->onDraw(canvas, x, y, paint);
+    asSB(this)->onDraw(canvas, x, y, sampling, paint);
 }
 
 bool SkSurface::peekPixels(SkPixmap* pmap) {
     return this->getCanvas()->peekPixels(pmap);
 }
 
+bool SkSurface::readPixels(const SkPixmap& pm, int srcX, int srcY) {
+    return this->getCanvas()->readPixels(pm, srcX, srcY);
+}
+
 bool SkSurface::readPixels(const SkImageInfo& dstInfo, void* dstPixels, size_t dstRowBytes,
                            int srcX, int srcY) {
-    return this->getCanvas()->readPixels(dstInfo, dstPixels, dstRowBytes, srcX, srcY);
+    return this->readPixels({dstInfo, dstPixels, dstRowBytes}, srcX, srcY);
 }
 
-GrBackendObject SkSurface::getTextureHandle(BackendHandleAccess access) {
-    return asSB(this)->onGetTextureHandle(access);
+bool SkSurface::readPixels(const SkBitmap& bitmap, int srcX, int srcY) {
+    SkPixmap pm;
+    return bitmap.peekPixels(&pm) && this->readPixels(pm, srcX, srcY);
 }
 
-bool SkSurface::getRenderTargetHandle(GrBackendObject* obj, BackendHandleAccess access) {
-    return asSB(this)->onGetRenderTargetHandle(obj, access);
+void SkSurface::asyncRescaleAndReadPixels(const SkImageInfo& info,
+                                          const SkIRect& srcRect,
+                                          RescaleGamma rescaleGamma,
+                                          RescaleMode rescaleMode,
+                                          ReadPixelsCallback callback,
+                                          ReadPixelsContext context) {
+    if (!SkIRect::MakeWH(this->width(), this->height()).contains(srcRect) ||
+        !SkImageInfoIsValid(info)) {
+        callback(context, nullptr);
+        return;
+    }
+    asSB(this)->onAsyncRescaleAndReadPixels(
+            info, srcRect, rescaleGamma, rescaleMode, callback, context);
 }
 
-void SkSurface::prepareForExternalIO() {
-  asSB(this)->onPrepareForExternalIO();
+void SkSurface::asyncRescaleAndReadPixelsYUV420(SkYUVColorSpace yuvColorSpace,
+                                                sk_sp<SkColorSpace> dstColorSpace,
+                                                const SkIRect& srcRect,
+                                                const SkISize& dstSize,
+                                                RescaleGamma rescaleGamma,
+                                                RescaleMode rescaleMode,
+                                                ReadPixelsCallback callback,
+                                                ReadPixelsContext context) {
+    if (!SkIRect::MakeWH(this->width(), this->height()).contains(srcRect) || dstSize.isZero() ||
+        (dstSize.width() & 0b1) || (dstSize.height() & 0b1)) {
+        callback(context, nullptr);
+        return;
+    }
+    asSB(this)->onAsyncRescaleAndReadPixelsYUV420(yuvColorSpace,
+                                                  std::move(dstColorSpace),
+                                                  srcRect,
+                                                  dstSize,
+                                                  rescaleGamma,
+                                                  rescaleMode,
+                                                  callback,
+                                                  context);
+}
+
+void SkSurface::writePixels(const SkPixmap& pmap, int x, int y) {
+    if (pmap.addr() == nullptr || pmap.width() <= 0 || pmap.height() <= 0) {
+        return;
+    }
+
+    const SkIRect srcR = SkIRect::MakeXYWH(x, y, pmap.width(), pmap.height());
+    const SkIRect dstR = SkIRect::MakeWH(this->width(), this->height());
+    if (SkIRect::Intersects(srcR, dstR)) {
+        ContentChangeMode mode = kRetain_ContentChangeMode;
+        if (srcR.contains(dstR)) {
+            mode = kDiscard_ContentChangeMode;
+        }
+        asSB(this)->aboutToDraw(mode);
+        asSB(this)->onWritePixels(pmap, x, y);
+    }
+}
+
+void SkSurface::writePixels(const SkBitmap& src, int x, int y) {
+    SkPixmap pm;
+    if (src.peekPixels(&pm)) {
+        this->writePixels(pm, x, y);
+    }
+}
+
+GrRecordingContext* SkSurface::recordingContext() {
+    return asSB(this)->onGetRecordingContext();
+}
+
+GrBackendTexture SkSurface::getBackendTexture(BackendHandleAccess access) {
+    return asSB(this)->onGetBackendTexture(access);
+}
+
+GrBackendRenderTarget SkSurface::getBackendRenderTarget(BackendHandleAccess access) {
+    return asSB(this)->onGetBackendRenderTarget(access);
+}
+
+bool SkSurface::replaceBackendTexture(const GrBackendTexture& backendTexture,
+                                      GrSurfaceOrigin origin, ContentChangeMode mode,
+                                      TextureReleaseProc textureReleaseProc,
+                                      ReleaseContext releaseContext) {
+    return asSB(this)->onReplaceBackendTexture(backendTexture, origin, mode, textureReleaseProc,
+                                               releaseContext);
+}
+
+GrSemaphoresSubmitted SkSurface::flush(BackendSurfaceAccess access, const GrFlushInfo& flushInfo) {
+    return asSB(this)->onFlush(access, flushInfo, nullptr);
+}
+
+GrSemaphoresSubmitted SkSurface::flush(const GrFlushInfo& info,
+                                       const GrBackendSurfaceMutableState* newState) {
+    return asSB(this)->onFlush(BackendSurfaceAccess::kNoAccess, info, newState);
+}
+
+bool SkSurface::wait(int numSemaphores, const GrBackendSemaphore* waitSemaphores,
+                     bool deleteSemaphoresAfterWait) {
+    return asSB(this)->onWait(numSemaphores, waitSemaphores, deleteSemaphoresAfterWait);
+}
+
+bool SkSurface::characterize(SkSurfaceCharacterization* characterization) const {
+    return asConstSB(this)->onCharacterize(characterization);
+}
+
+bool SkSurface::isCompatible(const SkSurfaceCharacterization& characterization) const {
+    return asConstSB(this)->onIsCompatible(characterization);
+}
+
+bool SkSurface::draw(sk_sp<const SkDeferredDisplayList> ddl, int xOffset, int yOffset) {
+    if (xOffset != 0 || yOffset != 0) {
+        return false; // the offsets currently aren't supported
+    }
+
+    return asSB(this)->onDraw(std::move(ddl), { xOffset, yOffset });
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+#include "include/utils/SkNoDrawCanvas.h"
+
+class SkNullSurface : public SkSurface_Base {
+public:
+    SkNullSurface(int width, int height) : SkSurface_Base(width, height, nullptr) {}
+
+protected:
+    SkCanvas* onNewCanvas() override {
+        return new SkNoDrawCanvas(this->width(), this->height());
+    }
+    sk_sp<SkSurface> onNewSurface(const SkImageInfo& info) override {
+        return MakeNull(info.width(), info.height());
+    }
+    sk_sp<SkImage> onNewImageSnapshot(const SkIRect* subsetOrNull) override { return nullptr; }
+    void onWritePixels(const SkPixmap&, int x, int y) override {}
+    void onDraw(SkCanvas*, SkScalar, SkScalar, const SkSamplingOptions&, const SkPaint*) override {}
+    void onCopyOnWrite(ContentChangeMode) override {}
+};
+
+sk_sp<SkSurface> SkSurface::MakeNull(int width, int height) {
+    if (width < 1 || height < 1) {
+        return nullptr;
+    }
+    return sk_sp<SkSurface>(new SkNullSurface(width, height));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
 
 #if !SK_SUPPORT_GPU
 
-sk_sp<SkSurface> SkSurface::MakeRenderTarget(GrContext*, SkBudgeted, const SkImageInfo&,
-                                             int, GrSurfaceOrigin, const SkSurfaceProps*) {
+sk_sp<SkSurface> SkSurface::MakeRenderTarget(GrRecordingContext*, SkBudgeted, const SkImageInfo&,
+                                             int, GrSurfaceOrigin, const SkSurfaceProps*, bool) {
     return nullptr;
 }
 
-sk_sp<SkSurface> SkSurface::MakeFromBackendTexture(GrContext*, const GrBackendTextureDesc&,
-                                                   sk_sp<SkColorSpace>, const SkSurfaceProps*) {
+sk_sp<SkSurface> SkSurface::MakeRenderTarget(GrRecordingContext*, const SkSurfaceCharacterization&,
+                                             SkBudgeted) {
     return nullptr;
 }
 
-sk_sp<SkSurface> SkSurface::MakeFromBackendTexture(GrContext*, const GrBackendTexture&,
+sk_sp<SkSurface> SkSurface::MakeFromBackendTexture(GrRecordingContext*, const GrBackendTexture&,
                                                    GrSurfaceOrigin origin, int sampleCnt,
-                                                   sk_sp<SkColorSpace>, const SkSurfaceProps*) {
+                                                   SkColorType, sk_sp<SkColorSpace>,
+                                                   const SkSurfaceProps*,
+                                                   TextureReleaseProc, ReleaseContext) {
     return nullptr;
 }
 
-sk_sp<SkSurface> SkSurface::MakeFromBackendRenderTarget(GrContext*,
-                                                        const GrBackendRenderTargetDesc&,
-                                                        sk_sp<SkColorSpace>,
-                                                        const SkSurfaceProps*) {
-    return nullptr;
-}
-
-sk_sp<SkSurface> SkSurface::MakeFromBackendRenderTarget(GrContext*,
+sk_sp<SkSurface> SkSurface::MakeFromBackendRenderTarget(GrRecordingContext*,
                                                         const GrBackendRenderTarget&,
                                                         GrSurfaceOrigin origin,
+                                                        SkColorType,
                                                         sk_sp<SkColorSpace>,
-                                                        const SkSurfaceProps*) {
+                                                        const SkSurfaceProps*,
+                                                        RenderTargetReleaseProc, ReleaseContext) {
     return nullptr;
 }
 
-sk_sp<SkSurface> SkSurface::MakeFromBackendTextureAsRenderTarget(GrContext*,
-                                                                 const GrBackendTextureDesc&,
-                                                                 sk_sp<SkColorSpace>,
-                                                                 const SkSurfaceProps*) {
-    return nullptr;
-}
-
-sk_sp<SkSurface> SkSurface::MakeFromBackendTextureAsRenderTarget(GrContext*,
-                                                                 const GrBackendTexture&,
-                                                                 GrSurfaceOrigin origin,
-                                                                 int sampleCnt,
-                                                                 sk_sp<SkColorSpace>,
-                                                                 const SkSurfaceProps*) {
-    return nullptr;
+void SkSurface::flushAndSubmit(bool syncCpu) {
+    this->flush(BackendSurfaceAccess::kNoAccess, GrFlushInfo());
 }
 
 #endif

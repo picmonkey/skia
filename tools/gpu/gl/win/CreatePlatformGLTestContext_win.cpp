@@ -6,15 +6,31 @@
  * found in the LICENSE file.
  */
 
-#include "gl/GLTestContext.h"
+#include "tools/gpu/gl/GLTestContext.h"
+
+#if defined(_M_ARM64)
+
+namespace sk_gpu_test {
+
+GLTestContext* CreatePlatformGLTestContext(GrGLStandard, GLTestContext*) { return nullptr; }
+
+}  // namespace sk_gpu_test
+
+#else
 
 #include <windows.h>
 #include <GL/GL.h>
-#include "win/SkWGL.h"
+#include "src/utils/win/SkWGL.h"
 
 #include <windows.h>
 
 namespace {
+
+std::function<void()> context_restorer() {
+    auto glrc = wglGetCurrentContext();
+    auto dc = wglGetCurrentDC();
+    return [glrc, dc] { wglMakeCurrent(dc, glrc); };
+}
 
 class WinGLTestContext : public sk_gpu_test::GLTestContext {
 public:
@@ -24,15 +40,16 @@ public:
 private:
     void destroyGLContext();
 
+    void onPlatformMakeNotCurrent() const override;
     void onPlatformMakeCurrent() const override;
-    void onPlatformSwapBuffers() const override;
+    std::function<void()> onPlatformGetAutoContextRestore() const override;
     GrGLFuncPtr onPlatformGetProcAddress(const char* name) const override;
 
     HWND fWindow;
     HDC fDeviceContext;
     HGLRC fGlRenderContext;
     static ATOM gWC;
-    SkWGLPbufferContext* fPbufferContext;
+    sk_sp<SkWGLPbufferContext> fPbufferContext;
 };
 
 ATOM WinGLTestContext::gWC = 0;
@@ -79,18 +96,19 @@ WinGLTestContext::WinGLTestContext(GrGLStandard forcedGpuAPI, WinGLTestContext* 
         this->destroyGLContext();
         return;
     }
-    // Requesting a Core profile would bar us from using NVPR. So we request
-    // compatibility profile or GL ES.
+
+    // We request a compatibility context since glMultiDrawArraysIndirect, apparently, doesn't
+    // work correctly on Intel Iris GPUs with the core profile (skbug.com/11787).
     SkWGLContextRequest contextType =
-        kGLES_GrGLStandard == forcedGpuAPI ?
-        kGLES_SkWGLContextRequest : kGLPreferCompatibilityProfile_SkWGLContextRequest;
+        kGLES_GrGLStandard == forcedGpuAPI ? kGLES_SkWGLContextRequest
+                                           : kGLPreferCompatibilityProfile_SkWGLContextRequest;
 
     HGLRC winShareContext = nullptr;
     if (shareContext) {
         winShareContext = shareContext->fPbufferContext ? shareContext->fPbufferContext->getGLRC()
                                                         : shareContext->fGlRenderContext;
     }
-    fPbufferContext = SkWGLPbufferContext::Create(fDeviceContext, 0, contextType, winShareContext);
+    fPbufferContext = SkWGLPbufferContext::Create(fDeviceContext, contextType, winShareContext);
 
     HDC dc;
     HGLRC glrc;
@@ -113,14 +131,16 @@ WinGLTestContext::WinGLTestContext(GrGLStandard forcedGpuAPI, WinGLTestContext* 
         glrc = fPbufferContext->getGLRC();
     }
 
+    SkScopeExit restorer(context_restorer());
     if (!(wglMakeCurrent(dc, glrc))) {
         SkDebugf("Could not set the context.\n");
         this->destroyGLContext();
         return;
     }
 
-    sk_sp<const GrGLInterface> gl(GrGLCreateNativeInterface());
-    if (nullptr == gl.get()) {
+#ifdef SK_GL
+    auto gl = GrGLMakeNativeInterface();
+    if (!gl) {
         SkDebugf("Could not create GL interface.\n");
         this->destroyGLContext();
         return;
@@ -131,7 +151,13 @@ WinGLTestContext::WinGLTestContext(GrGLStandard forcedGpuAPI, WinGLTestContext* 
         return;
     }
 
-    this->init(gl.release());
+    this->init(std::move(gl));
+#else
+    // Allow the GLTestContext creation to succeed without a GrGLInterface to support
+    // GrContextFactory's persistent GL context workaround for Vulkan. We won't need the
+    // GrGLInterface since we're not running the GL backend.
+    this->init(nullptr);
+#endif
 }
 
 WinGLTestContext::~WinGLTestContext() {
@@ -140,8 +166,9 @@ WinGLTestContext::~WinGLTestContext() {
 }
 
 void WinGLTestContext::destroyGLContext() {
-    SkSafeSetNull(fPbufferContext);
+    fPbufferContext = nullptr;
     if (fGlRenderContext) {
+        // This deletes the context immediately even if it is current.
         wglDeleteContext(fGlRenderContext);
         fGlRenderContext = 0;
     }
@@ -152,6 +179,12 @@ void WinGLTestContext::destroyGLContext() {
     if (fWindow) {
         DestroyWindow(fWindow);
         fWindow = 0;
+    }
+}
+
+void WinGLTestContext::onPlatformMakeNotCurrent() const {
+    if (!wglMakeCurrent(NULL, NULL)) {
+        SkDebugf("Could not null out the rendering context.\n");
     }
 }
 
@@ -168,21 +201,15 @@ void WinGLTestContext::onPlatformMakeCurrent() const {
     }
 
     if (!wglMakeCurrent(dc, glrc)) {
-        SkDebugf("Could not create rendering context.\n");
+        SkDebugf("Could not make current.\n");
     }
 }
 
-void WinGLTestContext::onPlatformSwapBuffers() const {
-    HDC dc;
-
-    if (nullptr == fPbufferContext) {
-        dc = fDeviceContext;
-    } else {
-        dc = fPbufferContext->getDC();
+std::function<void()> WinGLTestContext::onPlatformGetAutoContextRestore() const {
+    if (wglGetCurrentContext() == fGlRenderContext) {
+        return nullptr;
     }
-    if (!SwapBuffers(dc)) {
-        SkDebugf("Could not complete SwapBuffers.\n");
-    }
+    return context_restorer();
 }
 
 GrGLFuncPtr WinGLTestContext::onPlatformGetProcAddress(const char* name) const {
@@ -204,3 +231,4 @@ GLTestContext* CreatePlatformGLTestContext(GrGLStandard forcedGpuAPI,
 }
 }  // namespace sk_gpu_test
 
+#endif

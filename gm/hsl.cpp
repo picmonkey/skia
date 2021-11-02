@@ -5,8 +5,16 @@
  * found in the LICENSE file.
  */
 
-#include "gm.h"
-#include "sk_tool_utils.h"
+#include "gm/gm.h"
+#include "include/core/SkBlendMode.h"
+#include "include/core/SkCanvas.h"
+#include "include/core/SkColor.h"
+#include "include/core/SkFont.h"
+#include "include/core/SkPaint.h"
+#include "include/core/SkTypeface.h"
+#include "include/core/SkTypes.h"
+#include "tools/Resources.h"
+#include "tools/ToolUtils.h"
 
 // Hue, Saturation, Color, and Luminosity blend modes are oddballs.
 // They nominally convert their inputs to unpremul, then to HSL, then
@@ -35,8 +43,8 @@
 //
 // I think the KHR version is just wrong... it produces values >1.  So we use the web version.
 
-static float min(float r, float g, float b) { return SkTMin(r, SkTMin(g, b)); }
-static float max(float r, float g, float b) { return SkTMax(r, SkTMax(g, b)); }
+static float min(float r, float g, float b) { return std::min(r, std::min(g, b)); }
+static float max(float r, float g, float b) { return std::max(r, std::max(g, b)); }
 
 static float sat(float r, float g, float b) { return max(r,g,b) - min(r,g,b); }
 static float lum(float r, float g, float b) { return r*0.30f + g*0.59f + b*0.11f; }
@@ -130,45 +138,26 @@ static void luminosity(float  dr, float  dg, float  db,
 }
 
 static SkColor blend(SkColor dst, SkColor src,
-                     void (*mode)(float,float,float, float*,float*,float*),
-                     bool legacy) {
+                     void (*mode)(float,float,float, float*,float*,float*)) {
 
     SkASSERT(SkColorGetA(dst) == 0xff
           && SkColorGetA(src) == 0xff);   // Not fundamental, just simplifying for this GM.
 
-    auto to_float = [&](SkColor c) {
-        if (legacy) {
-            return SkColor4f{
-                SkColorGetR(c) * (1/255.0f),
-                SkColorGetG(c) * (1/255.0f),
-                SkColorGetB(c) * (1/255.0f),
-                1.0f,
-            };
-        }
-        return SkColor4f::FromColor(c);
-    };
-
-    SkColor4f d = to_float(dst),
-              s = to_float(src);
+    SkColor4f d = SkColor4f::FromColor(dst),
+              s = SkColor4f::FromColor(src);
 
     mode( d.fR,  d.fG,  d.fB,
          &s.fR, &s.fG, &s.fB);
 
-    if (legacy) {
-        return SkColorSetRGB(s.fR * 255.0f + 0.5f,
-                             s.fG * 255.0f + 0.5f,
-                             s.fB * 255.0f + 0.5f);
-    }
     return s.toSkColor();
 }
 
 DEF_SIMPLE_GM(hsl, canvas, 600, 100) {
-    SkPaint label;
-    sk_tool_utils::set_portable_typeface(&label);
-    label.setAntiAlias(true);
+    SkPaint paint;
+    SkFont  font(ToolUtils::create_portable_typeface());
 
     const char* comment = "HSL blend modes are correct when you see no circles in the squares.";
-    canvas->drawText(comment, strlen(comment), 10,10, label);
+    canvas->drawString(comment, 10,10, font, paint);
 
     // Just to keep things reaaaal simple, we'll only use opaque colors.
     SkPaint bg, fg;
@@ -186,7 +175,6 @@ DEF_SIMPLE_GM(hsl, canvas, 600, 100) {
         { SkBlendMode::kColor,      color      },
         { SkBlendMode::kLuminosity, luminosity },
     };
-    bool legacy = !canvas->imageInfo().colorSpace();
     for (auto test : tests) {
         canvas->drawRect({20,20,80,80}, bg);
 
@@ -195,13 +183,80 @@ DEF_SIMPLE_GM(hsl, canvas, 600, 100) {
 
         if (test.reference) {
             SkPaint ref;
-            ref.setColor(blend(bg.getColor(), fg.getColor(), test.reference, legacy));
+            ref.setColor(blend(bg.getColor(), fg.getColor(), test.reference));
             canvas->drawCircle(50,50, 20, ref);
         }
 
-        const char* name = SkBlendMode_Name(test.mode);
-        canvas->drawText(name, strlen(name), 20,90, label);
+        canvas->drawString(SkBlendMode_Name(test.mode), 20, 90, font, paint);
 
         canvas->translate(100,0);
+    }
+}
+
+#include "include/effects/SkGradientShader.h"
+
+// Trying to match sample images on https://www.w3.org/TR/compositing-1/#blendingnonseparable
+//
+static sk_sp<SkShader> make_grad(SkScalar width) {
+    SkColor colors[] = {
+        0xFF00CCCC, 0xFF0000CC, 0xFFCC00CC, 0xFFCC0000, 0xFFCCCC00, 0xFF00CC00,
+    };
+    SkPoint pts[] = {{0, 0}, {width, 0}};
+
+    return SkGradientShader::MakeLinear(pts, colors, nullptr, SK_ARRAY_COUNT(colors),
+                                        SkTileMode::kClamp);
+}
+
+DEF_SIMPLE_GM(HSL_duck, canvas, 1110, 620) {
+    auto src = GetResourceAsImage("images/ducky.png");
+    auto dst = make_grad(src->width());
+    SkRect r = SkRect::MakeIWH(src->width(), src->height());
+
+    canvas->translate(10, 50);
+    canvas->scale(0.5f, 0.5f);
+
+    const struct {
+        SkBlendMode fMode;
+        const char* fName;
+    } recs[] = {
+        { SkBlendMode::kHue,        "Hue" },
+        { SkBlendMode::kSaturation, "Saturation" },
+        { SkBlendMode::kColor,      "Color" },
+        { SkBlendMode::kLuminosity, "Luminosity" },
+    };
+
+    SkFont font;
+    font.setSize(40);
+    font.setEdging(SkFont::Edging::kAntiAlias);
+
+    canvas->save();
+    for (auto [_, name] : recs) {
+        canvas->drawSimpleText(name, strlen(name), SkTextEncoding::kUTF8, 150, -20,
+                               font, SkPaint());
+        canvas->translate(r.width() + 10, 0);
+    }
+    canvas->restore();
+
+    for (SkScalar src_a : {1.0f, 0.5f}) {
+        canvas->save();
+        for (auto [mode, _] : recs) {
+            SkPaint p;
+            p.setShader(dst);
+            canvas->drawRect(r, p); // bg
+
+            p.setShader(nullptr);
+            p.setBlendMode(mode);
+            p.setAlphaf(src_a);
+            canvas->drawImageRect(src, r, SkSamplingOptions(), &p);
+
+            canvas->translate(r.width() + 10, 0);
+        }
+        SkString str;
+        str.printf("alpha %g", src_a);
+        canvas->drawSimpleText(str.c_str(), str.size(), SkTextEncoding::kUTF8, 10, r.height()/2,
+                               font, SkPaint());
+
+        canvas->restore();
+        canvas->translate(0, r.height() + 10);
     }
 }

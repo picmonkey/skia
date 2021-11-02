@@ -8,234 +8,317 @@
 #ifndef GrOpFlushState_DEFINED
 #define GrOpFlushState_DEFINED
 
-#include "GrBufferAllocPool.h"
-#include "GrGpu.h"
-#include "SkArenaAlloc.h"
-#include "ops/GrMeshDrawOp.h"
+#include <utility>
+#include "src/core/SkArenaAlloc.h"
+#include "src/core/SkArenaAllocList.h"
+#include "src/gpu/GrAppliedClip.h"
+#include "src/gpu/GrBufferAllocPool.h"
+#include "src/gpu/GrDeferredUpload.h"
+#include "src/gpu/GrMeshDrawTarget.h"
+#include "src/gpu/GrProgramInfo.h"
+#include "src/gpu/GrRenderTargetProxy.h"
+#include "src/gpu/GrSurfaceProxyView.h"
 
-class GrGpuCommandBuffer;
+class GrGpu;
+class GrOpsRenderPass;
 class GrResourceProvider;
 
-/** Tracks the state across all the GrOps (really just the GrDrawOps) in a GrOpList flush. */
-class GrOpFlushState {
+/** Tracks the state across all the GrOps (really just the GrDrawOps) in a OpsTask flush. */
+class GrOpFlushState final : public GrDeferredUploadTarget, public GrMeshDrawTarget {
 public:
-    GrOpFlushState(GrGpu*, GrResourceProvider*);
+    // vertexSpace and indexSpace may either be null or an alloation of size
+    // GrBufferAllocPool::kDefaultBufferSize. If the latter, then CPU memory is only allocated for
+    // vertices/indices when a buffer larger than kDefaultBufferSize is required.
+    GrOpFlushState(GrGpu*, GrResourceProvider*, GrTokenTracker*,
+                   sk_sp<GrBufferAllocPool::CpuBufferCache> = nullptr);
 
-    ~GrOpFlushState() { this->reset(); }
-
-    /** Inserts an upload to be executed after all ops in the flush prepared their draws but before
-        the draws are executed to the backend 3D API. */
-    void addASAPUpload(GrDrawOp::DeferredUploadFn&& upload) {
-        fAsapUploads.emplace_back(std::move(upload));
-    }
-
-    const GrCaps& caps() const { return *fGpu->caps(); }
-    GrResourceProvider* resourceProvider() const { return fResourceProvider; }
-
-    /** Has the token been flushed to the backend 3D API. */
-    bool hasDrawBeenFlushed(GrDrawOpUploadToken token) const {
-        return token.fSequenceNumber <= fLastFlushedToken.fSequenceNumber;
-    }
-
-    /** Issue a token to an operation that is being enqueued. */
-    GrDrawOpUploadToken issueDrawToken() {
-        return GrDrawOpUploadToken(++fLastIssuedToken.fSequenceNumber);
-    }
-
-    /** Call every time a draw that was issued a token is flushed */
-    void flushToken() { ++fLastFlushedToken.fSequenceNumber; }
-
-    /** Gets the next draw token that will be issued. */
-    GrDrawOpUploadToken nextDrawToken() const {
-        return GrDrawOpUploadToken(fLastIssuedToken.fSequenceNumber + 1);
-    }
-
-    /** The last token flushed to all the way to the backend API. */
-    GrDrawOpUploadToken nextTokenToFlush() const {
-        return GrDrawOpUploadToken(fLastFlushedToken.fSequenceNumber + 1);
-    }
-
-    void* makeVertexSpace(size_t vertexSize, int vertexCount,
-                          const GrBuffer** buffer, int* startVertex);
-    uint16_t* makeIndexSpace(int indexCount, const GrBuffer** buffer, int* startIndex);
+    ~GrOpFlushState() final { this->reset(); }
 
     /** This is called after each op has a chance to prepare its draws and before the draws are
-        issued. */
-    void preIssueDraws() {
-        fVertexPool.unmap();
-        fIndexPool.unmap();
-        int uploadCount = fAsapUploads.count();
+        executed. */
+    void preExecuteDraws();
 
-        for (int i = 0; i < uploadCount; i++) {
-            this->doUpload(fAsapUploads[i]);
-        }
-        fAsapUploads.reset();
-    }
+    /** Called to upload data to a texture using the GrDeferredTextureUploadFn. If the uploaded
+        surface needs to be prepared for being sampled in a draw after the upload, the caller
+        should pass in true for shouldPrepareSurfaceForSampling. This feature is needed for Vulkan
+        when doing inline uploads to reset the image layout back to sampled. */
+    void doUpload(GrDeferredTextureUploadFn&, bool shouldPrepareSurfaceForSampling = false);
 
-    void doUpload(GrDrawOp::DeferredUploadFn& upload) {
-        GrDrawOp::WritePixelsFn wp = [this] (GrSurface* surface,
-                int left, int top, int width, int height,
-                GrPixelConfig config, const void* buffer,
-                size_t rowBytes) -> bool {
-            return this->fGpu->writePixels(surface, left, top, width, height, config, buffer,
-                                           rowBytes);
-        };
-        upload(wp);
-    }
+    /** Called as ops are executed. Must be called in the same order as the ops were prepared. */
+    void executeDrawsAndUploadsForMeshDrawOp(const GrOp* op, const SkRect& chainBounds,
+                                             const GrPipeline*, const GrUserStencilSettings*);
 
-    void putBackIndices(size_t indices) { fIndexPool.putBack(indices * sizeof(uint16_t)); }
-
-    void putBackVertexSpace(size_t sizeInBytes) { fVertexPool.putBack(sizeInBytes); }
-
-    GrGpuCommandBuffer* commandBuffer() { return fCommandBuffer; }
-    void setCommandBuffer(GrGpuCommandBuffer* buffer) { fCommandBuffer = buffer; }
+    GrOpsRenderPass* opsRenderPass() { return fOpsRenderPass; }
+    void setOpsRenderPass(GrOpsRenderPass* renderPass) { fOpsRenderPass = renderPass; }
 
     GrGpu* gpu() { return fGpu; }
 
-    void reset() {
-        fVertexPool.reset();
-        fIndexPool.reset();
-        fPipelines.reset();
-    }
+    void reset();
 
-    /** Additional data required on a per-op basis when executing GrDrawOps. */
-    struct DrawOpArgs {
-        GrRenderTarget* fRenderTarget;
-        const GrAppliedClip* fAppliedClip;
-        GrXferProcessor::DstTexture fDstTexture;
+    /** Additional data required on a per-op basis when executing GrOps. */
+    struct OpArgs {
+        // TODO: why does OpArgs have the op we're going to pass it to as a member? Remove it.
+        explicit OpArgs(GrOp* op, const GrSurfaceProxyView& surfaceView, bool usesMSAASurface,
+                        GrAppliedClip* appliedClip, const GrDstProxyView& dstProxyView,
+                        GrXferBarrierFlags renderPassXferBarriers, GrLoadOp colorLoadOp)
+                : fOp(op)
+                , fSurfaceView(surfaceView)
+                , fRenderTargetProxy(surfaceView.asRenderTargetProxy())
+                , fUsesMSAASurface(usesMSAASurface)
+                , fAppliedClip(appliedClip)
+                , fDstProxyView(dstProxyView)
+                , fRenderPassXferBarriers(renderPassXferBarriers)
+                , fColorLoadOp(colorLoadOp) {
+            SkASSERT(surfaceView.asRenderTargetProxy());
+        }
+
+        GrOp* op() { return fOp; }
+        const GrSurfaceProxyView& writeView() const { return fSurfaceView; }
+        GrRenderTargetProxy* rtProxy() const { return fRenderTargetProxy; }
+        // True if the op under consideration belongs to an opsTask that renders to an MSAA buffer.
+        bool usesMSAASurface() const { return fUsesMSAASurface; }
+        GrAppliedClip* appliedClip() { return fAppliedClip; }
+        const GrAppliedClip* appliedClip() const { return fAppliedClip; }
+        const GrDstProxyView& dstProxyView() const { return fDstProxyView; }
+        GrXferBarrierFlags renderPassBarriers() const { return fRenderPassXferBarriers; }
+        GrLoadOp colorLoadOp() const { return fColorLoadOp; }
+
+#ifdef SK_DEBUG
+        void validate() const {
+            SkASSERT(fOp);
+            SkASSERT(fSurfaceView);
+        }
+#endif
+
+    private:
+        GrOp*                         fOp;
+        const GrSurfaceProxyView&     fSurfaceView;
+        GrRenderTargetProxy*          fRenderTargetProxy;
+        bool                          fUsesMSAASurface;
+        GrAppliedClip*                fAppliedClip;
+        GrDstProxyView                fDstProxyView;   // TODO: do we still need the dst proxy here?
+        GrXferBarrierFlags            fRenderPassXferBarriers;
+        GrLoadOp                      fColorLoadOp;
     };
 
-    void setDrawOpArgs(DrawOpArgs* opArgs) { fOpArgs = opArgs; }
+    void setOpArgs(OpArgs* opArgs) { fOpArgs = opArgs; }
 
-    const DrawOpArgs& drawOpArgs() const {
+    const OpArgs& drawOpArgs() const {
         SkASSERT(fOpArgs);
+        SkDEBUGCODE(fOpArgs->validate());
         return *fOpArgs;
     }
 
-    template <typename... Args>
-    GrPipeline* allocPipeline(Args... args) {
-        return fPipelines.make<GrPipeline>(std::forward<Args>(args)...);
+    void setSampledProxyArray(SkTArray<GrSurfaceProxy*, true>* sampledProxies) {
+        fSampledProxies = sampledProxies;
+    }
+
+    SkTArray<GrSurfaceProxy*, true>* sampledProxyArray() override {
+        return fSampledProxies;
+    }
+
+    /** Overrides of GrDeferredUploadTarget. */
+
+    const GrTokenTracker* tokenTracker() final { return fTokenTracker; }
+    GrDeferredUploadToken addInlineUpload(GrDeferredTextureUploadFn&&) final;
+    GrDeferredUploadToken addASAPUpload(GrDeferredTextureUploadFn&&) final;
+
+    /** Overrides of GrMeshDrawTarget. */
+    void recordDraw(const GrGeometryProcessor*,
+                    const GrSimpleMesh[],
+                    int meshCnt,
+                    const GrSurfaceProxy* const primProcProxies[],
+                    GrPrimitiveType) final;
+    void* makeVertexSpace(size_t vertexSize, int vertexCount, sk_sp<const GrBuffer>*,
+                          int* startVertex) final;
+    uint16_t* makeIndexSpace(int indexCount, sk_sp<const GrBuffer>*, int* startIndex) final;
+    void* makeVertexSpaceAtLeast(size_t vertexSize, int minVertexCount, int fallbackVertexCount,
+                                 sk_sp<const GrBuffer>*, int* startVertex,
+                                 int* actualVertexCount) final;
+    uint16_t* makeIndexSpaceAtLeast(int minIndexCount, int fallbackIndexCount,
+                                    sk_sp<const GrBuffer>*, int* startIndex,
+                                    int* actualIndexCount) final;
+    GrDrawIndirectWriter makeDrawIndirectSpace(int drawCount, sk_sp<const GrBuffer>* buffer,
+                                               size_t* offset) override {
+        return fDrawIndirectPool.makeSpace(drawCount, buffer, offset);
+    }
+    GrDrawIndexedIndirectWriter makeDrawIndexedIndirectSpace(int drawCount,
+                                                             sk_sp<const GrBuffer>* buffer,
+                                                             size_t* offset) override {
+        return fDrawIndirectPool.makeIndexedSpace(drawCount, buffer, offset);
+    }
+    void putBackIndices(int indexCount) final;
+    void putBackVertices(int vertices, size_t vertexStride) final;
+    void putBackIndirectDraws(int drawCount) final { fDrawIndirectPool.putBack(drawCount); }
+    void putBackIndexedIndirectDraws(int drawCount) final {
+        fDrawIndirectPool.putBackIndexed(drawCount);
+    }
+    const GrSurfaceProxyView& writeView() const final { return this->drawOpArgs().writeView(); }
+    GrRenderTargetProxy* rtProxy() const final { return this->drawOpArgs().rtProxy(); }
+    bool usesMSAASurface() const final { return this->drawOpArgs().usesMSAASurface(); }
+    const GrAppliedClip* appliedClip() const final { return this->drawOpArgs().appliedClip(); }
+    const GrAppliedHardClip& appliedHardClip() const {
+        return (fOpArgs->appliedClip()) ?
+                fOpArgs->appliedClip()->hardClip() : GrAppliedHardClip::Disabled();
+    }
+    GrAppliedClip detachAppliedClip() final;
+    const GrDstProxyView& dstProxyView() const final {
+        return this->drawOpArgs().dstProxyView();
+    }
+
+    GrXferBarrierFlags renderPassBarriers() const final {
+        return this->drawOpArgs().renderPassBarriers();
+    }
+
+    GrLoadOp colorLoadOp() const final {
+        return this->drawOpArgs().colorLoadOp();
+    }
+
+    GrDeferredUploadTarget* deferredUploadTarget() final { return this; }
+    const GrCaps& caps() const final;
+    GrThreadSafeCache* threadSafeCache() const final;
+    GrResourceProvider* resourceProvider() const final { return fResourceProvider; }
+
+    GrStrikeCache* strikeCache() const final;
+
+    // At this point we know we're flushing so full access to the GrAtlasManager and
+    // SmallPathAtlasMgr is required (and permissible).
+    GrAtlasManager* atlasManager() const final;
+    skgpu::v1::SmallPathAtlasMgr* smallPathAtlasManager() const final;
+
+    /** GrMeshDrawTarget override. */
+    SkArenaAlloc* allocator() override { return &fArena; }
+
+    // This is a convenience method that binds the given pipeline, and then, if our applied clip has
+    // a scissor, sets the scissor rect from the applied clip.
+    void bindPipelineAndScissorClip(const GrProgramInfo& programInfo, const SkRect& drawBounds) {
+        SkASSERT((programInfo.pipeline().isScissorTestEnabled()) ==
+                 (this->appliedClip() && this->appliedClip()->scissorState().enabled()));
+        this->bindPipeline(programInfo, drawBounds);
+        if (programInfo.pipeline().isScissorTestEnabled()) {
+            this->setScissorRect(this->appliedClip()->scissorState().rect());
+        }
+    }
+
+    // This is a convenience method for when the primitive processor has exactly one texture. It
+    // binds one texture for the primitive processor, and any others for FPs on the pipeline.
+    void bindTextures(const GrGeometryProcessor& geomProc,
+                      const GrSurfaceProxy& singleGeomProcTexture,
+                      const GrPipeline& pipeline) {
+        SkASSERT(geomProc.numTextureSamplers() == 1);
+        const GrSurfaceProxy* ptr = &singleGeomProcTexture;
+        this->bindTextures(geomProc, &ptr, pipeline);
+    }
+
+    // Makes the appropriate bindBuffers() and draw*() calls for the provided mesh.
+    void drawMesh(const GrSimpleMesh& mesh);
+
+    // Pass-through methods to GrOpsRenderPass.
+    void bindPipeline(const GrProgramInfo& programInfo, const SkRect& drawBounds) {
+        fOpsRenderPass->bindPipeline(programInfo, drawBounds);
+    }
+    void setScissorRect(const SkIRect& scissorRect) {
+        fOpsRenderPass->setScissorRect(scissorRect);
+    }
+    void bindTextures(const GrGeometryProcessor& geomProc,
+                      const GrSurfaceProxy* const geomProcTextures[],
+                      const GrPipeline& pipeline) {
+        fOpsRenderPass->bindTextures(geomProc, geomProcTextures, pipeline);
+    }
+    void bindBuffers(sk_sp<const GrBuffer> indexBuffer, sk_sp<const GrBuffer> instanceBuffer,
+                     sk_sp<const GrBuffer> vertexBuffer,
+                     GrPrimitiveRestart primitiveRestart = GrPrimitiveRestart::kNo) {
+        fOpsRenderPass->bindBuffers(std::move(indexBuffer), std::move(instanceBuffer),
+                                    std::move(vertexBuffer), primitiveRestart);
+    }
+    void draw(int vertexCount, int baseVertex) {
+        fOpsRenderPass->draw(vertexCount, baseVertex);
+    }
+    void drawIndexed(int indexCount, int baseIndex, uint16_t minIndexValue, uint16_t maxIndexValue,
+                     int baseVertex) {
+        fOpsRenderPass->drawIndexed(indexCount, baseIndex, minIndexValue, maxIndexValue,
+                                    baseVertex);
+    }
+    void drawInstanced(int instanceCount, int baseInstance, int vertexCount, int baseVertex) {
+        fOpsRenderPass->drawInstanced(instanceCount, baseInstance, vertexCount, baseVertex);
+    }
+    void drawIndexedInstanced(int indexCount, int baseIndex, int instanceCount, int baseInstance,
+                              int baseVertex) {
+        fOpsRenderPass->drawIndexedInstanced(indexCount, baseIndex, instanceCount, baseInstance,
+                                             baseVertex);
+    }
+    void drawIndirect(const GrBuffer* drawIndirectBuffer, size_t offset, int drawCount) {
+        fOpsRenderPass->drawIndirect(drawIndirectBuffer, offset, drawCount);
+    }
+    void drawIndexedIndirect(const GrBuffer* drawIndirectBuffer, size_t offset, int drawCount) {
+        fOpsRenderPass->drawIndexedIndirect(drawIndirectBuffer, offset, drawCount);
+    }
+    void drawIndexPattern(int patternIndexCount, int patternRepeatCount,
+                          int maxPatternRepetitionsInIndexBuffer, int patternVertexCount,
+                          int baseVertex) {
+        fOpsRenderPass->drawIndexPattern(patternIndexCount, patternRepeatCount,
+                                         maxPatternRepetitionsInIndexBuffer, patternVertexCount,
+                                         baseVertex);
     }
 
 private:
-    GrGpu* fGpu;
-    GrResourceProvider* fResourceProvider;
-    GrGpuCommandBuffer* fCommandBuffer;
+    struct InlineUpload {
+        InlineUpload(GrDeferredTextureUploadFn&& upload, GrDeferredUploadToken token)
+                : fUpload(std::move(upload)), fUploadBeforeToken(token) {}
+        GrDeferredTextureUploadFn fUpload;
+        GrDeferredUploadToken fUploadBeforeToken;
+    };
+
+    // A set of contiguous draws that share a draw token, geometry processor, and pipeline. The
+    // meshes for the draw are stored in the fMeshes array. The reason for coalescing meshes
+    // that share a geometry processor into a Draw is that it allows the Gpu object to setup
+    // the shared state once and then issue draws for each mesh.
+    struct Draw {
+        ~Draw();
+        // The geometry processor is always forced to be in an arena allocation. This object does
+        // not need to manage its lifetime.
+        const GrGeometryProcessor* fGeometryProcessor = nullptr;
+        // Must have GrGeometryProcessor::numTextureSamplers() entries. Can be null if no samplers.
+        const GrSurfaceProxy* const* fGeomProcProxies = nullptr;
+        const GrSimpleMesh* fMeshes = nullptr;
+        const GrOp* fOp = nullptr;
+        int fMeshCnt = 0;
+        GrPrimitiveType fPrimitiveType;
+    };
+
+    // Storage for ops' pipelines, draws, and inline uploads.
+    SkArenaAllocWithReset fArena{sizeof(GrPipeline) * 100};
+
+    // Store vertex and index data on behalf of ops that are flushed.
     GrVertexBufferAllocPool fVertexPool;
     GrIndexBufferAllocPool fIndexPool;
-    SkSTArray<4, GrDrawOp::DeferredUploadFn> fAsapUploads;
-    GrDrawOpUploadToken fLastIssuedToken;
-    GrDrawOpUploadToken fLastFlushedToken;
-    DrawOpArgs* fOpArgs;
-    SkArenaAlloc fPipelines{sizeof(GrPipeline) * 100};
-};
+    GrDrawIndirectBufferAllocPool fDrawIndirectPool;
 
-/**
- * A word about uploads and tokens: Ops should usually schedule their uploads to occur at the
- * begining of a frame whenever possible. These are called ASAP uploads. Of course, this requires
- * that there are no draws that have yet to be flushed that rely on the old texture contents. In
- * that case the ASAP upload would happen prior to the previous draw causing the draw to read the
- * new (wrong) texture data. In that case they should schedule an inline upload.
- *
- * Ops, in conjunction with helpers such as GrDrawOpAtlas, can use the token system to know
- * what the most recent draw was that referenced a resource (or portion of a resource). Each draw
- * is assigned a token. A resource (or portion) can be tagged with the most recent draw's
- * token. The target provides a facility for testing whether the draw corresponding to the token
- * has been flushed. If it has not been flushed then the op must perform an inline upload instead.
- * When scheduling an inline upload the op provides the token of the draw that the upload must occur
- * before. The upload will then occur between the draw that requires the new data but after the
- * token that requires the old data.
- *
- * TODO: Currently the token/upload interface is spread over GrDrawOp, GrMeshDrawOp,
- * GrDrawOp::Target, and GrMeshDrawOp::Target. However, the interface at the GrDrawOp level is not
- * complete and isn't useful. We should push it down to GrMeshDrawOp until it is required at the
- * GrDrawOp level.
- */
+    // Data stored on behalf of the ops being flushed.
+    SkArenaAllocList<GrDeferredTextureUploadFn> fASAPUploads;
+    SkArenaAllocList<InlineUpload> fInlineUploads;
+    SkArenaAllocList<Draw> fDraws;
 
-/**
- * GrDrawOp instances use this object to allocate space for their geometry and to issue the draws
- * that render their op.
- */
-class GrDrawOp::Target {
-public:
-    Target(GrOpFlushState* state, GrDrawOp* op) : fState(state), fOp(op) {}
+    // All draws we store have an implicit draw token. This is the draw token for the first draw
+    // in fDraws.
+    GrDeferredUploadToken fBaseDrawToken = GrDeferredUploadToken::AlreadyFlushedToken();
 
-    /** Returns the token of the draw that this upload will occur before. */
-    GrDrawOpUploadToken addInlineUpload(DeferredUploadFn&& upload) {
-        fOp->fInlineUploads.emplace_back(std::move(upload), fState->nextDrawToken());
-        return fOp->fInlineUploads.back().fUploadBeforeToken;
-    }
+    // Info about the op that is currently preparing or executing using the flush state or null if
+    // an op is not currently preparing of executing.
+    OpArgs* fOpArgs = nullptr;
 
-    /** Returns the token of the draw that this upload will occur before. Since ASAP uploads
-        are done first during a flush, this will be the first token since the most recent
-        flush. */
-    GrDrawOpUploadToken addAsapUpload(DeferredUploadFn&& upload) {
-        fState->addASAPUpload(std::move(upload));
-        return fState->nextTokenToFlush();
-    }
+    // This field is only transiently set during flush. Each OpsTask will set it to point to an
+    // array of proxies it uses before call onPrepare and onExecute.
+    SkTArray<GrSurfaceProxy*, true>* fSampledProxies;
 
-    bool hasDrawBeenFlushed(GrDrawOpUploadToken token) const {
-        return fState->hasDrawBeenFlushed(token);
-    }
+    GrGpu* fGpu;
+    GrResourceProvider* fResourceProvider;
+    GrTokenTracker* fTokenTracker;
+    GrOpsRenderPass* fOpsRenderPass = nullptr;
 
-    /** Gets the next draw token that will be issued by this target. This can be used by an op
-        to record that the next draw it issues will use a resource (e.g. texture) while preparing
-        that draw. */
-    GrDrawOpUploadToken nextDrawToken() const { return fState->nextDrawToken(); }
-
-    const GrCaps& caps() const { return fState->caps(); }
-
-    GrResourceProvider* resourceProvider() const { return fState->resourceProvider(); }
-
-protected:
-    GrDrawOp* op() { return fOp; }
-    GrOpFlushState* state() { return fState; }
-    const GrOpFlushState* state() const { return fState; }
-
-private:
-    GrOpFlushState* fState;
-    GrDrawOp* fOp;
-};
-
-/** Extension of GrDrawOp::Target for use by GrMeshDrawOp. Adds the ability to create vertex
-    draws. */
-class GrMeshDrawOp::Target : public GrDrawOp::Target {
-public:
-    Target(GrOpFlushState* state, GrMeshDrawOp* op) : INHERITED(state, op) {}
-
-    void draw(const GrGeometryProcessor* gp, const GrPipeline* pipeline, const GrMesh& mesh);
-
-    void* makeVertexSpace(size_t vertexSize, int vertexCount,
-                          const GrBuffer** buffer, int* startVertex) {
-        return this->state()->makeVertexSpace(vertexSize, vertexCount, buffer, startVertex);
-    }
-
-    uint16_t* makeIndexSpace(int indexCount, const GrBuffer** buffer, int* startIndex) {
-        return this->state()->makeIndexSpace(indexCount, buffer, startIndex);
-    }
-
-    /** Helpers for ops which over-allocate and then return data to the pool. */
-    void putBackIndices(int indices) { this->state()->putBackIndices(indices); }
-    void putBackVertices(int vertices, size_t vertexStride) {
-        this->state()->putBackVertexSpace(vertices * vertexStride);
-    }
-
-    GrRenderTarget* renderTarget() const { return this->state()->drawOpArgs().fRenderTarget; }
-
-    const GrAppliedClip* clip() const { return this->state()->drawOpArgs().fAppliedClip; }
-
-    const GrXferProcessor::DstTexture& dstTexture() const {
-        return this->state()->drawOpArgs().fDstTexture;
-    }
-
-    template <typename... Args>
-    GrPipeline* allocPipeline(Args... args) {
-        return this->state()->allocPipeline(std::forward<Args>(args)...);
-    }
-
-private:
-    GrMeshDrawOp* meshDrawOp() { return static_cast<GrMeshDrawOp*>(this->op()); }
-    typedef GrDrawOp::Target INHERITED;
+    // Variables that are used to track where we are in lists as ops are executed
+    SkArenaAllocList<Draw>::Iter fCurrDraw;
+    SkArenaAllocList<InlineUpload>::Iter fCurrUpload;
 };
 
 #endif

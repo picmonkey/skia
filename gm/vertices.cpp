@@ -5,13 +5,34 @@
  * found in the LICENSE file.
  */
 
-#include "gm.h"
-#include "SkCanvas.h"
-#include "SkColorFilter.h"
-#include "SkGradientShader.h"
-#include "SkLocalMatrixShader.h"
-#include "SkRandom.h"
-#include "SkVertices.h"
+#include "gm/gm.h"
+#include "include/core/SkBlendMode.h"
+#include "include/core/SkCanvas.h"
+#include "include/core/SkColor.h"
+#include "include/core/SkColorFilter.h"
+#include "include/core/SkMatrix.h"
+#include "include/core/SkPaint.h"
+#include "include/core/SkPoint.h"
+#include "include/core/SkRefCnt.h"
+#include "include/core/SkScalar.h"
+#include "include/core/SkShader.h"
+#include "include/core/SkSize.h"
+#include "include/core/SkString.h"
+#include "include/core/SkTileMode.h"
+#include "include/core/SkTypes.h"
+#include "include/core/SkVertices.h"
+#include "include/effects/SkGradientShader.h"
+#include "include/effects/SkRuntimeEffect.h"
+#include "include/private/SkTDArray.h"
+#include "include/utils/SkRandom.h"
+#include "src/core/SkVerticesPriv.h"
+#include "src/shaders/SkLocalMatrixShader.h"
+#include "src/utils/SkPatchUtils.h"
+#include "tools/Resources.h"
+#include "tools/ToolUtils.h"
+
+#include <initializer_list>
+#include <utility>
 
 static constexpr SkScalar kShaderSize = 40;
 static sk_sp<SkShader> make_shader1(SkScalar shaderScale) {
@@ -20,26 +41,26 @@ static sk_sp<SkShader> make_shader1(SkScalar shaderScale) {
         SK_ColorMAGENTA, SK_ColorBLUE, SK_ColorYELLOW,
     };
     const SkPoint pts[] = {{kShaderSize / 4, 0}, {3 * kShaderSize / 4, kShaderSize}};
-    const SkMatrix localMatrix = SkMatrix::MakeScale(shaderScale, shaderScale);
+    const SkMatrix localMatrix = SkMatrix::Scale(shaderScale, shaderScale);
 
     sk_sp<SkShader> grad = SkGradientShader::MakeLinear(pts, colors, nullptr,
                                                         SK_ARRAY_COUNT(colors),
-                                                        SkShader::kMirror_TileMode, 0,
+                                                        SkTileMode::kMirror, 0,
                                                         &localMatrix);
     // Throw in a couple of local matrix wrappers for good measure.
     return shaderScale == 1
         ? grad
         : sk_make_sp<SkLocalMatrixShader>(
-              sk_make_sp<SkLocalMatrixShader>(std::move(grad), SkMatrix::MakeTrans(-10, 0)),
-              SkMatrix::MakeTrans(10, 0));
+              sk_make_sp<SkLocalMatrixShader>(std::move(grad), SkMatrix::Translate(-10, 0)),
+              SkMatrix::Translate(10, 0));
 }
 
 static sk_sp<SkShader> make_shader2() {
-    return SkShader::MakeColorShader(SK_ColorBLUE);
+    return SkShaders::Color(SK_ColorBLUE);
 }
 
 static sk_sp<SkColorFilter> make_color_filter() {
-    return SkColorFilter::MakeModeFilter(0xFFAABBCC, SkBlendMode::kDarken);
+    return SkColorFilters::Blend(0xFFAABBCC, SkBlendMode::kDarken);
 }
 
 static constexpr SkScalar kMeshSize = 30;
@@ -154,7 +175,7 @@ protected:
         int x = 0;
         for (auto mode : modes) {
             canvas->save();
-            for (uint8_t alpha : {0xFF, 0x80}) {
+            for (float alpha : {1.0f, 0.5f}) {
                 for (const auto& cf : {sk_sp<SkColorFilter>(nullptr), fColorFilter}) {
                     for (const auto& shader : {fShader1, fShader2}) {
                         static constexpr struct {
@@ -164,7 +185,7 @@ protected:
                         for (auto attrs : kAttrs) {
                             paint.setShader(shader);
                             paint.setColorFilter(cf);
-                            paint.setAlpha(alpha);
+                            paint.setAlphaf(alpha);
 
                             const SkColor* colors = attrs.fHasColors ? fColors : nullptr;
                             const SkPoint* texs = attrs.fHasTexs ? fTexs : nullptr;
@@ -184,7 +205,7 @@ protected:
     }
 
 private:
-    typedef skiagm::GM INHERITED;
+    using INHERITED = skiagm::GM;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -207,10 +228,10 @@ static void draw_batching(SkCanvas* canvas) {
     SkTDArray<SkMatrix> matrices;
     matrices.push()->reset();
     matrices.push()->setTranslate(0, 40);
-    SkMatrix* m = matrices.push();
-    m->setRotate(45, kMeshSize / 2, kMeshSize / 2);
-    m->postScale(1.2f, .8f, kMeshSize / 2, kMeshSize / 2);
-    m->postTranslate(0, 80);
+    matrices.push()
+            ->setRotate(45, kMeshSize / 2, kMeshSize / 2)
+            .postScale(1.2f, .8f, kMeshSize / 2, kMeshSize / 2)
+            .postTranslate(0, 80);
 
     auto shader = make_shader1(1);
 
@@ -249,4 +270,43 @@ DEF_SIMPLE_GM(vertices_batching, canvas, 100, 500) {
     draw_batching(canvas);
     canvas->translate(50, 0);
     draw_batching(canvas);
+}
+
+// Test case for skbug.com/10069. We need to draw the vertices twice (with different matrices) to
+// trigger the bug.
+DEF_SIMPLE_GM(vertices_perspective, canvas, 256, 256) {
+    SkPaint paint;
+    paint.setShader(ToolUtils::create_checkerboard_shader(SK_ColorBLACK, SK_ColorWHITE, 32));
+
+    SkRect r = SkRect::MakeWH(128, 128);
+
+    SkPoint pos[4];
+    r.toQuad(pos);
+    auto verts = SkVertices::MakeCopy(SkVertices::kTriangleFan_VertexMode, 4, pos, pos, nullptr);
+
+    SkMatrix persp;
+    persp.setPerspY(SK_Scalar1 / 100);
+
+    canvas->save();
+    canvas->concat(persp);
+    canvas->drawRect(r, paint);
+    canvas->restore();
+
+    canvas->save();
+    canvas->translate(r.width(), 0);
+    canvas->concat(persp);
+    canvas->drawRect(r, paint);
+    canvas->restore();
+
+    canvas->save();
+    canvas->translate(0, r.height());
+    canvas->concat(persp);
+    canvas->drawVertices(verts, paint);
+    canvas->restore();
+
+    canvas->save();
+    canvas->translate(r.width(), r.height());
+    canvas->concat(persp);
+    canvas->drawVertices(verts, paint);
+    canvas->restore();
 }

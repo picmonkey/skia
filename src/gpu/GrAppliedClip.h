@@ -8,24 +8,40 @@
 #ifndef GrAppliedClip_DEFINED
 #define GrAppliedClip_DEFINED
 
-#include "GrFragmentProcessor.h"
-#include "GrScissorState.h"
-#include "GrWindowRectsState.h"
+#include "src/gpu/GrFragmentProcessor.h"
+#include "src/gpu/GrScissorState.h"
+#include "src/gpu/GrWindowRectsState.h"
+
+#include "src/core/SkClipStack.h"
+
 
 /**
- * Produced by GrClip. It provides a set of modifications to the drawing state that are used to
- * create the final GrPipeline for a GrOp.
+ * Produced by GrHardClip. It provides a set of modifications to the hardware drawing state that
+ * implement the clip.
  */
-class GrAppliedClip {
+class GrAppliedHardClip {
 public:
-    GrAppliedClip() = default;
-    GrAppliedClip(GrAppliedClip&& that) = default;
-    GrAppliedClip(const GrAppliedClip&) = delete;
+    static const GrAppliedHardClip& Disabled() {
+        // The size doesn't really matter here since it's returned as const& so an actual scissor
+        // will never be set on it, and applied clips are not used to query or bounds test like
+        // the GrClip is.
+        static const GrAppliedHardClip kDisabled({1 << 29, 1 << 29});
+        return kDisabled;
+    }
+
+    GrAppliedHardClip(const SkISize& rtDims) : fScissorState(rtDims) {}
+    GrAppliedHardClip(const SkISize& logicalRTDims, const SkISize& backingStoreDims)
+            : fScissorState(backingStoreDims) {
+        fScissorState.set(SkIRect::MakeSize(logicalRTDims));
+    }
+
+    GrAppliedHardClip(GrAppliedHardClip&& that) = default;
+    explicit GrAppliedHardClip(const GrAppliedHardClip&) = default;
 
     const GrScissorState& scissorState() const { return fScissorState; }
     const GrWindowRectsState& windowRectsState() const { return fWindowRectsState; }
-    GrFragmentProcessor* clipCoverageFragmentProcessor() const { return fClipCoverageFP.get(); }
-    bool hasStencilClip() const { return fHasStencilClip; }
+    uint32_t stencilStackID() const { return fStencilStackID; }
+    bool hasStencilClip() const { return SkClipStack::kInvalidGenID != fStencilStackID; }
 
     /**
      * Intersects the applied clip with the provided rect. Returns false if the draw became empty.
@@ -34,6 +50,10 @@ public:
      */
     bool addScissor(const SkIRect& irect, SkRect* clippedDrawBounds) {
         return fScissorState.intersect(irect) && clippedDrawBounds->intersect(SkRect::Make(irect));
+    }
+
+    void setScissor(const SkIRect& irect) {
+        fScissorState.set(irect);
     }
 
     void addWindowRectangles(const GrWindowRectsState& windowState) {
@@ -46,42 +66,95 @@ public:
         fWindowRectsState.set(windows, mode);
     }
 
-    void addCoverageFP(sk_sp<GrFragmentProcessor> fp) {
-        SkASSERT(!fClipCoverageFP);
-        fClipCoverageFP = fp;
-    }
-
-    void addStencilClip() {
-        SkASSERT(!fHasStencilClip);
-        fHasStencilClip = true;
+    void addStencilClip(uint32_t stencilStackID) {
+        SkASSERT(SkClipStack::kInvalidGenID == fStencilStackID);
+        fStencilStackID = stencilStackID;
     }
 
     bool doesClip() const {
-        return fScissorState.enabled() || fClipCoverageFP || fHasStencilClip ||
-               fWindowRectsState.enabled();
+        return fScissorState.enabled() || this->hasStencilClip() || fWindowRectsState.enabled();
     }
 
-    bool operator==(const GrAppliedClip& that) const {
-        if (fScissorState != that.fScissorState || fHasStencilClip != that.fHasStencilClip) {
-            return false;
-        }
-        if (SkToBool(fClipCoverageFP)) {
-            if (!SkToBool(that.fClipCoverageFP) ||
-                !that.fClipCoverageFP->isEqual(*fClipCoverageFP)) {
-                return false;
-            }
-        } else if (SkToBool(that.fClipCoverageFP)) {
-            return false;
-        }
-        return fWindowRectsState == that.fWindowRectsState;
+    bool operator==(const GrAppliedHardClip& that) const {
+        return fScissorState == that.fScissorState &&
+               fWindowRectsState == that.fWindowRectsState &&
+               fStencilStackID == that.fStencilStackID;
     }
-    bool operator!=(const GrAppliedClip& that) const { return !(*this == that); }
+    bool operator!=(const GrAppliedHardClip& that) const { return !(*this == that); }
 
 private:
     GrScissorState             fScissorState;
     GrWindowRectsState         fWindowRectsState;
-    sk_sp<GrFragmentProcessor> fClipCoverageFP;
-    bool                       fHasStencilClip = false;
+    uint32_t                   fStencilStackID = SkClipStack::kInvalidGenID;
+};
+
+/**
+ * Produced by GrClip. It provides a set of modifications to GrPipeline that implement the clip.
+ */
+class GrAppliedClip {
+public:
+    static GrAppliedClip Disabled() {
+        return GrAppliedClip({1 << 29, 1 << 29});
+    }
+
+    GrAppliedClip(const SkISize& rtDims) : fHardClip(rtDims) {}
+    GrAppliedClip(const SkISize& logicalRTDims, const SkISize& backingStoreDims)
+            : fHardClip(logicalRTDims, backingStoreDims) {}
+
+    GrAppliedClip(GrAppliedClip&& that) = default;
+    GrAppliedClip(const GrAppliedClip&) = delete;
+
+    const GrScissorState& scissorState() const { return fHardClip.scissorState(); }
+    const GrWindowRectsState& windowRectsState() const { return fHardClip.windowRectsState(); }
+    uint32_t stencilStackID() const { return fHardClip.stencilStackID(); }
+    bool hasStencilClip() const { return fHardClip.hasStencilClip(); }
+    int hasCoverageFragmentProcessor() const { return fCoverageFP != nullptr; }
+    const GrFragmentProcessor* coverageFragmentProcessor() const {
+        SkASSERT(fCoverageFP != nullptr);
+        return fCoverageFP.get();
+    }
+    std::unique_ptr<GrFragmentProcessor> detachCoverageFragmentProcessor() {
+        SkASSERT(fCoverageFP != nullptr);
+        return std::move(fCoverageFP);
+    }
+
+    const GrAppliedHardClip& hardClip() const { return fHardClip; }
+    GrAppliedHardClip& hardClip() { return fHardClip; }
+
+    void addCoverageFP(std::unique_ptr<GrFragmentProcessor> fp) {
+        if (fCoverageFP == nullptr) {
+            fCoverageFP = std::move(fp);
+        } else {
+            // Compose this coverage FP with the previously-added coverage.
+            fCoverageFP = GrFragmentProcessor::Compose(std::move(fp), std::move(fCoverageFP));
+        }
+    }
+
+    bool doesClip() const {
+        return fHardClip.doesClip() || fCoverageFP != nullptr;
+    }
+
+    bool operator==(const GrAppliedClip& that) const {
+        if (fHardClip != that.fHardClip ||
+            this->hasCoverageFragmentProcessor() != that.hasCoverageFragmentProcessor()) {
+            return false;
+        }
+        if (fCoverageFP != nullptr && !fCoverageFP->isEqual(*that.fCoverageFP)) {
+            return false;
+        }
+        return true;
+    }
+    bool operator!=(const GrAppliedClip& that) const { return !(*this == that); }
+
+    void visitProxies(const GrVisitProxyFunc& func) const {
+        if (fCoverageFP != nullptr) {
+            fCoverageFP->visitProxies(func);
+        }
+    }
+
+private:
+    GrAppliedHardClip fHardClip;
+    std::unique_ptr<GrFragmentProcessor> fCoverageFP;
 };
 
 #endif

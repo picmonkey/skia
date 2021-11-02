@@ -8,7 +8,7 @@
 #ifndef SkScalar_DEFINED
 #define SkScalar_DEFINED
 
-#include "../private/SkFloatingPoint.h"
+#include "include/private/SkFloatingPoint.h"
 
 #undef SK_SCALAR_IS_FLOAT
 #define SK_SCALAR_IS_FLOAT  1
@@ -17,8 +17,8 @@ typedef float SkScalar;
 
 #define SK_Scalar1                  1.0f
 #define SK_ScalarHalf               0.5f
-#define SK_ScalarSqrt2              1.41421356f
-#define SK_ScalarPI                 3.14159265f
+#define SK_ScalarSqrt2              SK_FloatSqrt2
+#define SK_ScalarPI                 SK_FloatPI
 #define SK_ScalarTanPIOver8         0.414213562f
 #define SK_ScalarRoot2Over2         0.707106781f
 #define SK_ScalarMax                3.402823466e+38f
@@ -55,12 +55,12 @@ typedef float SkScalar;
 
 #define SkIntToScalar(x)        static_cast<SkScalar>(x)
 #define SkIntToFloat(x)         static_cast<float>(x)
-#define SkScalarTruncToInt(x)   static_cast<int>(x)
+#define SkScalarTruncToInt(x)   sk_float_saturate2int(x)
 
 #define SkScalarToFloat(x)      static_cast<float>(x)
 #define SkFloatToScalar(x)      static_cast<SkScalar>(x)
 #define SkScalarToDouble(x)     static_cast<double>(x)
-#define SkDoubleToScalar(x)     static_cast<SkScalar>(x)
+#define SkDoubleToScalar(x)     sk_double_to_float(x)
 
 #define SK_ScalarMin            (-SK_ScalarMax)
 
@@ -68,31 +68,14 @@ static inline bool SkScalarIsNaN(SkScalar x) { return x != x; }
 
 /** Returns true if x is not NaN and not infinite
  */
-static inline bool SkScalarIsFinite(SkScalar x) {
-    // We rely on the following behavior of infinities and nans
-    // 0 * finite --> 0
-    // 0 * infinity --> NaN
-    // 0 * NaN --> NaN
-    SkScalar prod = x * 0;
-    // At this point, prod will either be NaN or 0
-    return !SkScalarIsNaN(prod);
-}
+static inline bool SkScalarIsFinite(SkScalar x) { return sk_float_isfinite(x); }
 
 static inline bool SkScalarsAreFinite(SkScalar a, SkScalar b) {
-    SkScalar prod = 0;
-    prod *= a;
-    prod *= b;
-    // At this point, prod will either be NaN or 0
-    return !SkScalarIsNaN(prod);
+    return sk_floats_are_finite(a, b);
 }
 
 static inline bool SkScalarsAreFinite(const SkScalar array[], int count) {
-    SkScalar prod = 0;
-    for (int i = 0; i < count; ++i) {
-        prod *= array[i];
-    }
-    // At this point, prod will either be NaN or 0
-    return !SkScalarIsNaN(prod);
+    return sk_floats_are_finite(array, count);
 }
 
 /**
@@ -120,33 +103,17 @@ static inline SkScalar SkScalarFraction(SkScalar x) {
     return x - SkScalarTruncToScalar(x);
 }
 
-static inline SkScalar SkScalarClampMax(SkScalar x, SkScalar max) {
-    x = SkTMin(x, max);
-    x = SkTMax<SkScalar>(x, 0);
-    return x;
-}
-
-static inline SkScalar SkScalarPin(SkScalar x, SkScalar min, SkScalar max) {
-    return SkTPin(x, min, max);
-}
-
-SkScalar SkScalarSinCos(SkScalar radians, SkScalar* cosValue);
-
 static inline SkScalar SkScalarSquare(SkScalar x) { return x * x; }
 
-#define SkScalarInvert(x)       (SK_Scalar1 / (x))
-#define SkScalarFastInvert(x)   (SK_Scalar1 / (x))
-#define SkScalarAve(a, b)       (((a) + (b)) * SK_ScalarHalf)
-#define SkScalarHalf(a)         ((a) * SK_ScalarHalf)
+#define SkScalarInvert(x)           sk_ieee_float_divide_TODO_IS_DIVIDE_BY_ZERO_SAFE_HERE(SK_Scalar1, (x))
+#define SkScalarAve(a, b)           (((a) + (b)) * SK_ScalarHalf)
+#define SkScalarHalf(a)             ((a) * SK_ScalarHalf)
 
 #define SkDegreesToRadians(degrees) ((degrees) * (SK_ScalarPI / 180))
 #define SkRadiansToDegrees(radians) ((radians) * (180 / SK_ScalarPI))
 
-static inline SkScalar SkMaxScalar(SkScalar a, SkScalar b) { return a > b ? a : b; }
-static inline SkScalar SkMinScalar(SkScalar a, SkScalar b) { return a < b ? a : b; }
-
 static inline bool SkScalarIsInt(SkScalar x) {
-    return x == (SkScalar)(int)x;
+    return x == SkScalarFloorToScalar(x);
 }
 
 /**
@@ -178,6 +145,16 @@ static inline bool SkScalarNearlyEqual(SkScalar x, SkScalar y,
     return SkScalarAbs(x-y) <= tolerance;
 }
 
+static inline float SkScalarSinSnapToZero(SkScalar radians) {
+    float v = SkScalarSin(radians);
+    return SkScalarNearlyZero(v) ? 0.0f : v;
+}
+
+static inline float SkScalarCosSnapToZero(SkScalar radians) {
+    float v = SkScalarCos(radians);
+    return SkScalarNearlyZero(v) ? 0.0f : v;
+}
+
 /** Linearly interpolate between A and B, based on t.
     If t is 0, return A
     If t is 1, return B
@@ -190,14 +167,13 @@ static inline SkScalar SkScalarInterp(SkScalar A, SkScalar B, SkScalar t) {
 }
 
 /** Interpolate along the function described by (keys[length], values[length])
-    for the passed searchKey.  SearchKeys outside the range keys[0]-keys[Length]
-    clamp to the min or max value.  This function was inspired by a desire
-    to change the multiplier for thickness in fakeBold; therefore it assumes
-    the number of pairs (length) will be small, and a linear search is used.
+    for the passed searchKey. SearchKeys outside the range keys[0]-keys[Length]
+    clamp to the min or max value. This function assumes the number of pairs
+    (length) will be small and a linear search is used.
+
     Repeated keys are allowed for discontinuous functions (so long as keys is
-    monotonically increasing), and if key is the value of a repeated scalar in
-    keys, the first one will be used.  However, that may change if a binary
-    search is used.
+    monotonically increasing). If key is the value of a repeated scalar in
+    keys the first one will be used.
 */
 SkScalar SkScalarInterpFunc(SkScalar searchKey, const SkScalar keys[],
                             const SkScalar values[], int length);

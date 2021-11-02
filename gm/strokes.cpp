@@ -5,12 +5,25 @@
  * found in the LICENSE file.
  */
 
-#include "gm.h"
-#include "sk_tool_utils.h"
-#include "SkPath.h"
-#include "SkRandom.h"
-#include "SkDashPathEffect.h"
-#include "SkParsePath.h"
+#include "gm/gm.h"
+#include "include/core/SkCanvas.h"
+#include "include/core/SkColor.h"
+#include "include/core/SkPaint.h"
+#include "include/core/SkPath.h"
+#include "include/core/SkPathEffect.h"
+#include "include/core/SkPoint.h"
+#include "include/core/SkRect.h"
+#include "include/core/SkScalar.h"
+#include "include/core/SkSize.h"
+#include "include/core/SkString.h"
+#include "include/core/SkTypes.h"
+#include "include/effects/SkDashPathEffect.h"
+#include "include/private/SkFloatBits.h"
+#include "include/utils/SkParsePath.h"
+#include "include/utils/SkRandom.h"
+#include "tools/ToolUtils.h"
+
+#include <string.h>
 
 #define W   400
 #define H   400
@@ -27,11 +40,11 @@ static void rnd_rect(SkRect* r, SkPaint* paint, SkRandom& rand) {
     SkScalar hoffset = rand.nextSScalar1();
     SkScalar woffset = rand.nextSScalar1();
 
-    r->set(x, y, x + w, y + h);
+    r->setXYWH(x, y, w, h);
     r->offset(-w/2 + woffset, -h/2 + hoffset);
 
     paint->setColor(rand.nextU());
-    paint->setAlpha(0xFF);
+    paint->setAlphaf(1.0f);
 }
 
 
@@ -76,7 +89,7 @@ protected:
     }
 
 private:
-    typedef skiagm::GM INHERITED;
+    using INHERITED = skiagm::GM;
 };
 
 /* See
@@ -118,8 +131,8 @@ protected:
         strokePaint = fillPaint;
         strokePaint.setStyle(SkPaint::kStroke_Style);
         for (int i = 0; i < 2; ++i) {
-            fillPaint.setAlpha(255);
-            strokePaint.setAlpha(255);
+            fillPaint.setAlphaf(1.0f);
+            strokePaint.setAlphaf(1.0f);
             strokePaint.setStrokeWidth(i ? 8.f : 10.f);
             strokePaint.setStrokeCap(i ? SkPaint::kSquare_Cap : SkPaint::kRound_Cap);
             canvas->save();
@@ -137,13 +150,13 @@ protected:
             canvas->translate(0, 20);
             canvas->drawPath(fRefPath[i * 2], fillPaint);
             strokePaint.setStrokeWidth(20);
-            strokePaint.setAlpha(127);
+            strokePaint.setAlphaf(0.5f);
             canvas->translate(0, 50);
             canvas->drawPath(fMoveHfPath, strokePaint);
             canvas->translate(0, 30);
             canvas->drawPath(fMoveZfPath, strokePaint);
             canvas->translate(0, 30);
-            fillPaint.setAlpha(127);
+            fillPaint.setAlphaf(0.5f);
             canvas->drawPath(fRefPath[1 + i * 2], fillPaint);
             canvas->translate(0, 30);
             canvas->drawPath(fCubicPath, strokePaint);
@@ -156,7 +169,7 @@ protected:
     }
 
 private:
-    typedef skiagm::GM INHERITED;
+    using INHERITED = skiagm::GM;
 };
 
 class TeenyStrokesGM : public skiagm::GM {
@@ -175,9 +188,9 @@ class TeenyStrokesGM : public skiagm::GM {
         p.setStyle(SkPaint::kStroke_Style);
         p.setColor(color);
         canvas->translate(50, 0);
-	    canvas->save();
+        canvas->save();
         p.setStrokeWidth(scale * 5);
-	    canvas->scale(1 / scale, 1 / scale);
+        canvas->scale(1 / scale, 1 / scale);
         canvas->drawLine(20 * scale, 20 * scale, 20 * scale, 100 * scale, p);
         canvas->drawLine(20 * scale, 20 * scale, 100 * scale, 100 * scale, p);
         canvas->restore();
@@ -191,7 +204,7 @@ class TeenyStrokesGM : public skiagm::GM {
         line(0.000002f, canvas, SK_ColorBLACK);
     }
 private:
-    typedef skiagm::GM INHERITED;
+    using INHERITED = skiagm::GM;
 };
 
 DEF_SIMPLE_GM(CubicStroke, canvas, 384, 384) {
@@ -199,7 +212,7 @@ DEF_SIMPLE_GM(CubicStroke, canvas, 384, 384) {
     p.setAntiAlias(true);
     p.setStyle(SkPaint::kStroke_Style);
     p.setStrokeWidth(1.0720f);
-	SkPath path;
+    SkPath path;
     path.moveTo(-6000,-6000);
     path.cubicTo(-3500,5500,-500,5500,2500,-6500);
     canvas->drawPath(path, p);
@@ -318,7 +331,7 @@ protected:
     }
 
 private:
-    typedef skiagm::GM INHERITED;
+    using INHERITED = skiagm::GM;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -331,42 +344,42 @@ static SkRect inset(const SkRect& r) {
 
 class Strokes3GM : public skiagm::GM {
     static void make0(SkPath* path, const SkRect& bounds, SkString* title) {
-        path->addRect(bounds, SkPath::kCW_Direction);
-        path->addRect(inset(bounds), SkPath::kCW_Direction);
+        path->addRect(bounds, SkPathDirection::kCW);
+        path->addRect(inset(bounds), SkPathDirection::kCW);
         title->set("CW CW");
     }
 
     static void make1(SkPath* path, const SkRect& bounds, SkString* title) {
-        path->addRect(bounds, SkPath::kCW_Direction);
-        path->addRect(inset(bounds), SkPath::kCCW_Direction);
+        path->addRect(bounds, SkPathDirection::kCW);
+        path->addRect(inset(bounds), SkPathDirection::kCCW);
         title->set("CW CCW");
     }
 
     static void make2(SkPath* path, const SkRect& bounds, SkString* title) {
-        path->addOval(bounds, SkPath::kCW_Direction);
-        path->addOval(inset(bounds), SkPath::kCW_Direction);
+        path->addOval(bounds, SkPathDirection::kCW);
+        path->addOval(inset(bounds), SkPathDirection::kCW);
         title->set("CW CW");
     }
 
     static void make3(SkPath* path, const SkRect& bounds, SkString* title) {
-        path->addOval(bounds, SkPath::kCW_Direction);
-        path->addOval(inset(bounds), SkPath::kCCW_Direction);
+        path->addOval(bounds, SkPathDirection::kCW);
+        path->addOval(inset(bounds), SkPathDirection::kCCW);
         title->set("CW CCW");
     }
 
     static void make4(SkPath* path, const SkRect& bounds, SkString* title) {
-        path->addRect(bounds, SkPath::kCW_Direction);
+        path->addRect(bounds, SkPathDirection::kCW);
         SkRect r = bounds;
         r.inset(bounds.width() / 10, -bounds.height() / 10);
-        path->addOval(r, SkPath::kCW_Direction);
+        path->addOval(r, SkPathDirection::kCW);
         title->set("CW CW");
     }
 
     static void make5(SkPath* path, const SkRect& bounds, SkString* title) {
-        path->addRect(bounds, SkPath::kCW_Direction);
+        path->addRect(bounds, SkPathDirection::kCW);
         SkRect r = bounds;
         r.inset(bounds.width() / 10, -bounds.height() / 10);
-        path->addOval(r, SkPath::kCCW_Direction);
+        path->addOval(r, SkPathDirection::kCCW);
         title->set("CW CCW");
     }
 
@@ -390,7 +403,7 @@ protected:
         SkPaint fillPaint(origPaint);
         fillPaint.setColor(SK_ColorRED);
         SkPaint strokePaint(origPaint);
-        strokePaint.setColor(sk_tool_utils::color_to_565(0xFF4444FF));
+        strokePaint.setColor(ToolUtils::color_to_565(0xFF4444FF));
 
         void (*procs[])(SkPath*, const SkRect&, SkString*) = {
             make0, make1, make2, make3, make4, make5
@@ -423,7 +436,7 @@ protected:
     }
 
 private:
-    typedef skiagm::GM INHERITED;
+    using INHERITED = skiagm::GM;
 };
 
 class Strokes4GM : public skiagm::GM {
@@ -450,7 +463,7 @@ protected:
     }
 
 private:
-    typedef skiagm::GM INHERITED;
+    using INHERITED = skiagm::GM;
 };
 
 // Test stroking for curves that produce degenerate tangents when t is 0 or 1 (see bug 4191)
@@ -504,7 +517,7 @@ protected:
     }
 
 private:
-    typedef skiagm::GM INHERITED;
+    using INHERITED = skiagm::GM;
 };
 
 
@@ -518,3 +531,116 @@ DEF_GM( return new Strokes5GM; )
 
 DEF_GM( return new ZeroLenStrokesGM; )
 DEF_GM( return new TeenyStrokesGM; )
+
+DEF_SIMPLE_GM(zerolinedash, canvas, 256, 256) {
+    canvas->clear(SK_ColorWHITE);
+
+    SkPaint paint;
+    paint.setColor(SkColorSetARGB(255, 0, 0, 0));
+    paint.setStrokeWidth(11);
+    paint.setStrokeCap(SkPaint::kRound_Cap);
+    paint.setStrokeJoin(SkPaint::kBevel_Join);
+
+    SkScalar dash_pattern[] = {1, 5};
+    paint.setPathEffect(SkDashPathEffect::Make(dash_pattern, 2, 0));
+
+    canvas->drawLine(100, 100, 100, 100, paint);
+}
+
+#ifdef PDF_IS_FIXED_SO_THIS_DOESNT_BREAK_IT
+DEF_SIMPLE_GM(longrect_dash, canvas, 250, 250) {
+    canvas->clear(SK_ColorWHITE);
+
+    SkPaint paint;
+    paint.setColor(SkColorSetARGB(255, 0, 0, 0));
+    paint.setStrokeWidth(5);
+    paint.setStrokeCap(SkPaint::kRound_Cap);
+    paint.setStrokeJoin(SkPaint::kBevel_Join);
+    paint.setStyle(SkPaint::kStroke_Style);
+    SkScalar dash_pattern[] = {1, 5};
+    paint.setPathEffect(SkDashPathEffect::Make(dash_pattern, 2, 0));
+    // try all combinations of stretching bounds
+    for (auto left : { 20.f, -100001.f } ) {
+        for (auto top : { 20.f, -100001.f } ) {
+            for (auto right : { 40.f, 100001.f } ) {
+                for (auto bottom : { 40.f, 100001.f } ) {
+                    canvas->save();
+                    canvas->clipRect({10, 10, 50, 50});
+                    canvas->drawRect({left, top, right, bottom}, paint);
+                    canvas->restore();
+                    canvas->translate(60, 0);
+               }
+            }
+            canvas->translate(-60 * 4, 60);
+        }
+    }
+}
+#endif
+
+DEF_SIMPLE_GM(inner_join_geometry, canvas, 1000, 700) {
+    // These paths trigger cases where we must add inner join geometry.
+    // skbug.com/11964
+    const SkPoint pathPoints[] = {
+        /*moveTo*/  /*lineTo*/  /*lineTo*/
+        {119,  71}, {129, 151}, {230,  24},
+        {200, 144}, {129, 151}, {230,  24},
+        {192, 176}, {224, 175}, {281, 103},
+        {233, 205}, {224, 175}, {281, 103},
+        {121, 216}, {234, 189}, {195, 147},
+        {141, 216}, {254, 189}, {238, 250},
+        {159, 202}, {269, 197}, {289, 165},
+        {159, 202}, {269, 197}, {287, 227},
+    };
+
+    SkPaint pathPaint;
+    pathPaint.setStroke(true);
+    pathPaint.setAntiAlias(true);
+    pathPaint.setStrokeWidth(100);
+
+    SkPaint skeletonPaint;
+    skeletonPaint.setStroke(true);
+    skeletonPaint.setAntiAlias(true);
+    skeletonPaint.setStrokeWidth(0);
+    skeletonPaint.setColor(SK_ColorRED);
+
+    canvas->translate(0, 50);
+    for (size_t i = 0; i < SK_ARRAY_COUNT(pathPoints) / 3; i++) {
+        auto path = SkPath::Polygon(pathPoints + i * 3, 3, false);
+        canvas->drawPath(path, pathPaint);
+
+        SkPath fillPath;
+        pathPaint.getFillPath(path, &fillPath);
+        canvas->drawPath(fillPath, skeletonPaint);
+
+        canvas->translate(200, 0);
+        if ((i + 1) % 4 == 0) {
+            canvas->translate(-800, 200);
+        }
+    }
+}
+
+DEF_SIMPLE_GM(skbug12244, canvas, 150, 150) {
+    // Should look like a stroked triangle; these vertices are the results of the SkStroker
+    // but we draw as a filled path in order to highlight that it's the GPU triangulating path
+    // renderer that's the source of the problem, and not the stroking operation. The original
+    // path was a simple:
+    // m(0,0), l(100, 40), l(0, 80), l(0,0) with a stroke width of 15px
+    SkPath path;
+    path.moveTo(2.7854299545288085938, -6.9635753631591796875);
+    path.lineTo( 120.194366455078125,                   40);
+    path.lineTo(-7.5000004768371582031, 91.07775115966796875);
+    path.lineTo(-7.5000004768371582031, -11.077748298645019531);
+    path.lineTo(2.7854299545288085938, -6.9635753631591796875);
+    path.moveTo(-2.7854299545288085938, 6.9635753631591796875);
+    path.lineTo(                   0,                    0);
+    path.lineTo(                 7.5,                    0);
+    path.lineTo(7.5000004768371582031, 68.92224884033203125);
+    path.lineTo(  79.805633544921875,                   40);
+    path.lineTo(-2.7854299545288085938, 6.9635753631591796875);
+
+    SkPaint p;
+    p.setColor(SK_ColorGREEN);
+
+    canvas->translate(20.f, 20.f);
+    canvas->drawPath(path, p);
+}

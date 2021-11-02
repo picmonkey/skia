@@ -8,19 +8,13 @@
 #ifndef GrOnFlushResourceProvider_DEFINED
 #define GrOnFlushResourceProvider_DEFINED
 
-#include "GrTypes.h"
-#include "SkRefCnt.h"
-#include "SkTArray.h"
+#include "include/core/SkSpan.h"
+#include "src/gpu/GrDeferredUpload.h"
 
+class GrCaps;
 class GrDrawingManager;
-class GrOpList;
 class GrOnFlushResourceProvider;
-class GrRenderTargetOpList;
-class GrRenderTargetContext;
 class GrSurfaceProxy;
-
-class SkColorSpace;
-class SkSurfaceProps;
 
 /*
  * This is the base class from which all pre-flush callback objects must be derived. It
@@ -28,26 +22,27 @@ class SkSurfaceProps;
  */
 class GrOnFlushCallbackObject {
 public:
-    virtual ~GrOnFlushCallbackObject() { }
+    virtual ~GrOnFlushCallbackObject() {}
 
     /*
-     * The onFlush callback allows subsystems (e.g., text, path renderers) to create atlases
-     * for a specific flush. All the GrOpList IDs required for the flush are passed into the
-     * callback. The callback should return the render target contexts used to render the atlases
-     * in 'results'.
+     * The preFlush callback allows subsystems (e.g., text, path renderers) to create atlases
+     * for a specific flush. All the GrRenderTask IDs required for the flush are passed into the
+     * callback.
      */
-    virtual void preFlush(GrOnFlushResourceProvider*,
-                          const uint32_t* opListIDs, int numOpListIDs,
-                          SkTArray<sk_sp<GrRenderTargetContext>>* results) = 0;
+    virtual void preFlush(GrOnFlushResourceProvider*, SkSpan<const uint32_t> renderTaskIDs) = 0;
 
     /**
-     * Called once flushing is complete and all ops indicated by preFlush have been executed and
-     * released.
+     * Called once flushing is complete and all renderTasks indicated by preFlush have been executed
+     * and released. startTokenForNextFlush can be used to track resources used in the current
+     * flush.
      */
-    virtual void postFlush() {}
+    virtual void postFlush(GrDeferredUploadToken startTokenForNextFlush,
+                           SkSpan<const uint32_t> renderTaskIDs) {}
 
-private:
-    typedef SkRefCnt INHERITED;
+    /**
+     * Tells the callback owner to hold onto this object when freeing GPU resources.
+     */
+    virtual bool retainOnFreeGpuResources() { return false; }
 };
 
 /*
@@ -57,24 +52,17 @@ private:
  */
 class GrOnFlushResourceProvider {
 public:
-    sk_sp<GrRenderTargetContext> makeRenderTargetContext(const GrSurfaceDesc& desc,
-                                                         sk_sp<SkColorSpace> colorSpace,
-                                                         const SkSurfaceProps* props);
+    explicit GrOnFlushResourceProvider(GrDrawingManager* drawingMgr) : fDrawingMgr(drawingMgr) {}
 
-    // TODO: we only need this entry point as long as we have to pre-allocate the atlas.
-    // Remove it ASAP.
-    sk_sp<GrRenderTargetContext> makeRenderTargetContext(sk_sp<GrSurfaceProxy> proxy,
-                                                         sk_sp<SkColorSpace> colorSpace,
-                                                         const SkSurfaceProps* props);
+    bool instatiateProxy(GrSurfaceProxy*);
+
+    const GrCaps* caps() const;
 
 private:
-    explicit GrOnFlushResourceProvider(GrDrawingManager* drawingMgr) : fDrawingMgr(drawingMgr) {}
     GrOnFlushResourceProvider(const GrOnFlushResourceProvider&) = delete;
     GrOnFlushResourceProvider& operator=(const GrOnFlushResourceProvider&) = delete;
 
     GrDrawingManager* fDrawingMgr;
-
-    friend class GrDrawingManager; // to construct this type.
 };
 
 #endif

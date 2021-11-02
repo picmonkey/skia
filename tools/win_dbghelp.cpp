@@ -5,8 +5,9 @@
  * found in the LICENSE file.
  */
 
-#include "windows.h"
-#include "win_dbghelp.h"
+#include <windows.h>
+#include "tools/win_dbghelp.h"
+
 #include <process.h>
 #include <string.h>
 #include <stdlib.h>
@@ -228,7 +229,7 @@ void setUpDebuggingFromArgs(const char* vargs0) {
     binaries_path[pos_last_slash] = '\0';
     setBinariesPath(binaries_path);
 
-    setAppVersion("1.0");  // Dummy for now, but use revision instead if we use
+    setAppVersion("1.0");  // Placeholder for now, but use revision instead if we use
                            // the minidump for anything else other than
                            // collecting the callstack.
 

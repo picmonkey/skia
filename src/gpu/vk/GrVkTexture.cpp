@@ -5,151 +5,159 @@
  * found in the LICENSE file.
  */
 
-#include "GrVkTexture.h"
-#include "GrVkGpu.h"
-#include "GrVkImageView.h"
-#include "GrTexturePriv.h"
-#include "GrVkTextureRenderTarget.h"
-#include "GrVkUtil.h"
 
-#include "vk/GrVkTypes.h"
+#include "src/gpu/vk/GrVkTexture.h"
+
+#include "src/gpu/GrTexture.h"
+#include "src/gpu/vk/GrVkDescriptorSet.h"
+#include "src/gpu/vk/GrVkGpu.h"
+#include "src/gpu/vk/GrVkImageView.h"
+#include "src/gpu/vk/GrVkTextureRenderTarget.h"
+#include "src/gpu/vk/GrVkUtil.h"
+
+#include "include/gpu/vk/GrVkTypes.h"
 
 #define VK_CALL(GPU, X) GR_VK_CALL(GPU->vkInterface(), X)
-
-// This method parallels GrTextureProxy::highestFilterMode
-static inline GrSamplerParams::FilterMode highest_filter_mode(GrPixelConfig config) {
-    if (GrPixelConfigIsSint(config)) {
-        // We only ever want to nearest-neighbor sample signed int textures.
-        return GrSamplerParams::kNone_FilterMode;
-    }
-    return GrSamplerParams::kMipMap_FilterMode;
-}
 
 // Because this class is virtually derived from GrSurface we must explicitly call its constructor.
 GrVkTexture::GrVkTexture(GrVkGpu* gpu,
                          SkBudgeted budgeted,
-                         const GrSurfaceDesc& desc,
-                         const GrVkImageInfo& info,
-                         const GrVkImageView* view)
-    : GrSurface(gpu, desc)
-    , GrVkImage(info, GrVkImage::kNot_Wrapped)
-    , INHERITED(gpu, desc, kTexture2DSampler_GrSLType, highest_filter_mode(desc.fConfig),
-                desc.fIsMipMapped)
-    , fTextureView(view)
-    , fLinearTextureView(nullptr) {
+                         SkISize dimensions,
+                         sk_sp<GrVkImage> texture,
+                         GrMipmapStatus mipmapStatus)
+        : GrSurface(gpu, dimensions,
+                    texture->isProtected() ? GrProtected::kYes : GrProtected::kNo)
+        , GrTexture(gpu, dimensions,
+                    texture->isProtected() ? GrProtected::kYes : GrProtected::kNo,
+                    GrTextureType::k2D, mipmapStatus)
+        , fTexture(std::move(texture))
+        , fDescSetCache(kMaxCachedDescSets) {
+    SkASSERT((GrMipmapStatus::kNotAllocated == mipmapStatus) == (1 == fTexture->mipLevels()));
+    // We don't support creating external GrVkTextures
+    SkASSERT(!fTexture->ycbcrConversionInfo().isValid() ||
+             !fTexture->ycbcrConversionInfo().fExternalFormat);
+    SkASSERT(SkToBool(fTexture->vkUsageFlags() & VK_IMAGE_USAGE_SAMPLED_BIT));
     this->registerWithCache(budgeted);
+    if (GrVkFormatIsCompressed(fTexture->imageFormat())) {
+        this->setReadOnly();
+    }
 }
 
-GrVkTexture::GrVkTexture(GrVkGpu* gpu,
-                         Wrapped,
-                         const GrSurfaceDesc& desc,
-                         const GrVkImageInfo& info,
-                         const GrVkImageView* view,
-                         GrVkImage::Wrapped wrapped)
-    : GrSurface(gpu, desc)
-    , GrVkImage(info, wrapped)
-    , INHERITED(gpu, desc, kTexture2DSampler_GrSLType, highest_filter_mode(desc.fConfig),
-                desc.fIsMipMapped)
-    , fTextureView(view)
-    , fLinearTextureView(nullptr) {
-    this->registerWithCacheWrapped();
+GrVkTexture::GrVkTexture(GrVkGpu* gpu, SkISize dimensions,
+                         sk_sp<GrVkImage> texture, GrMipmapStatus mipmapStatus,
+                         GrWrapCacheable cacheable, GrIOType ioType, bool isExternal)
+        : GrSurface(gpu, dimensions, texture->isProtected() ? GrProtected::kYes : GrProtected::kNo)
+        , GrTexture(gpu, dimensions, texture->isProtected() ? GrProtected::kYes : GrProtected::kNo,
+                    isExternal ? GrTextureType::kExternal : GrTextureType::k2D, mipmapStatus)
+        , fTexture(std::move(texture))
+        , fDescSetCache(kMaxCachedDescSets) {
+    SkASSERT((GrMipmapStatus::kNotAllocated == mipmapStatus) == (1 == fTexture->mipLevels()));
+    SkASSERT(SkToBool(fTexture->vkUsageFlags() & VK_IMAGE_USAGE_SAMPLED_BIT));
+    if (ioType == kRead_GrIOType) {
+        this->setReadOnly();
+    }
+    this->registerWithCacheWrapped(cacheable);
 }
 
 // Because this class is virtually derived from GrSurface we must explicitly call its constructor.
 GrVkTexture::GrVkTexture(GrVkGpu* gpu,
-                         const GrSurfaceDesc& desc,
-                         const GrVkImageInfo& info,
-                         const GrVkImageView* view,
-                         GrVkImage::Wrapped wrapped)
-    : GrSurface(gpu, desc)
-    , GrVkImage(info, wrapped)
-    , INHERITED(gpu, desc, kTexture2DSampler_GrSLType, highest_filter_mode(desc.fConfig),
-                desc.fIsMipMapped)
-    , fTextureView(view)
-    , fLinearTextureView(nullptr) {
+                         SkISize dimensions,
+                         sk_sp<GrVkImage> texture,
+                         GrMipmapStatus mipmapStatus)
+        : GrSurface(gpu, dimensions, texture->isProtected() ? GrProtected::kYes : GrProtected::kNo)
+        , GrTexture(gpu, dimensions, texture->isProtected() ? GrProtected::kYes : GrProtected::kNo,
+                    GrTextureType::k2D, mipmapStatus)
+        , fTexture(std::move(texture))
+        , fDescSetCache(kMaxCachedDescSets) {
+    SkASSERT((GrMipmapStatus::kNotAllocated == mipmapStatus) == (1 == fTexture->mipLevels()));
+    // Since this ctor is only called from GrVkTextureRenderTarget, we can't have a ycbcr conversion
+    // since we don't support that on render targets.
+    SkASSERT(!fTexture->ycbcrConversionInfo().isValid());
+    SkASSERT(SkToBool(fTexture->vkUsageFlags() & VK_IMAGE_USAGE_SAMPLED_BIT));
 }
 
-GrVkTexture* GrVkTexture::CreateNewTexture(GrVkGpu* gpu, SkBudgeted budgeted,
-                                           const GrSurfaceDesc& desc,
-                                           const GrVkImage::ImageDesc& imageDesc) {
-    SkASSERT(imageDesc.fUsageFlags & VK_IMAGE_USAGE_SAMPLED_BIT);
+sk_sp<GrVkTexture> GrVkTexture::MakeNewTexture(GrVkGpu* gpu, SkBudgeted budgeted,
+                                               SkISize dimensions,
+                                               VkFormat format, uint32_t mipLevels,
+                                               GrProtected isProtected,
+                                               GrMipmapStatus mipmapStatus) {
+    sk_sp<GrVkImage> texture = GrVkImage::MakeTexture(
+            gpu, dimensions, format, mipLevels, GrRenderable::kNo, /*numSamples=*/1, budgeted,
+            isProtected);
 
-    GrVkImageInfo info;
-    if (!GrVkImage::InitImageInfo(gpu, imageDesc, &info)) {
+    if (!texture) {
         return nullptr;
     }
-
-    const GrVkImageView* imageView = GrVkImageView::Create(gpu, info.fImage, info.fFormat,
-                                                           GrVkImageView::kColor_Type,
-                                                           info.fLevelCount);
-    if (!imageView) {
-        GrVkImage::DestroyImageInfo(gpu, &info);
-        return nullptr;
-    }
-
-    return new GrVkTexture(gpu, budgeted, desc, info, imageView);
+    return sk_sp<GrVkTexture>(new GrVkTexture(gpu, budgeted, dimensions, std::move(texture),
+                                              mipmapStatus));
 }
 
-sk_sp<GrVkTexture> GrVkTexture::MakeWrappedTexture(GrVkGpu* gpu,
-                                                   const GrSurfaceDesc& desc,
-                                                   GrWrapOwnership ownership,
-                                                   const GrVkImageInfo* info) {
-    SkASSERT(info);
-    // Wrapped textures require both image and allocation (because they can be mapped)
-    SkASSERT(VK_NULL_HANDLE != info->fImage && VK_NULL_HANDLE != info->fAlloc.fMemory);
+sk_sp<GrVkTexture> GrVkTexture::MakeWrappedTexture(
+        GrVkGpu* gpu, SkISize dimensions, GrWrapOwnership wrapOwnership, GrWrapCacheable cacheable,
+        GrIOType ioType, const GrVkImageInfo& info,
+        sk_sp<GrBackendSurfaceMutableStateImpl> mutableState) {
+    // Adopted textures require both image and allocation because we're responsible for freeing
+    SkASSERT(VK_NULL_HANDLE != info.fImage &&
+             (kBorrow_GrWrapOwnership == wrapOwnership || VK_NULL_HANDLE != info.fAlloc.fMemory));
 
-    const GrVkImageView* imageView = GrVkImageView::Create(gpu, info->fImage, info->fFormat,
-                                                           GrVkImageView::kColor_Type,
-                                                           info->fLevelCount);
-    if (!imageView) {
+    sk_sp<GrVkImage> texture = GrVkImage::MakeWrapped(gpu,
+                                                      dimensions,
+                                                      info,
+                                                      std::move(mutableState),
+                                                      GrAttachment::UsageFlags::kTexture,
+                                                      wrapOwnership,
+                                                      cacheable);
+    if (!texture) {
         return nullptr;
     }
 
-    GrVkImage::Wrapped wrapped = kBorrow_GrWrapOwnership == ownership
-            ? GrVkImage::kBorrowed_Wrapped : GrVkImage::kAdopted_Wrapped;
-    return sk_sp<GrVkTexture>(new GrVkTexture(gpu, kWrapped, desc, *info, imageView, wrapped));
+    GrMipmapStatus mipmapStatus = info.fLevelCount > 1 ? GrMipmapStatus::kValid
+                                                       : GrMipmapStatus::kNotAllocated;
+
+    bool isExternal = info.fYcbcrConversionInfo.isValid() &&
+                      (info.fYcbcrConversionInfo.fExternalFormat != 0);
+    isExternal |= (info.fImageTiling == VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT);
+    return sk_sp<GrVkTexture>(new GrVkTexture(gpu, dimensions, std::move(texture), mipmapStatus,
+                                              cacheable, ioType, isExternal));
 }
 
 GrVkTexture::~GrVkTexture() {
     // either release or abandon should have been called by the owner of this object.
-    SkASSERT(!fTextureView);
-    SkASSERT(!fLinearTextureView);
+    SkASSERT(!fTexture);
 }
 
 void GrVkTexture::onRelease() {
-    // we create this and don't hand it off, so we should always destroy it
-    if (fTextureView) {
-        fTextureView->unref(this->getVkGpu());
-        fTextureView = nullptr;
-    }
+    fTexture.reset();
 
-    if (fLinearTextureView) {
-        fLinearTextureView->unref(this->getVkGpu());
-        fLinearTextureView = nullptr;
-    }
+    fDescSetCache.reset();
 
-    this->releaseImage(this->getVkGpu());
-
-    INHERITED::onRelease();
+    GrTexture::onRelease();
 }
+
+struct GrVkTexture::DescriptorCacheEntry {
+    DescriptorCacheEntry(const GrVkDescriptorSet* fDescSet, GrVkGpu* gpu)
+            : fDescriptorSet(fDescSet), fGpu(gpu) {}
+    ~DescriptorCacheEntry() {
+        if (fDescriptorSet) {
+            fDescriptorSet->recycle();
+        }
+    }
+
+    const GrVkDescriptorSet* fDescriptorSet;
+    GrVkGpu* fGpu;
+};
 
 void GrVkTexture::onAbandon() {
-    if (fTextureView) {
-        fTextureView->unrefAndAbandon();
-        fTextureView = nullptr;
-    }
+    fTexture.reset();
 
-    if (fLinearTextureView) {
-        fLinearTextureView->unrefAndAbandon();
-        fLinearTextureView = nullptr;
-    }
+    fDescSetCache.reset();
 
-    this->abandonImage();
-    INHERITED::onAbandon();
+    GrTexture::onAbandon();
 }
 
-GrBackendObject GrVkTexture::getTextureHandle() const {
-    return (GrBackendObject)&fInfo;
+GrBackendTexture GrVkTexture::getBackendTexture() const {
+    return GrBackendTexture(fTexture->width(), fTexture->height(), fTexture->vkImageInfo(),
+                            fTexture->getMutableState());
 }
 
 GrVkGpu* GrVkTexture::getVkGpu() const {
@@ -157,88 +165,17 @@ GrVkGpu* GrVkTexture::getVkGpu() const {
     return static_cast<GrVkGpu*>(this->getGpu());
 }
 
-const GrVkImageView* GrVkTexture::textureView(bool allowSRGB) {
-    VkFormat linearFormat;
-    if (allowSRGB || !GrVkFormatIsSRGB(fInfo.fFormat, &linearFormat)) {
-        return fTextureView;
-    }
+const GrVkImageView* GrVkTexture::textureView() { return fTexture->textureView(); }
 
-    if (!fLinearTextureView) {
-        fLinearTextureView = GrVkImageView::Create(this->getVkGpu(), fInfo.fImage,
-                                                   linearFormat, GrVkImageView::kColor_Type,
-                                                   fInfo.fLevelCount);
-        SkASSERT(fLinearTextureView);
+const GrVkDescriptorSet* GrVkTexture::cachedSingleDescSet(GrSamplerState state) {
+    if (std::unique_ptr<DescriptorCacheEntry>* e = fDescSetCache.find(state)) {
+        return (*e)->fDescriptorSet;
     }
-
-    return fLinearTextureView;
+    return nullptr;
 }
 
-bool GrVkTexture::reallocForMipmap(GrVkGpu* gpu, uint32_t mipLevels) {
-    if (mipLevels == 1) {
-        // don't need to do anything for a 1x1 texture
-        return false;
-    }
-
-    const GrVkResource* oldResource = this->resource();
-
-    // We shouldn't realloc something that doesn't belong to us
-    if (fIsBorrowed) {
-        return false;
-    }
-
-    bool renderTarget = SkToBool(fDesc.fFlags & kRenderTarget_GrSurfaceFlag);
-
-    VkImageUsageFlags usageFlags = VK_IMAGE_USAGE_SAMPLED_BIT;
-    if (renderTarget) {
-        usageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-    }
-    usageFlags |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-
-    GrVkImage::ImageDesc imageDesc;
-    imageDesc.fImageType = VK_IMAGE_TYPE_2D;
-    imageDesc.fFormat = fInfo.fFormat;
-    imageDesc.fWidth = fDesc.fWidth;
-    imageDesc.fHeight = fDesc.fHeight;
-    imageDesc.fLevels = mipLevels;
-    imageDesc.fSamples = 1;
-    imageDesc.fImageTiling = VK_IMAGE_TILING_OPTIMAL;
-    imageDesc.fUsageFlags = usageFlags;
-    imageDesc.fMemProps = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-
-    GrVkImageInfo info;
-    if (!GrVkImage::InitImageInfo(gpu, imageDesc, &info)) {
-        return false;
-    }
-
-    // have to create a new image view for new resource
-    const GrVkImageView* oldView = fTextureView;
-    VkImage image = info.fImage;
-    const GrVkImageView* textureView = GrVkImageView::Create(gpu, image, info.fFormat,
-                                                             GrVkImageView::kColor_Type, mipLevels);
-    if (!textureView) {
-        GrVkImage::DestroyImageInfo(gpu, &info);
-        return false;
-    }
-
-    if (renderTarget) {
-        GrVkTextureRenderTarget* texRT = static_cast<GrVkTextureRenderTarget*>(this);
-        if (!texRT->updateForMipmap(gpu, info)) {
-            GrVkImage::DestroyImageInfo(gpu, &info);
-            return false;
-        }
-    }
-
-    oldResource->unref(gpu);
-    oldView->unref(gpu);
-    if (fLinearTextureView) {
-        fLinearTextureView->unref(gpu);
-        fLinearTextureView = nullptr;
-    }
-
-    this->setNewResource(info.fImage, info.fAlloc, info.fImageTiling);
-    fTextureView = textureView;
-    fInfo = info;
-    this->texturePriv().setMaxMipMapLevel(mipLevels);
-
-    return true;
+void GrVkTexture::addDescriptorSetToCache(const GrVkDescriptorSet* descSet, GrSamplerState state) {
+    SkASSERT(!fDescSetCache.find(state));
+    descSet->ref();
+    fDescSetCache.insert(state, std::make_unique<DescriptorCacheEntry>(descSet, this->getVkGpu()));
 }

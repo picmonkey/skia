@@ -5,29 +5,30 @@
  * found in the LICENSE file.
  */
 
-#include "SkData.h"
-#include "SkOSFile.h"
-#include "SkOnce.h"
-#include "SkReadBuffer.h"
-#include "SkStream.h"
-#include "SkWriteBuffer.h"
+#include "include/core/SkData.h"
+#include "include/core/SkStream.h"
+#include "include/private/SkOnce.h"
+#include "src/core/SkOSFile.h"
+#include "src/core/SkReadBuffer.h"
+#include "src/core/SkWriteBuffer.h"
+#include <new>
 
-SkData::SkData(const void* ptr, size_t size, ReleaseProc proc, void* context) {
-    fPtr = const_cast<void*>(ptr);
-    fSize = size;
-    fReleaseProc = proc;
-    fReleaseProcContext = context;
-}
+SkData::SkData(const void* ptr, size_t size, ReleaseProc proc, void* context)
+    : fReleaseProc(proc)
+    , fReleaseProcContext(context)
+    , fPtr(ptr)
+    , fSize(size)
+{}
 
 /** This constructor means we are inline with our fPtr's contents.
  *  Thus we set fPtr to point right after this.
  */
-SkData::SkData(size_t size) {
-    fPtr = (char*)(this + 1);   // contents are immediately after this
-    fSize = size;
-    fReleaseProc = nullptr;
-    fReleaseProcContext = nullptr;
-}
+SkData::SkData(size_t size)
+    : fReleaseProc(nullptr)
+    , fReleaseProcContext(nullptr)
+    , fPtr((const char*)(this + 1))
+    , fSize(size)
+{}
 
 SkData::~SkData() {
     if (fReleaseProc) {
@@ -36,11 +37,13 @@ SkData::~SkData() {
 }
 
 bool SkData::equals(const SkData* other) const {
+    if (this == other) {
+        return true;
+    }
     if (nullptr == other) {
         return false;
     }
-
-    return fSize == other->fSize && !memcmp(fPtr, other->fPtr, fSize);
+    return fSize == other->fSize && !sk_careful_memcmp(fPtr, other->fPtr, fSize);
 }
 
 size_t SkData::copyRange(size_t offset, size_t length, void* buffer) const {
@@ -58,16 +61,17 @@ size_t SkData::copyRange(size_t offset, size_t length, void* buffer) const {
     return length;
 }
 
+void SkData::operator delete(void* p) {
+    ::operator delete(p);
+}
+
 sk_sp<SkData> SkData::PrivateNewWithCopy(const void* srcOrNull, size_t length) {
     if (0 == length) {
         return SkData::MakeEmpty();
     }
 
     const size_t actualLength = length + sizeof(SkData);
-    if (actualLength < length) {
-        // we overflowed
-        sk_throw();
-    }
+    SkASSERT_RELEASE(length < actualLength);  // Check for overflow.
 
     void* storage = ::operator new (actualLength);
     sk_sp<SkData> data(new (storage) SkData(length));
@@ -77,7 +81,7 @@ sk_sp<SkData> SkData::PrivateNewWithCopy(const void* srcOrNull, size_t length) {
     return data;
 }
 
-void SkData::DummyReleaseProc(const void*, void*) {}
+void SkData::NoopReleaseProc(const void*, void*) {}
 
 ///////////////////////////////////////////////////////////////////////////////
 

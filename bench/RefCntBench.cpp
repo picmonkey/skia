@@ -4,38 +4,14 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
+#include "bench/Benchmark.h"
+#include "include/core/SkRefCnt.h"
+#include "include/private/SkWeakRefCnt.h"
 #include <memory>
-#include "Benchmark.h"
-#include "SkAtomics.h"
-#include "SkRefCnt.h"
-#include "SkWeakRefCnt.h"
+#include <new>
 
 enum {
     M = 2
-};
-
-class AtomicInc32 : public Benchmark {
-public:
-    AtomicInc32() : fX(0) {}
-
-    bool isSuitableFor(Backend backend) override {
-        return backend == kNonRendering_Backend;
-    }
-
-protected:
-    const char* onGetName() override {
-        return "atomic_inc_32";
-    }
-
-    void onDraw(int loops, SkCanvas*) override {
-        for (int i = 0; i < loops; ++i) {
-            sk_atomic_inc(&fX);
-        }
-    }
-
-private:
-    int32_t fX;
-    typedef Benchmark INHERITED;
 };
 
 class RefCntBench_Stack : public Benchmark {
@@ -60,7 +36,7 @@ protected:
     }
 
 private:
-    typedef Benchmark INHERITED;
+    using INHERITED = Benchmark;
 };
 
 class PlacedRefCnt : public SkRefCnt {
@@ -69,7 +45,7 @@ public:
     void operator delete(void*) { }
 
 private:
-    typedef SkRefCnt INHERITED;
+    using INHERITED = SkRefCnt;
 };
 
 class RefCntBench_Heap : public Benchmark {
@@ -96,7 +72,7 @@ protected:
     }
 
 private:
-    typedef Benchmark INHERITED;
+    using INHERITED = Benchmark;
 };
 
 class RefCntBench_New : public Benchmark {
@@ -122,7 +98,7 @@ protected:
     }
 
 private:
-    typedef Benchmark INHERITED;
+    using INHERITED = Benchmark;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -149,7 +125,7 @@ protected:
     }
 
 private:
-    typedef Benchmark INHERITED;
+    using INHERITED = Benchmark;
 };
 
 class PlacedWeakRefCnt : public SkWeakRefCnt {
@@ -182,7 +158,7 @@ protected:
     }
 
 private:
-    typedef Benchmark INHERITED;
+    using INHERITED = Benchmark;
 };
 
 class WeakRefCntBench_New : public Benchmark {
@@ -208,12 +184,10 @@ protected:
     }
 
 private:
-    typedef Benchmark INHERITED;
+    using INHERITED = Benchmark;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-
-DEF_BENCH( return new AtomicInc32(); )
 
 DEF_BENCH( return new RefCntBench_Stack(); )
 DEF_BENCH( return new RefCntBench_Heap(); )

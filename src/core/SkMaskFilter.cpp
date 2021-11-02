@@ -5,23 +5,27 @@
  * found in the LICENSE file.
  */
 
-#include "SkMaskFilter.h"
+#include "src/core/SkMaskFilterBase.h"
 
-#include "SkAutoMalloc.h"
-#include "SkBlitter.h"
-#include "SkCachedData.h"
-#include "SkDraw.h"
-#include "SkPath.h"
-#include "SkRRect.h"
-#include "SkRasterClip.h"
+#include "include/core/SkPath.h"
+#include "include/core/SkRRect.h"
+#include "src/core/SkAutoMalloc.h"
+#include "src/core/SkBlitter.h"
+#include "src/core/SkCachedData.h"
+#include "src/core/SkDraw.h"
+#include "src/core/SkPathPriv.h"
+#include "src/core/SkRasterClip.h"
+#include "src/core/SkReadBuffer.h"
+#include "src/core/SkWriteBuffer.h"
 
 #if SK_SUPPORT_GPU
-#include "GrTexture.h"
-#include "GrTextureProxy.h"
-#include "SkGr.h"
+#include "src/gpu/GrFragmentProcessor.h"
+#include "src/gpu/GrSurfaceProxyView.h"
+#include "src/gpu/GrTextureProxy.h"
+#include "src/gpu/text/GrSDFMaskFilter.h"
 #endif
 
-SkMaskFilter::NinePatch::~NinePatch() {
+SkMaskFilterBase::NinePatch::~NinePatch() {
     if (fCache) {
         SkASSERT((const void*)fMask.fImage == fCache->data());
         fCache->unref();
@@ -30,12 +34,7 @@ SkMaskFilter::NinePatch::~NinePatch() {
     }
 }
 
-bool SkMaskFilter::filterMask(SkMask*, const SkMask&, const SkMatrix&,
-                              SkIPoint*) const {
-    return false;
-}
-
-bool SkMaskFilter::asABlur(BlurRec*) const {
+bool SkMaskFilterBase::asABlur(BlurRec*) const {
     return false;
 }
 
@@ -125,10 +124,10 @@ static void draw_nine_clipped(const SkMask& mask, const SkIRect& outerR,
     }
 
     SkIRect innerR;
-    innerR.set(outerR.left() + cx - mask.fBounds.left(),
-               outerR.top() + cy - mask.fBounds.top(),
-               outerR.right() + (cx + 1 - mask.fBounds.right()),
-               outerR.bottom() + (cy + 1 - mask.fBounds.bottom()));
+    innerR.setLTRB(outerR.left() + cx - mask.fBounds.left(),
+                   outerR.top() + cy - mask.fBounds.top(),
+                   outerR.right() + (cx + 1 - mask.fBounds.right()),
+                   outerR.bottom() + (cy + 1 - mask.fBounds.bottom()));
     if (fillCenter) {
         blitClippedRect(blitter, innerR, clipR);
     }
@@ -141,9 +140,9 @@ static void draw_nine_clipped(const SkMask& mask, const SkIRect& outerR,
 
     SkIRect r;
     // top
-    r.set(innerR.left(), outerR.top(), innerR.right(), innerR.top());
+    r.setLTRB(innerR.left(), outerR.top(), innerR.right(), innerR.top());
     if (r.intersect(clipR)) {
-        int startY = SkMax32(0, r.top() - outerR.top());
+        int startY = std::max(0, r.top() - outerR.top());
         int stopY = startY + r.height();
         int width = r.width();
         for (int y = startY; y < stopY; ++y) {
@@ -154,7 +153,7 @@ static void draw_nine_clipped(const SkMask& mask, const SkIRect& outerR,
         }
     }
     // bottom
-    r.set(innerR.left(), innerR.bottom(), innerR.right(), outerR.bottom());
+    r.setLTRB(innerR.left(), innerR.bottom(), innerR.right(), outerR.bottom());
     if (r.intersect(clipR)) {
         int startY = outerR.bottom() - r.bottom();
         int stopY = startY + r.height();
@@ -167,26 +166,26 @@ static void draw_nine_clipped(const SkMask& mask, const SkIRect& outerR,
         }
     }
     // left
-    r.set(outerR.left(), innerR.top(), innerR.left(), innerR.bottom());
+    r.setLTRB(outerR.left(), innerR.top(), innerR.left(), innerR.bottom());
     if (r.intersect(clipR)) {
-        int startX = r.left() - outerR.left();
-        int stopX = startX + r.width();
-        int height = r.height();
-        for (int x = startX; x < stopX; ++x) {
-            blitter->blitV(outerR.left() + x, r.top(), height,
-                           *mask.getAddr8(mask.fBounds.left() + x, mask.fBounds.top() + cy));
-        }
+        SkMask leftMask;
+        leftMask.fImage = mask.getAddr8(mask.fBounds.left() + r.left() - outerR.left(),
+                                        mask.fBounds.top() + cy);
+        leftMask.fBounds = r;
+        leftMask.fRowBytes = 0;    // so we repeat the scanline for our height
+        leftMask.fFormat = SkMask::kA8_Format;
+        blitter->blitMask(leftMask, r);
     }
     // right
-    r.set(innerR.right(), innerR.top(), outerR.right(), innerR.bottom());
+    r.setLTRB(innerR.right(), innerR.top(), outerR.right(), innerR.bottom());
     if (r.intersect(clipR)) {
-        int startX = outerR.right() - r.right();
-        int stopX = startX + r.width();
-        int height = r.height();
-        for (int x = startX; x < stopX; ++x) {
-            blitter->blitV(outerR.right() - x - 1, r.top(), height,
-                           *mask.getAddr8(mask.fBounds.right() - x - 1, mask.fBounds.top() + cy));
-        }
+        SkMask rightMask;
+        rightMask.fImage = mask.getAddr8(mask.fBounds.right() - outerR.right() + r.left(),
+                                         mask.fBounds.top() + cy);
+        rightMask.fBounds = r;
+        rightMask.fRowBytes = 0;    // so we repeat the scanline for our height
+        rightMask.fFormat = SkMask::kA8_Format;
+        blitter->blitMask(rightMask, r);
     }
 }
 
@@ -208,14 +207,14 @@ static void draw_nine(const SkMask& mask, const SkIRect& outerR, const SkIPoint&
 }
 
 static int countNestedRects(const SkPath& path, SkRect rects[2]) {
-    if (path.isNestedFillRects(rects)) {
+    if (SkPathPriv::IsNestedFillRects(path, rects)) {
         return 2;
     }
     return path.isRect(&rects[0]);
 }
 
-bool SkMaskFilter::filterRRect(const SkRRect& devRRect, const SkMatrix& matrix,
-                               const SkRasterClip& clip, SkBlitter* blitter) const {
+bool SkMaskFilterBase::filterRRect(const SkRRect& devRRect, const SkMatrix& matrix,
+                                   const SkRasterClip& clip, SkBlitter* blitter) const {
     // Attempt to speed up drawing by creating a nine patch. If a nine patch
     // cannot be used, return false to allow our caller to recover and perform
     // the drawing another way.
@@ -231,9 +230,9 @@ bool SkMaskFilter::filterRRect(const SkRRect& devRRect, const SkMatrix& matrix,
     return true;
 }
 
-bool SkMaskFilter::filterPath(const SkPath& devPath, const SkMatrix& matrix,
-                              const SkRasterClip& clip, SkBlitter* blitter,
-                              SkStrokeRec::InitStyle style) const {
+bool SkMaskFilterBase::filterPath(const SkPath& devPath, const SkMatrix& matrix,
+                                  const SkRasterClip& clip, SkBlitter* blitter,
+                                  SkStrokeRec::InitStyle style) const {
     SkRect rects[2];
     int rectCount = 0;
     if (SkStrokeRec::kFill_InitStyle == style) {
@@ -254,13 +253,18 @@ bool SkMaskFilter::filterPath(const SkPath& devPath, const SkMatrix& matrix,
 
             case kUnimplemented_FilterReturn:
                 SkASSERT(nullptr == patch.fMask.fImage);
-                // fall through
+                // fall out
                 break;
         }
     }
 
     SkMask  srcM, dstM;
 
+#if defined(SK_BUILD_FOR_FUZZER)
+    if (devPath.countVerbs() > 1000 || devPath.countPoints() > 1000) {
+        return false;
+    }
+#endif
     if (!SkDraw::DrawToMask(devPath, &clip.getBounds(), this, &matrix, &srcM,
                             SkMask::kComputeBoundsAndRenderImage_CreateMode,
                             style)) {
@@ -290,60 +294,67 @@ bool SkMaskFilter::filterPath(const SkPath& devPath, const SkMatrix& matrix,
     return true;
 }
 
-SkMaskFilter::FilterReturn
-SkMaskFilter::filterRRectToNine(const SkRRect&, const SkMatrix&,
-                                const SkIRect& clipBounds, NinePatch*) const {
+SkMaskFilterBase::FilterReturn
+SkMaskFilterBase::filterRRectToNine(const SkRRect&, const SkMatrix&,
+                                    const SkIRect& clipBounds, NinePatch*) const {
     return kUnimplemented_FilterReturn;
 }
 
-SkMaskFilter::FilterReturn
-SkMaskFilter::filterRectsToNine(const SkRect[], int count, const SkMatrix&,
-                                const SkIRect& clipBounds, NinePatch*) const {
+SkMaskFilterBase::FilterReturn
+SkMaskFilterBase::filterRectsToNine(const SkRect[], int count, const SkMatrix&,
+                                    const SkIRect& clipBounds, NinePatch*) const {
     return kUnimplemented_FilterReturn;
 }
 
 #if SK_SUPPORT_GPU
-bool SkMaskFilter::asFragmentProcessor(GrFragmentProcessor**, GrTexture*, const SkMatrix&) const {
-    return false;
+std::unique_ptr<GrFragmentProcessor>
+SkMaskFilterBase::asFragmentProcessor(const GrFPArgs& args) const {
+    auto fp = this->onAsFragmentProcessor(args);
+    if (fp) {
+        SkASSERT(this->hasFragmentProcessor());
+    } else {
+        SkASSERT(!this->hasFragmentProcessor());
+    }
+    return fp;
+}
+bool SkMaskFilterBase::hasFragmentProcessor() const {
+    return this->onHasFragmentProcessor();
 }
 
-bool SkMaskFilter::canFilterMaskGPU(const SkRRect& devRRect,
-                                    const SkIRect& clipBounds,
-                                    const SkMatrix& ctm,
-                                    SkRect* maskRect) const {
-    return false;
-}
-
-bool SkMaskFilter::directFilterMaskGPU(GrContext*,
-                                       GrRenderTargetContext* renderTargetContext,
-                                       GrPaint&&,
-                                       const GrClip&,
-                                       const SkMatrix& viewMatrix,
-                                       const SkStrokeRec& strokeRec,
-                                       const SkPath& path) const {
-    return false;
-}
-
-bool SkMaskFilter::directFilterRRectMaskGPU(GrContext*,
-                                            GrRenderTargetContext* renderTargetContext,
-                                            GrPaint&&,
-                                            const GrClip&,
-                                            const SkMatrix& viewMatrix,
-                                            const SkStrokeRec& strokeRec,
-                                            const SkRRect& rrect,
-                                            const SkRRect& devRRect) const {
-    return false;
-}
-
-sk_sp<GrTextureProxy> SkMaskFilter::filterMaskGPU(GrContext*,
-                                                  sk_sp<GrTextureProxy> srcProxy,
-                                                  const SkMatrix& ctm,
-                                                  const SkIRect& maskRect) const {
+std::unique_ptr<GrFragmentProcessor>
+SkMaskFilterBase::onAsFragmentProcessor(const GrFPArgs&) const {
     return nullptr;
+}
+bool SkMaskFilterBase::onHasFragmentProcessor() const { return false; }
+
+bool SkMaskFilterBase::canFilterMaskGPU(const GrStyledShape& shape,
+                                        const SkIRect& devSpaceShapeBounds,
+                                        const SkIRect& clipBounds,
+                                        const SkMatrix& ctm,
+                                        SkIRect* maskRect) const {
+    return false;
+}
+
+bool SkMaskFilterBase::directFilterMaskGPU(GrRecordingContext*,
+                                           skgpu::v1::SurfaceDrawContext*,
+                                           GrPaint&&,
+                                           const GrClip*,
+                                           const SkMatrix& viewMatrix,
+                                           const GrStyledShape&) const {
+    return false;
+}
+
+GrSurfaceProxyView SkMaskFilterBase::filterMaskGPU(GrRecordingContext*,
+                                                   GrSurfaceProxyView view,
+                                                   GrColorType srcColorType,
+                                                   SkAlphaType srcAlphaType,
+                                                   const SkMatrix& ctm,
+                                                   const SkIRect& maskRect) const {
+    return {};
 }
 #endif
 
-void SkMaskFilter::computeFastBounds(const SkRect& src, SkRect* dst) const {
+void SkMaskFilterBase::computeFastBounds(const SkRect& src, SkRect* dst) const {
     SkMask  srcM, dstM;
 
     srcM.fBounds = src.roundOut();
@@ -356,4 +367,24 @@ void SkMaskFilter::computeFastBounds(const SkRect& src, SkRect* dst) const {
     } else {
         dst->set(srcM.fBounds);
     }
+}
+
+SkRect SkMaskFilter::approximateFilteredBounds(const SkRect& src) const {
+    SkRect dst;
+    as_MFB(this)->computeFastBounds(src, &dst);
+    return dst;
+}
+
+void SkMaskFilter::RegisterFlattenables() {
+    sk_register_blur_maskfilter_createproc();
+#if SK_SUPPORT_GPU
+    gr_register_sdf_maskfilter_createproc();
+#endif
+}
+
+sk_sp<SkMaskFilter> SkMaskFilter::Deserialize(const void* data, size_t size,
+                                              const SkDeserialProcs* procs) {
+    return sk_sp<SkMaskFilter>(static_cast<SkMaskFilter*>(
+                               SkFlattenable::Deserialize(
+                               kSkMaskFilter_Type, data, size, procs).release()));
 }

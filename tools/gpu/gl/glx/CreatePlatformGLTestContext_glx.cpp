@@ -5,8 +5,8 @@
  * found in the LICENSE file.
  */
 
-#include "gl/GLTestContext.h"
-#include "SkOnce.h"
+#include "include/private/SkOnce.h"
+#include "tools/gpu/gl/GLTestContext.h"
 
 #include <X11/Xlib.h>
 #include <GL/glx.h>
@@ -61,8 +61,9 @@ private:
     static GLXContext CreateBestContext(bool isES, Display* display, GLXFBConfig bestFbc,
                                         GLXContext glxSharedContext);
 
+    void onPlatformMakeNotCurrent() const override;
     void onPlatformMakeCurrent() const override;
-    void onPlatformSwapBuffers() const override;
+    std::function<void()> onPlatformGetAutoContextRestore() const override;
     GrGLFuncPtr onPlatformGetProcAddress(const char*) const override;
 
     GLXContext fContext;
@@ -86,8 +87,19 @@ static Display* get_display() {
     };
     static std::unique_ptr<AutoDisplay> ad;
     static SkOnce once;
-    once([] { ad.reset(new AutoDisplay{}); });
+    once([] { ad = std::make_unique<AutoDisplay>(); });
     return ad->display();
+}
+
+std::function<void()> context_restorer() {
+    auto display = glXGetCurrentDisplay();
+    auto drawable = glXGetCurrentDrawable();
+    auto context = glXGetCurrentContext();
+    // On some systems calling glXMakeCurrent with a null display crashes.
+    if (!display) {
+        display = get_display();
+    }
+    return [display, drawable, context] { glXMakeCurrent(display, drawable, context); };
 }
 
 GLXGLTestContext::GLXGLTestContext(GrGLStandard forcedGpuAPI, GLXGLTestContext* shareContext)
@@ -95,6 +107,11 @@ GLXGLTestContext::GLXGLTestContext(GrGLStandard forcedGpuAPI, GLXGLTestContext* 
     , fDisplay(nullptr)
     , fPixmap(0)
     , fGlxPixmap(0) {
+    // We cross our fingers that this is the first X call in the program and that if the application
+    // is actually threaded that this succeeds.
+    static SkOnce gOnce;
+    gOnce([] { XInitThreads(); });
+
     fDisplay = get_display();
 
     GLXContext glxShareContext = shareContext ? shareContext->fContext : nullptr;
@@ -188,7 +205,7 @@ GLXGLTestContext::GLXGLTestContext(GrGLStandard forcedGpuAPI, GLXGLTestContext* 
     if (!gluCheckExtension(reinterpret_cast<const GLubyte*>("GLX_ARB_create_context"),
                            reinterpret_cast<const GLubyte*>(glxExts))) {
         if (kGLES_GrGLStandard != forcedGpuAPI) {
-            fContext = glXCreateNewContext(fDisplay, bestFbc, GLX_RGBA_TYPE, 0, True);
+            fContext = glXCreateNewContext(fDisplay, bestFbc, GLX_RGBA_TYPE, nullptr, True);
         }
     } else {
         if (kGLES_GrGLStandard == forcedGpuAPI) {
@@ -214,6 +231,7 @@ GLXGLTestContext::GLXGLTestContext(GrGLStandard forcedGpuAPI, GLXGLTestContext* 
         //SkDebugf("Direct GLX rendering context obtained.\n");
     }
 
+    SkScopeExit restorer(context_restorer());
     //SkDebugf("Making context current.\n");
     if (!glXMakeCurrent(fDisplay, fGlxPixmap, fContext)) {
       SkDebugf("Could not set the context.\n");
@@ -221,8 +239,9 @@ GLXGLTestContext::GLXGLTestContext(GrGLStandard forcedGpuAPI, GLXGLTestContext* 
         return;
     }
 
-    sk_sp<const GrGLInterface> gl(GrGLCreateNativeInterface());
-    if (nullptr == gl.get()) {
+#ifdef SK_GL
+    auto gl = GrGLMakeNativeInterface();
+    if (!gl) {
         SkDebugf("Failed to create gl interface");
         this->destroyGLContext();
         return;
@@ -234,7 +253,13 @@ GLXGLTestContext::GLXGLTestContext(GrGLStandard forcedGpuAPI, GLXGLTestContext* 
         return;
     }
 
-    this->init(gl.release());
+    this->init(std::move(gl));
+#else
+    // Allow the GLTestContext creation to succeed without a GrGLInterface to support
+    // GrContextFactory's persistent GL context workaround for Vulkan. We won't need the
+    // GrGLInterface since we're not running the GL backend.
+    this->init(nullptr);
+#endif
 }
 
 
@@ -245,9 +270,11 @@ GLXGLTestContext::~GLXGLTestContext() {
 
 void GLXGLTestContext::destroyGLContext() {
     if (fDisplay) {
-        glXMakeCurrent(fDisplay, 0, 0);
-
         if (fContext) {
+            if (glXGetCurrentContext() == fContext) {
+                // This will ensure that the context is immediately deleted.
+                glXMakeContextCurrent(fDisplay, None, None, nullptr);
+            }
             glXDestroyContext(fDisplay, fContext);
             fContext = nullptr;
         }
@@ -306,10 +333,7 @@ GLXContext GLXGLTestContext::CreateBestContext(bool isES, Display* display, GLXF
             flags.push_back(GLX_CONTEXT_ES2_PROFILE_BIT_EXT);
         } else if (versions[i].first > 2) {
             flags.push_back(GLX_CONTEXT_PROFILE_MASK_ARB);
-            // TODO When Nvidia implements NVPR on Core profiles, we should start
-            // requesting core here - currently Nv Path rendering on Nvidia
-            // requires a compatibility profile.
-            flags.push_back(GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB);
+            flags.push_back(GLX_CONTEXT_CORE_PROFILE_BIT_ARB);
         }
         flags.push_back(0);
         context = glXCreateContextAttribsARB(display, bestFbc, glxShareContext, true,
@@ -328,14 +352,23 @@ GLXContext GLXGLTestContext::CreateBestContext(bool isES, Display* display, GLXF
     return context;
 }
 
+void GLXGLTestContext::onPlatformMakeNotCurrent() const {
+    if (!glXMakeCurrent(fDisplay, None , nullptr)) {
+        SkDebugf("Could not reset the context.\n");
+    }
+}
+
 void GLXGLTestContext::onPlatformMakeCurrent() const {
     if (!glXMakeCurrent(fDisplay, fGlxPixmap, fContext)) {
         SkDebugf("Could not set the context.\n");
     }
 }
 
-void GLXGLTestContext::onPlatformSwapBuffers() const {
-    glXSwapBuffers(fDisplay, fGlxPixmap);
+std::function<void()> GLXGLTestContext::onPlatformGetAutoContextRestore() const {
+    if (glXGetCurrentContext() == fContext) {
+        return nullptr;
+    }
+    return context_restorer();
 }
 
 GrGLFuncPtr GLXGLTestContext::onPlatformGetProcAddress(const char* procName) const {

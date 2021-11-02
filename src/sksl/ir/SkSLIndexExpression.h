@@ -8,63 +8,83 @@
 #ifndef SKSL_INDEX
 #define SKSL_INDEX
 
-#include "SkSLContext.h"
-#include "SkSLExpression.h"
-#include "SkSLUtil.h"
+#include "src/sksl/SkSLContext.h"
+#include "src/sksl/SkSLUtil.h"
+#include "src/sksl/ir/SkSLExpression.h"
 
 namespace SkSL {
 
 /**
- * Given a type, returns the type that will result from extracting an array value from it.
- */
-static const Type& index_type(const Context& context, const Type& type) {
-    if (type.kind() == Type::kMatrix_Kind) {
-        if (type.componentType() == *context.fFloat_Type) {
-            switch (type.rows()) {
-                case 2: return *context.fVec2_Type;
-                case 3: return *context.fVec3_Type;
-                case 4: return *context.fVec4_Type;
-                default: ASSERT(false);
-            }
-        } else {
-            ASSERT(type.componentType() == *context.fDouble_Type);
-            switch (type.rows()) {
-                case 2: return *context.fDVec2_Type;
-                case 3: return *context.fDVec3_Type;
-                case 4: return *context.fDVec4_Type;
-                default: ASSERT(false);
-            }
-        }
-    }
-    return type.componentType();
-}
-
-/**
  * An expression which extracts a value from an array or matrix, as in 'm[2]'.
  */
-struct IndexExpression : public Expression {
+struct IndexExpression final : public Expression {
+    inline static constexpr Kind kExpressionKind = Kind::kIndex;
+
     IndexExpression(const Context& context, std::unique_ptr<Expression> base,
                     std::unique_ptr<Expression> index)
-    : INHERITED(base->fPosition, kIndex_Kind, index_type(context, base->fType))
-    , fBase(std::move(base))
-    , fIndex(std::move(index)) {
-        ASSERT(fIndex->fType == *context.fInt_Type || fIndex->fType == *context.fUInt_Type);
+        : INHERITED(base->fLine, kExpressionKind, &IndexType(context, base->type()))
+        , fBase(std::move(base))
+        , fIndex(std::move(index)) {}
+
+    // Returns a simplified index-expression; reports errors via the ErrorReporter.
+    static std::unique_ptr<Expression> Convert(const Context& context,
+                                               SymbolTable& symbolTable,
+                                               std::unique_ptr<Expression> base,
+                                               std::unique_ptr<Expression> index);
+
+    // Returns a simplified index-expression; reports errors via ASSERT.
+    static std::unique_ptr<Expression> Make(const Context& context,
+                                            std::unique_ptr<Expression> base,
+                                            std::unique_ptr<Expression> index);
+
+    /**
+     * Given a type, returns the type that will result from extracting an array value from it.
+     */
+    static const Type& IndexType(const Context& context, const Type& type);
+
+    std::unique_ptr<Expression>& base() {
+        return fBase;
     }
 
-    bool hasSideEffects() const override {
-        return fBase->hasSideEffects() || fIndex->hasSideEffects();
+    const std::unique_ptr<Expression>& base() const {
+        return fBase;
+    }
+
+    std::unique_ptr<Expression>& index() {
+        return fIndex;
+    }
+
+    const std::unique_ptr<Expression>& index() const {
+        return fIndex;
+    }
+
+    bool hasProperty(Property property) const override {
+        return this->base()->hasProperty(property) || this->index()->hasProperty(property);
+    }
+
+    std::unique_ptr<Expression> clone() const override {
+        return std::unique_ptr<Expression>(new IndexExpression(this->base()->clone(),
+                                                               this->index()->clone(),
+                                                               &this->type()));
     }
 
     String description() const override {
-        return fBase->description() + "[" + fIndex->description() + "]";
+        return this->base()->description() + "[" + this->index()->description() + "]";
     }
+
+    using INHERITED = Expression;
+
+private:
+    IndexExpression(std::unique_ptr<Expression> base, std::unique_ptr<Expression> index,
+                    const Type* type)
+        : INHERITED(base->fLine, Kind::kIndex, type)
+        , fBase(std::move(base))
+        , fIndex(std::move(index)) {}
 
     std::unique_ptr<Expression> fBase;
     std::unique_ptr<Expression> fIndex;
-
-    typedef Expression INHERITED;
 };
 
-} // namespace
+}  // namespace SkSL
 
 #endif

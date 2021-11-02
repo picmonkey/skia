@@ -5,37 +5,50 @@
  * found in the LICENSE file.
  */
 
-#include "GrProcessorAnalysis.h"
-#include "GrGeometryProcessor.h"
-#include "ops/GrDrawOp.h"
+#include "src/gpu/GrCaps.h"
+#include "src/gpu/GrFragmentProcessor.h"
+#include "src/gpu/GrGeometryProcessor.h"
+#include "src/gpu/GrProcessorAnalysis.h"
 
-void GrColorFragmentProcessorAnalysis::analyzeProcessors(
-        const GrFragmentProcessor* const* processors, int cnt) {
-    for (int i = 0; i < cnt; ++i) {
-        bool knowCurrentOutput = fProcessorsVisitedWithKnownOutput == fTotalProcessorsVisited;
-        if (fUsesLocalCoords && !knowCurrentOutput &&
-            !fAllProcessorsCompatibleWithCoverageAsAlpha && !fIsOpaque) {
-            fTotalProcessorsVisited += cnt - i;
-            return;
-        }
-        const GrFragmentProcessor* fp = processors[i];
-        if (knowCurrentOutput &&
-            fp->hasConstantOutputForConstantInput(fLastKnownOutputColor, &fLastKnownOutputColor)) {
-            ++fProcessorsVisitedWithKnownOutput;
+GrColorFragmentProcessorAnalysis::GrColorFragmentProcessorAnalysis(
+        const GrProcessorAnalysisColor& input,
+        std::unique_ptr<GrFragmentProcessor> const fps[],
+        int count) {
+    fCompatibleWithCoverageAsAlpha = true;
+    fIsOpaque = input.isOpaque();
+    fUsesLocalCoords = false;
+    fWillReadDstColor = false;
+    fProcessorsToEliminate = 0;
+    fOutputColorKnown = input.isConstant(&fLastKnownOutputColor);
+    for (int i = 0; i < count; ++i) {
+        const GrFragmentProcessor* fp = fps[i].get();
+        if (fOutputColorKnown && fp->hasConstantOutputForConstantInput(fLastKnownOutputColor,
+                                                                       &fLastKnownOutputColor)) {
+            ++fProcessorsToEliminate;
             fIsOpaque = fLastKnownOutputColor.isOpaque();
-            // We reset these since the caller is expected to not use the earlier fragment
-            // processors.
-            fAllProcessorsCompatibleWithCoverageAsAlpha = true;
+            // We reset these flags since the earlier fragment processors are being eliminated.
+            fCompatibleWithCoverageAsAlpha = true;
             fUsesLocalCoords = false;
-        } else if (fIsOpaque && !fp->preservesOpaqueInput()) {
+            fWillReadDstColor = false;
+            continue;
+        }
+
+        fOutputColorKnown = false;
+        if (fIsOpaque && !fp->preservesOpaqueInput()) {
             fIsOpaque = false;
         }
-        if (fAllProcessorsCompatibleWithCoverageAsAlpha && !fp->compatibleWithCoverageAsAlpha()) {
-            fAllProcessorsCompatibleWithCoverageAsAlpha = false;
+        if (fCompatibleWithCoverageAsAlpha && !fp->compatibleWithCoverageAsAlpha()) {
+            fCompatibleWithCoverageAsAlpha = false;
         }
-        if (fp->usesLocalCoords()) {
+        if (fp->usesSampleCoords()) {
             fUsesLocalCoords = true;
         }
-        ++fTotalProcessorsVisited;
+        if (fp->willReadDstColor()) {
+            fWillReadDstColor = true;
+        }
     }
+}
+
+bool GrColorFragmentProcessorAnalysis::requiresDstTexture(const GrCaps& caps) const {
+    return this->willReadDstColor() && !caps.shaderCaps()->dstReadInShaderSupport();
 }

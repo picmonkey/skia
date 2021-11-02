@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from __future__ import print_function
+
 import os
 import glob
 import re
@@ -52,6 +54,7 @@ cppTypeGuid = "8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942"
 allProjects = {}
 projectPattern = (r'Project\("\{' + cppTypeGuid +
                   r'\}"\) = "([^"]*)", "([^"]*)", "\{([^\}]*)\}"')
+projectNamePattern = (r'obj/(.*)\.vcxproj')
 
 for config in configs:
     if config[1]:
@@ -59,16 +62,19 @@ for config in configs:
         for slnLine in slnLines:
             matchObj = re.match(projectPattern, slnLine)
             if matchObj:
-                projName = matchObj.group(1)
-                if not allProjects.has_key(projName):
-                    allProjects[projName] = []
-                allProjects[projName].append((config[0], matchObj.group(2),
-                                              matchObj.group(3)))
+                projPath = matchObj.group(2)
+                nameObj = re.match(projectNamePattern, projPath)
+                if nameObj:
+                    projName = nameObj.group(1).replace('/', '.')
+                    if not allProjects.has_key(projName):
+                        allProjects[projName] = []
+                    allProjects[projName].append((config[0], projPath,
+                                                 matchObj.group(3)))
 
 # We need something to work with. Typically, this will fail if no GN folders
 # have IDE files
 if len(allProjects) == 0:
-    print "ERROR: At least one GN directory must have been built with --ide=vs"
+    print("ERROR: At least one GN directory must have been built with --ide=vs")
     sys.exit()
 
 # Create a new solution. We arbitrarily use the first config as the GUID source

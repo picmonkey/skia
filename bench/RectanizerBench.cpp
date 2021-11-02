@@ -5,15 +5,15 @@
 * found in the LICENSE file.
 */
 
-#include "Benchmark.h"
-#include "SkRandom.h"
-#include "SkSize.h"
-#include "SkTDArray.h"
+#include <memory>
 
-#if SK_SUPPORT_GPU
+#include "bench/Benchmark.h"
+#include "include/core/SkSize.h"
+#include "include/private/SkTDArray.h"
+#include "include/utils/SkRandom.h"
 
-#include "GrRectanizer_pow2.h"
-#include "GrRectanizer_skyline.h"
+#include "src/gpu/GrRectanizerPow2.h"
+#include "src/gpu/GrRectanizerSkyline.h"
 
 /**
  * This bench exercises Ganesh' GrRectanizer classes. It exercises the following
@@ -27,8 +27,8 @@
  */
 class RectanizerBench : public Benchmark {
 public:
-    static const int kWidth = 1024;
-    static const int kHeight = 1024;
+    inline static constexpr int kWidth = 1024;
+    inline static constexpr int kHeight = 1024;
 
     enum RectanizerType {
         kPow2_RectanizerType,
@@ -76,10 +76,10 @@ protected:
         SkASSERT(nullptr == fRectanizer.get());
 
         if (kPow2_RectanizerType == fRectanizerType) {
-            fRectanizer.reset(new GrRectanizerPow2(kWidth, kHeight));
+            fRectanizer = std::make_unique<GrRectanizerPow2>(kWidth, kHeight);
         } else {
             SkASSERT(kSkyline_RectanizerType == fRectanizerType);
-            fRectanizer.reset(new GrRectanizerSkyline(kWidth, kHeight));
+            fRectanizer = std::make_unique<GrRectanizerSkyline>(kWidth, kHeight);
         }
     }
 
@@ -117,7 +117,7 @@ private:
     RectType                    fRectType;
     std::unique_ptr<GrRectanizer> fRectanizer;
 
-    typedef Benchmark INHERITED;
+    using INHERITED = Benchmark;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -134,5 +134,3 @@ DEF_BENCH(return new RectanizerBench(RectanizerBench::kSkyline_RectanizerType,
                                      RectanizerBench::kRandPow2_RectType);)
 DEF_BENCH(return new RectanizerBench(RectanizerBench::kSkyline_RectanizerType,
                                      RectanizerBench::kSmallPow2_RectType);)
-
-#endif

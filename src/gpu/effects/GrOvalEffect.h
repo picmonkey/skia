@@ -8,18 +8,21 @@
 #ifndef GrOvalEffect_DEFINED
 #define GrOvalEffect_DEFINED
 
-#include "GrTypes.h"
-#include "GrTypesPriv.h"
-#include "SkRefCnt.h"
+#include "include/core/SkRefCnt.h"
+#include "include/gpu/GrTypes.h"
+#include "include/private/GrTypesPriv.h"
+#include "src/gpu/GrFragmentProcessor.h"
 
-class GrFragmentProcessor;
+class GrShaderCaps;
 struct SkRect;
 
 namespace GrOvalEffect {
-    /**
-     * Creates an effect that performs clipping against an oval.
-     */
-    sk_sp<GrFragmentProcessor> Make(GrPrimitiveEdgeType, const SkRect&);
-};
+
+/**
+ * Creates an effect that performs clipping against an oval.
+ */
+GrFPResult Make(std::unique_ptr<GrFragmentProcessor>, GrClipEdgeType, const SkRect&,
+                const GrShaderCaps&);
+}  // namespace GrOvalEffect
 
 #endif

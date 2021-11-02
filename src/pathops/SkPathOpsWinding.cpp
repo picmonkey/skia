@@ -21,9 +21,12 @@
 
 // bestXY is initialized by caller with basePt
 
-#include "SkOpContour.h"
-#include "SkOpSegment.h"
-#include "SkPathOpsCurve.h"
+#include "src/core/SkTSort.h"
+#include "src/pathops/SkOpContour.h"
+#include "src/pathops/SkOpSegment.h"
+#include "src/pathops/SkPathOpsCurve.h"
+
+#include <utility>
 
 enum class SkOpRayDir {
     kLeft,
@@ -233,8 +236,7 @@ static double get_t_guess(int tTry, int* dirOffset) {
 }
 
 bool SkOpSpan::sortableTop(SkOpContour* contourHead) {
-    char storage[1024];
-    SkArenaAlloc allocator(storage);
+    SkSTArenaAlloc<1024> allocator;
     int dirOffset;
     double t = get_t_guess(fTopTTry++, &dirOffset);
     SkOpRayHit hitBase;
@@ -245,7 +247,7 @@ bool SkOpSpan::sortableTop(SkOpContour* contourHead) {
     SkOpRayHit* hitHead = &hitBase;
     dir = static_cast<SkOpRayDir>(static_cast<int>(dir) + dirOffset);
     if (hitBase.fSpan && hitBase.fSpan->segment()->verb() > SkPath::kLine_Verb
-            && !pt_yx(hitBase.fSlope.asSkVector(), dir)) {
+            && !pt_dydx(hitBase.fSlope, dir)) {
         return false;
     }
     SkOpContour* contour = contourHead;
@@ -263,9 +265,9 @@ bool SkOpSpan::sortableTop(SkOpContour* contourHead) {
         hit = hit->fNext;
     }
     int count = sorted.count();
-    SkTQSort(sorted.begin(), sorted.end() - 1, xy_index(dir)
-            ? less_than(dir) ? hit_compare_y : reverse_hit_compare_y
-            : less_than(dir) ? hit_compare_x : reverse_hit_compare_x);
+    SkTQSort(sorted.begin(), sorted.end(),
+             xy_index(dir) ? less_than(dir) ? hit_compare_y : reverse_hit_compare_y
+                           : less_than(dir) ? hit_compare_x : reverse_hit_compare_x);
     // verify windings
 #if DEBUG_WINDING
     SkDebugf("%s dir=%s seg=%d t=%1.9g pt=(%1.9g,%1.9g)\n", __FUNCTION__,
@@ -315,7 +317,8 @@ bool SkOpSpan::sortableTop(SkOpContour* contourHead) {
         }
         bool operand = hitSegment->operand();
         if (operand) {
-            SkTSwap(wind, oppWind);
+            using std::swap;
+            swap(wind, oppWind);
         }
         int lastWind = wind;
         int lastOpp = oppWind;
@@ -358,7 +361,8 @@ bool SkOpSpan::sortableTop(SkOpContour* contourHead) {
             }
         }
         if (operand) {
-            SkTSwap(wind, oppWind);
+            using std::swap;
+            swap(wind, oppWind);
         }
         last = &hit->fPt;
         this->globalState()->bumpNested();

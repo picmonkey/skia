@@ -8,8 +8,8 @@
 #ifndef SkGeometry_DEFINED
 #define SkGeometry_DEFINED
 
-#include "SkMatrix.h"
-#include "SkNx.h"
+#include "include/core/SkMatrix.h"
+#include "include/private/SkNx.h"
 
 static inline Sk2s from_point(const SkPoint& point) {
     return Sk2s::Load(&point);
@@ -29,6 +29,15 @@ static Sk2s times_2(const Sk2s& value) {
     equation.
 */
 int SkFindUnitQuadRoots(SkScalar A, SkScalar B, SkScalar C, SkScalar roots[2]);
+
+/** Measures the angle between two vectors, in the range [0, pi].
+*/
+float SkMeasureAngleBetweenVectors(SkVector, SkVector);
+
+/** Returns a new, arbitrarily scaled vector that bisects the given vectors. The returned bisector
+    will always point toward the interior of the provided vectors.
+*/
+SkVector SkFindBisector(SkVector, SkVector);
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -50,6 +59,30 @@ void SkChopQuadAt(const SkPoint src[3], SkPoint dst[5], SkScalar t);
     The new quads are returned in dst[0..2] and dst[2..4]
 */
 void SkChopQuadAtHalf(const SkPoint src[3], SkPoint dst[5]);
+
+/** Measures the rotation of the given quadratic curve in radians.
+
+    Rotation is perhaps easiest described via a driving analogy: If you drive your car along the
+    curve from p0 to p2, then by the time you arrive at p2, how many radians will your car have
+    rotated? For a quadratic this is the same as the vector inside the tangents at the endpoints.
+
+    Quadratics can have rotations in the range [0, pi].
+*/
+inline float SkMeasureQuadRotation(const SkPoint pts[3]) {
+    return SkMeasureAngleBetweenVectors(pts[1] - pts[0], pts[2] - pts[1]);
+}
+
+/** Given a src quadratic bezier, returns the T value whose tangent angle is halfway between the
+    tangents at p0 and p3.
+*/
+float SkFindQuadMidTangent(const SkPoint src[4]);
+
+/** Given a src quadratic bezier, chop it at the tangent whose angle is halfway between the
+    tangents at p0 and p2. The new quads are returned in dst[0..2] and dst[2..4].
+*/
+inline void SkChopQuadAtMidTangent(const SkPoint src[3], SkPoint dst[5]) {
+    SkChopQuadAt(src, dst, SkFindQuadMidTangent(src));
+}
 
 /** Given the 3 coefficients for a quadratic bezier (either X or Y values), look
     for extrema, and return the number of t-values that are found that represent
@@ -89,7 +122,7 @@ int SkChopQuadAtMaxCurvature(const SkPoint src[3], SkPoint dst[5]);
     convert it into the cubic fitting the same curve. The new cubic
     curve is returned in dst[0..3].
 */
-SK_API void SkConvertQuadToCubic(const SkPoint src[3], SkPoint dst[4]);
+void SkConvertQuadToCubic(const SkPoint src[3], SkPoint dst[4]);
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -100,13 +133,19 @@ void SkEvalCubicAt(const SkPoint src[4], SkScalar t, SkPoint* locOrNull,
                    SkVector* tangentOrNull, SkVector* curvatureOrNull);
 
 /** Given a src cubic bezier, chop it at the specified t value,
-    where 0 < t < 1, and return the two new cubics in dst:
+    where 0 <= t <= 1, and return the two new cubics in dst:
     dst[0..3] and dst[3..6]
 */
 void SkChopCubicAt(const SkPoint src[4], SkPoint dst[7], SkScalar t);
 
+/** Given a src cubic bezier, chop it at the specified t0 and t1 values,
+    where 0 <= t0 <= t1 <= 1, and return the three new cubics in dst:
+    dst[0..3], dst[3..6], and dst[6..9]
+*/
+void SkChopCubicAt(const SkPoint src[4], SkPoint dst[10], float t0, float t1);
+
 /** Given a src cubic bezier, chop it at the specified t values,
-    where 0 < t < 1, and return the new cubics in dst:
+    where 0 <= t0 <= t1 <= ... <= 1, and return the new cubics in dst:
     dst[0..3],dst[3..6],...,dst[3*t_count..3*(t_count+1)]
 */
 void SkChopCubicAt(const SkPoint src[4], SkPoint dst[], const SkScalar t[],
@@ -116,6 +155,38 @@ void SkChopCubicAt(const SkPoint src[4], SkPoint dst[], const SkScalar t[],
     The new cubics are returned in dst[0..3] and dst[3..6]
 */
 void SkChopCubicAtHalf(const SkPoint src[4], SkPoint dst[7]);
+
+/** Given a cubic curve with no inflection points, this method measures the rotation in radians.
+
+    Rotation is perhaps easiest described via a driving analogy: If you drive your car along the
+    curve from p0 to p3, then by the time you arrive at p3, how many radians will your car have
+    rotated? This is not quite the same as the vector inside the tangents at the endpoints, even
+    without inflection, because the curve might rotate around the outside of the
+    tangents (>= 180 degrees) or the inside (<= 180 degrees).
+
+    Cubics can have rotations in the range [0, 2*pi].
+
+    NOTE: The caller must either call SkChopCubicAtInflections or otherwise prove that the provided
+    cubic has no inflection points prior to calling this method.
+*/
+float SkMeasureNonInflectCubicRotation(const SkPoint[4]);
+
+/** Given a src cubic bezier, returns the T value whose tangent angle is halfway between the
+    tangents at p0 and p3.
+*/
+float SkFindCubicMidTangent(const SkPoint src[4]);
+
+/** Given a src cubic bezier, chop it at the tangent whose angle is halfway between the
+    tangents at p0 and p3. The new cubics are returned in dst[0..3] and dst[3..6].
+
+    NOTE: 0- and 360-degree flat lines don't have single points of midtangent.
+    (tangent == midtangent at every point on these curves except the cusp points.)
+    If this is the case then we simply chop at a point which guarantees neither side rotates more
+    than 180 degrees.
+*/
+inline void SkChopCubicAtMidTangent(const SkPoint src[4], SkPoint dst[7]) {
+    SkChopCubicAt(src, dst, SkFindCubicMidTangent(src));
+}
 
 /** Given the 4 coefficients for a cubic bezier (either X or Y values), look
     for extrema, and return the number of t-values that are found that represent
@@ -154,6 +225,9 @@ int SkChopCubicAtInflections(const SkPoint src[4], SkPoint dst[10]);
 int SkFindCubicMaxCurvature(const SkPoint src[4], SkScalar tValues[3]);
 int SkChopCubicAtMaxCurvature(const SkPoint src[4], SkPoint dst[13],
                               SkScalar tValues[3] = nullptr);
+/** Returns t value of cusp if cubic has one; returns -1 otherwise.
+ */
+SkScalar SkFindCubicCusp(const SkPoint src[4]);
 
 bool SkChopMonoCubicAtX(SkPoint src[4], SkScalar y, SkPoint dst[7]);
 bool SkChopMonoCubicAtY(SkPoint src[4], SkScalar x, SkPoint dst[7]);
@@ -161,23 +235,57 @@ bool SkChopMonoCubicAtY(SkPoint src[4], SkScalar x, SkPoint dst[7]);
 enum class SkCubicType {
     kSerpentine,
     kLoop,
-    kLocalCusp,     // Cusp at a non-infinite parameter value with an inflection at t=infinity.
-    kInfiniteCusp,  // Cusp with a cusp at t=infinity and a local inflection.
+    kLocalCusp,       // Cusp at a non-infinite parameter value with an inflection at t=infinity.
+    kCuspAtInfinity,  // Cusp with a cusp at t=infinity and a local inflection.
     kQuadratic,
     kLineOrPoint
 };
 
+static inline bool SkCubicIsDegenerate(SkCubicType type) {
+    switch (type) {
+        case SkCubicType::kSerpentine:
+        case SkCubicType::kLoop:
+        case SkCubicType::kLocalCusp:
+        case SkCubicType::kCuspAtInfinity:
+            return false;
+        case SkCubicType::kQuadratic:
+        case SkCubicType::kLineOrPoint:
+            return true;
+    }
+    SK_ABORT("Invalid SkCubicType");
+}
+
+static inline const char* SkCubicTypeName(SkCubicType type) {
+    switch (type) {
+        case SkCubicType::kSerpentine: return "kSerpentine";
+        case SkCubicType::kLoop: return "kLoop";
+        case SkCubicType::kLocalCusp: return "kLocalCusp";
+        case SkCubicType::kCuspAtInfinity: return "kCuspAtInfinity";
+        case SkCubicType::kQuadratic: return "kQuadratic";
+        case SkCubicType::kLineOrPoint: return "kLineOrPoint";
+    }
+    SK_ABORT("Invalid SkCubicType");
+}
+
 /** Returns the cubic classification.
 
-    d[] is filled with the cubic inflection function coefficients. Furthermore, since d0 is always
-    zero for integral curves, if the cubic type is kSerpentine, kLoop, or kLocalCusp then d[0] will
-    instead contain the cubic discriminant: 3*d2^2 - 4*d1*d3.
+    t[],s[] are set to the two homogeneous parameter values at which points the lines L & M
+    intersect with K, sorted from smallest to largest and oriented so positive values of the
+    implicit are on the "left" side. For a serpentine curve they are the inflection points. For a
+    loop they are the double point. For a local cusp, they are both equal and denote the cusp point.
+    For a cusp at an infinite parameter value, one will be the local inflection point and the other
+    +inf (t,s = 1,0). If the curve is degenerate (i.e. quadratic or linear) they are both set to a
+    parameter value of +inf (t,s = 1,0).
 
-    See "Resolution Independent Curve Rendering using Programmable Graphics Hardware",
-    4.2 Curve Categorization
+    d[] is filled with the cubic inflection function coefficients. See "Resolution Independent
+    Curve Rendering using Programmable Graphics Hardware", 4.2 Curve Categorization:
+
+    If the input points contain infinities or NaN, the return values are undefined.
+
     https://www.microsoft.com/en-us/research/wp-content/uploads/2005/01/p1000-loop.pdf
 */
-SkCubicType SkClassifyCubic(const SkPoint p[4], SkScalar d[4]);
+SkCubicType SkClassifyCubic(const SkPoint p[4], double t[2] = nullptr, double s[2] = nullptr,
+                            double d[4] = nullptr);
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -236,14 +344,15 @@ struct SkConic {
      *  return the power-of-2 number of quads needed to approximate this conic
      *  with a sequence of quads. Will be >= 0.
      */
-    int computeQuadPOW2(SkScalar tol) const;
+    int SK_SPI computeQuadPOW2(SkScalar tol) const;
 
     /**
      *  Chop this conic into N quads, stored continguously in pts[], where
      *  N = 1 << pow2. The amount of storage needed is (1 + 2 * N)
      */
-    int SK_WARN_UNUSED_RESULT chopIntoQuadsPOW2(SkPoint pts[], int pow2) const;
+    int SK_SPI SK_WARN_UNUSED_RESULT chopIntoQuadsPOW2(SkPoint pts[], int pow2) const;
 
+    float findMidTangent() const;
     bool findXExtrema(SkScalar* t) const;
     bool findYExtrema(SkScalar* t) const;
     bool chopAtXExtrema(SkConic dst[2]) const;
@@ -271,7 +380,7 @@ struct SkConic {
 };
 
 // inline helpers are contained in a namespace to avoid external leakage to fragile SkNx members
-namespace {
+namespace {  // NOLINT(google-build-namespaces)
 
 /**
  *  use for : eval(t) == A * t^2 + B * t + C
@@ -364,9 +473,9 @@ struct SkCubicCoeff {
     Sk2s fD;
 };
 
-}
+}  // namespace
 
-#include "SkTemplates.h"
+#include "include/private/SkTemplates.h"
 
 /**
  *  Help class to allocate storage for approximating a conic with N quads.

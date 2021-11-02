@@ -5,10 +5,11 @@
  * found in the LICENSE file.
  */
 
-#include "SkScaleToSides.h"
+#include "src/core/SkScaleToSides.h"
+
+#include "tests/Test.h"
 
 #include <algorithm>
-#include "Test.h"
 
 DEF_TEST(ScaleToSides, reporter) {
     double interestingValues[] = {
@@ -37,7 +38,10 @@ DEF_TEST(ScaleToSides, reporter) {
         333333334.0,
         FLT_MAX,
         FLT_EPSILON,
-        FLT_MIN
+        FLT_MIN,
+        340282569745034499980078846904281071616.0,
+        170141284872517249990039423452140535808.0,
+        170141244307698042686698575557637963776.0,
     };
 
     int numInterestingValues = (int)SK_ARRAY_COUNT(interestingValues);
@@ -46,10 +50,16 @@ DEF_TEST(ScaleToSides, reporter) {
         for (int i = 0; i < numInterestingValues; i++) {
             for (int j = 0; j < numInterestingValues; j++) {
                 for (int k = 0; k < numInterestingValues; k++) {
+                    // We're about to cast values i and j to float, don't bother if they won't fit.
+                    // (Is there a more robust way to test this, like SkTFitsIn but double->float?)
+                    if (interestingValues[i] > FLT_MAX ||
+                        interestingValues[j] > FLT_MAX) {
+                        continue;
+                    }
                     float radius1 = (float)interestingValues[i];
                     float radius2 = (float)interestingValues[j];
                     double width = interestingValues[k];
-                    double scale = width / ((double)radius1 + (double)radius2);
+                    double scale = sk_ieee_double_divide(width, (double)radius1 + (double)radius2);
                     if (width > 0.0) {
                         if (s != 0) {
                             scale = std::min(scale, interestingValues[s-1]);

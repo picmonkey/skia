@@ -8,25 +8,27 @@
 #ifndef SkSurface_Base_DEFINED
 #define SkSurface_Base_DEFINED
 
-#include "SkCanvas.h"
-#include "SkImagePriv.h"
-#include "SkSurface.h"
-#include "SkSurfacePriv.h"
+#include "include/core/SkCanvas.h"
+#include "include/core/SkDeferredDisplayList.h"
+#include "include/core/SkSurface.h"
+#include "src/core/SkImagePriv.h"
+#include "src/core/SkSurfacePriv.h"
 
 class SkSurface_Base : public SkSurface {
 public:
     SkSurface_Base(int width, int height, const SkSurfaceProps*);
     SkSurface_Base(const SkImageInfo&, const SkSurfaceProps*);
-    virtual ~SkSurface_Base();
+    ~SkSurface_Base() override;
 
-    virtual GrBackendObject onGetTextureHandle(BackendHandleAccess) {
-        return 0;
-    }
+    virtual GrRecordingContext* onGetRecordingContext();
 
-    virtual bool onGetRenderTargetHandle(GrBackendObject*, BackendHandleAccess) {
-        return false;
-    }
-
+    virtual GrBackendTexture onGetBackendTexture(BackendHandleAccess);
+    virtual GrBackendRenderTarget onGetBackendRenderTarget(BackendHandleAccess);
+    virtual bool onReplaceBackendTexture(const GrBackendTexture&,
+                                         GrSurfaceOrigin,
+                                         ContentChangeMode,
+                                         TextureReleaseProc,
+                                         ReleaseContext);
     /**
      *  Allocate a canvas that will draw into this surface. We will cache this
      *  canvas, to return the same object to the caller multiple times. We
@@ -42,8 +44,34 @@ public:
      *  This needs to be able to outlive the surface itself (if need be), and
      *  must faithfully represent the current contents, even if the surface
      *  is changed after this called (e.g. it is drawn to via its canvas).
+     *
+     *  If a subset is specified, the the impl must make a copy, rather than try to wait
+     *  on copy-on-write.
      */
-    virtual sk_sp<SkImage> onNewImageSnapshot() = 0;
+    virtual sk_sp<SkImage> onNewImageSnapshot(const SkIRect* subset = nullptr) { return nullptr; }
+
+    virtual void onWritePixels(const SkPixmap&, int x, int y) = 0;
+
+    /**
+     * Default implementation does a rescale/read and then calls the callback.
+     */
+    virtual void onAsyncRescaleAndReadPixels(const SkImageInfo&,
+                                             const SkIRect& srcRect,
+                                             RescaleGamma,
+                                             RescaleMode,
+                                             ReadPixelsCallback,
+                                             ReadPixelsContext);
+    /**
+     * Default implementation does a rescale/read/yuv conversion and then calls the callback.
+     */
+    virtual void onAsyncRescaleAndReadPixelsYUV420(SkYUVColorSpace,
+                                                   sk_sp<SkColorSpace> dstColorSpace,
+                                                   const SkIRect& srcRect,
+                                                   const SkISize& dstSize,
+                                                   RescaleGamma,
+                                                   RescaleMode,
+                                                   ReadPixelsCallback,
+                                                   ReadPixelsContext);
 
     /**
      *  Default implementation:
@@ -54,7 +82,7 @@ public:
      *      image->unref();
      *  }
      */
-    virtual void onDraw(SkCanvas*, SkScalar x, SkScalar y, const SkPaint*);
+    virtual void onDraw(SkCanvas*, SkScalar x, SkScalar y, const SkSamplingOptions&,const SkPaint*);
 
     /**
      * Called as a performance hint when the Surface is allowed to make it's contents
@@ -77,8 +105,29 @@ public:
 
     /**
      * Issue any pending surface IO to the current backend 3D API and resolve any surface MSAA.
+     * Inserts the requested number of semaphores for the gpu to signal when work is complete on the
+     * gpu and inits the array of GrBackendSemaphores with the signaled semaphores.
      */
-    virtual void onPrepareForExternalIO() {}
+    virtual GrSemaphoresSubmitted onFlush(BackendSurfaceAccess access, const GrFlushInfo&,
+                                          const GrBackendSurfaceMutableState*) {
+        return GrSemaphoresSubmitted::kNo;
+    }
+
+    /**
+     * Caused the current backend 3D API to wait on the passed in semaphores before executing new
+     * commands on the gpu. Any previously submitting commands will not be blocked by these
+     * semaphores.
+     */
+    virtual bool onWait(int numSemaphores, const GrBackendSemaphore* waitSemaphores,
+                        bool deleteSemaphoresAfterWait) {
+        return false;
+    }
+
+    virtual bool onCharacterize(SkSurfaceCharacterization*) const { return false; }
+    virtual bool onIsCompatible(const SkSurfaceCharacterization&) const { return false; }
+    virtual bool onDraw(sk_sp<const SkDeferredDisplayList>, SkIPoint offset) {
+        return false;
+    }
 
     inline SkCanvas* getCachedCanvas();
     inline sk_sp<SkImage> refCachedImage();
@@ -101,7 +150,7 @@ private:
     friend class SkCanvas;
     friend class SkSurface;
 
-    typedef SkSurface INHERITED;
+    using INHERITED = SkSurface;
 };
 
 SkCanvas* SkSurface_Base::getCachedCanvas() {

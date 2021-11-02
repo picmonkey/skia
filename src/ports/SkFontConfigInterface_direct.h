@@ -6,8 +6,10 @@
  */
 
 /* migrated from chrome/src/skia/ext/SkFontHost_fontconfig_direct.cpp */
+#ifndef SKFONTCONFIGINTERFACE_DIRECT_H_
+#define SKFONTCONFIGINTERFACE_DIRECT_H_
 
-#include "SkFontConfigInterface.h"
+#include "include/ports/SkFontConfigInterface.h"
 
 #include <fontconfig/fontconfig.h>
 
@@ -31,5 +33,7 @@ private:
     bool isValidPattern(FcPattern* pattern);
     FcPattern* MatchFont(FcFontSet* font_set, const char* post_config_family,
                          const SkString& family);
-    typedef SkFontConfigInterface INHERITED;
+    using INHERITED = SkFontConfigInterface;
 };
+
+#endif

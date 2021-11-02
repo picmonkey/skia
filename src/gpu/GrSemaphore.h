@@ -8,24 +8,26 @@
 #ifndef GrSemaphore_DEFINED
 #define GrSemaphore_DEFINED
 
-#include "SkRefCnt.h"
+#include "include/gpu/GrBackendSemaphore.h"
 
-class GrGpu;
+/**
+ * Represents a semaphore-like GPU synchronization object.
+ */
+class GrSemaphore {
+public:
+    virtual ~GrSemaphore() {}
 
-class GrSemaphore : public SkRefCnt {
+    // The derived class can return its GrBackendSemaphore. This is used when flushing with signal
+    // semaphores so we can set the client's GrBackendSemaphore object after we've created the
+    // internal semaphore.
+    virtual GrBackendSemaphore backendSemaphore() const = 0;
+
 private:
-    // This function should only be used in the case of exporting and importing a GrSemaphore object
-    // from one GrContext to another. When exporting, the GrSemaphore should be set to a null GrGpu,
-    // and when importing it should be set to the GrGpu of the current context. Once exported, a
-    // GrSemaphore should not be used with its old context.
-    void resetGpu(const GrGpu* gpu) { fGpu = gpu; }
-
-protected:
-    explicit GrSemaphore(const GrGpu* gpu) : fGpu(gpu) {}
-
-    friend class GrResourceProvider; // resetGpu
-
-    const GrGpu* fGpu;
+    friend class GrGpu; // for setIsOwned
+    // This is only used in GrGpu to handle the case where we created a semaphore that was meant to
+    // be borrowed, but we failed to submit it. So we must go back and switch the semaphore to owned
+    // so that it gets deleted.
+    virtual void setIsOwned() = 0;
 };
 
 #endif

@@ -8,71 +8,30 @@
 #ifndef GrDefaultGeoProcFactory_DEFINED
 #define GrDefaultGeoProcFactory_DEFINED
 
-#include "GrGeometryProcessor.h"
+#include "src/gpu/GrGeometryProcessor.h"
 
 /*
  * A factory for creating default Geometry Processors which simply multiply position by the uniform
  * view matrix and wire through color, coverage, UV coords if requested.
  */
 namespace GrDefaultGeoProcFactory {
-    // Structs for adding vertex attributes
-    struct PositionAttr {
-        SkPoint fPosition;
-    };
-
-    struct PositionCoverageAttr {
-        SkPoint fPosition;
-        float   fCoverage;
-    };
-
-    struct PositionColorAttr {
-        SkPoint fPosition;
-        SkColor fColor;
-    };
-
-    struct PositionColorCoverageAttr {
-        SkPoint fPosition;
-        SkColor fColor;
-        float   fCoverage;
-    };
-
-    struct PositionLocalCoordAttr {
-        SkPoint fPosition;
-        SkPoint fLocalCoord;
-    };
-
-    struct PositionLocalCoordCoverageAttr {
-        SkPoint fPosition;
-        SkPoint fLocalCoord;
-        float   fCoverage;
-    };
-
-    struct PositionColorLocalCoordAttr {
-        SkPoint fPosition;
-        GrColor fColor;
-        SkPoint fLocalCoord;
-    };
-
-    struct PositionColorLocalCoordCoverage {
-        SkPoint fPosition;
-        GrColor fColor;
-        SkPoint fLocalCoord;
-        float   fCoverage;
-    };
-
     struct Color {
         enum Type {
             kPremulGrColorUniform_Type,
             kPremulGrColorAttribute_Type,
-            kUnpremulSkColorAttribute_Type,
+            kPremulWideColorAttribute_Type,
         };
-        explicit Color(GrColor color) : fType(kPremulGrColorUniform_Type), fColor(color) {}
-        Color(Type type) : fType(type), fColor(GrColor_ILLEGAL) {
+        explicit Color(const SkPMColor4f& color)
+                : fType(kPremulGrColorUniform_Type)
+                , fColor(color) {}
+        Color(Type type)
+                : fType(type)
+                , fColor(SK_PMColor4fILLEGAL) {
             SkASSERT(type != kPremulGrColorUniform_Type);
         }
 
         Type fType;
-        GrColor fColor;
+        SkPMColor4f fColor;
     };
 
     struct Coverage {
@@ -80,6 +39,9 @@ namespace GrDefaultGeoProcFactory {
             kSolid_Type,
             kUniform_Type,
             kAttribute_Type,
+            kAttributeTweakAlpha_Type,
+            kAttributeUnclamped_Type,  // Fragment shader will call saturate(coverage) before using.
+                                       // (Not compatible with kAttributeTweakAlpha_Type.)
         };
         explicit Coverage(uint8_t coverage) : fType(kUniform_Type), fCoverage(coverage) {}
         Coverage(Type type) : fType(type), fCoverage(0xff) {
@@ -95,7 +57,6 @@ namespace GrDefaultGeoProcFactory {
             kUnused_Type,
             kUsePosition_Type,
             kHasExplicit_Type,
-            kHasTransformed_Type,
         };
         LocalCoords(Type type) : fType(type), fMatrix(nullptr) {}
         LocalCoords(Type type, const SkMatrix* matrix) : fType(type), fMatrix(matrix) {
@@ -107,20 +68,22 @@ namespace GrDefaultGeoProcFactory {
         const SkMatrix* fMatrix;
     };
 
-    sk_sp<GrGeometryProcessor> Make(const Color&,
-                                    const Coverage&,
-                                    const LocalCoords&,
-                                    const SkMatrix& viewMatrix);
+    GrGeometryProcessor* Make(SkArenaAlloc*,
+                              const Color&,
+                              const Coverage&,
+                              const LocalCoords&,
+                              const SkMatrix& viewMatrix);
 
     /*
      * Use this factory to create a GrGeometryProcessor that expects a device space vertex position
      * attribute. The view matrix must still be provided to compute correctly transformed
      * coordinates for GrFragmentProcessors. It may fail if the view matrix is not invertible.
      */
-    sk_sp<GrGeometryProcessor> MakeForDeviceSpace(const Color&,
-                                                  const Coverage&,
-                                                  const LocalCoords&,
-                                                  const SkMatrix& viewMatrix);
-};
+    GrGeometryProcessor* MakeForDeviceSpace(SkArenaAlloc*,
+                                            const Color&,
+                                            const Coverage&,
+                                            const LocalCoords&,
+                                            const SkMatrix& viewMatrix);
+}  // namespace GrDefaultGeoProcFactory
 
 #endif

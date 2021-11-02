@@ -8,7 +8,7 @@
 #ifndef SkGraphics_DEFINED
 #define SkGraphics_DEFINED
 
-#include "SkRefCnt.h"
+#include "include/core/SkRefCnt.h"
 
 class SkData;
 class SkImageGenerator;
@@ -25,12 +25,6 @@ public:
 
     // We're in the middle of cleaning this up.
     static void Term() {}
-
-    /**
-     *  Return the version numbers for the library. If the parameter is not
-     *  null, it is set to the version number.
-     */
-    static void GetVersion(int32_t* major, int32_t* minor, int32_t* patch);
 
     /**
      *  Return the max number of bytes that should be used by the font cache.
@@ -80,11 +74,7 @@ public:
     static void PurgeFontCache();
 
     /**
-     *  Scaling bitmaps with the kHigh_SkFilterQuality setting is
-     *  expensive, so the result is saved in the global Scaled Image
-     *  Cache.
-     *
-     *  This function returns the memory usage of the Scaled Image Cache.
+     *  This function returns the memory used for temporary images and other resources.
      */
     static size_t GetResourceCacheTotalBytesUsed();
 
@@ -137,26 +127,6 @@ public:
      */
     static void SetFlags(const char* flags);
 
-    /**
-     *  Return the max number of bytes that should be used by the thread-local
-     *  font cache.
-     *  If the cache needs to allocate more, it will purge previous entries.
-     *  This max can be changed by calling SetFontCacheLimit().
-     *
-     *  If this thread has never called SetTLSFontCacheLimit, or has called it
-     *  with 0, then this thread is using the shared font cache. In that case,
-     *  this function will always return 0, and the caller may want to call
-     *  GetFontCacheLimit.
-     */
-    static size_t GetTLSFontCacheLimit();
-
-    /**
-     *  Specify the max number of bytes that should be used by the thread-local
-     *  font cache. If this value is 0, then this thread will use the shared
-     *  global font cache.
-     */
-    static void SetTLSFontCacheLimit(size_t bytes);
-
     typedef std::unique_ptr<SkImageGenerator>
                                             (*ImageGeneratorFromEncodedDataFactory)(sk_sp<SkData>);
 
@@ -169,6 +139,11 @@ public:
      */
     static ImageGeneratorFromEncodedDataFactory
                     SetImageGeneratorFromEncodedDataFactory(ImageGeneratorFromEncodedDataFactory);
+
+    /**
+     *  Call early in main() to allow Skia to use a JIT to accelerate CPU-bound operations.
+     */
+    static void AllowJIT();
 };
 
 class SkAutoGraphics {

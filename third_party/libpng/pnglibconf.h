@@ -1,3 +1,4 @@
+
 /* libpng 1.6.22rc01 STANDARD API DEFINITION */
 
 /* pnglibconf.h - library build configuration */

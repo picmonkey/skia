@@ -8,9 +8,10 @@
 #ifndef GrGLUniformHandler_DEFINED
 #define GrGLUniformHandler_DEFINED
 
-#include "glsl/GrGLSLUniformHandler.h"
+#include "src/gpu/gl/GrGLProgramDataManager.h"
+#include "src/gpu/glsl/GrGLSLUniformHandler.h"
 
-#include "gl/GrGLProgramDataManager.h"
+#include <vector>
 
 class GrGLCaps;
 
@@ -19,52 +20,47 @@ public:
     static const int kUniformsPerBlock = 8;
 
     const GrShaderVar& getUniformVariable(UniformHandle u) const override {
-        return fUniforms[u.toIndex()].fVariable;
+        return fUniforms.item(u.toIndex()).fVariable;
     }
 
     const char* getUniformCStr(UniformHandle u) const override {
         return this->getUniformVariable(u).c_str();
     }
+
+    int numUniforms() const override {
+        return fUniforms.count();
+    }
+
+    UniformInfo& uniform(int idx) override {
+        return fUniforms.item(idx);
+    }
+    const UniformInfo& uniform(int idx) const override {
+        return fUniforms.item(idx);
+    }
+
 private:
     explicit GrGLUniformHandler(GrGLSLProgramBuilder* program)
         : INHERITED(program)
         , fUniforms(kUniformsPerBlock)
-        , fSamplers(kUniformsPerBlock)
-        , fTexelBuffers(kUniformsPerBlock)
-        , fImageStorages(kUniformsPerBlock) {}
+        , fSamplers(kUniformsPerBlock) {}
 
-    UniformHandle internalAddUniformArray(uint32_t visibility,
+    UniformHandle internalAddUniformArray(const GrFragmentProcessor* owner,
+                                          uint32_t visibility,
                                           GrSLType type,
-                                          GrSLPrecision precision,
                                           const char* name,
                                           bool mangleName,
                                           int arrayCount,
                                           const char** outName) override;
 
-    SamplerHandle addSampler(uint32_t visibility, GrSwizzle, GrSLType, GrSLPrecision,
-                             const char* name) override;
+    SamplerHandle addSampler(const GrBackendFormat&, GrSamplerState, const GrSwizzle&,
+                             const char* name, const GrShaderCaps*) override;
 
-    const GrShaderVar& samplerVariable(SamplerHandle handle) const override {
-        return fSamplers[handle.toIndex()].fVariable;
+    const char* samplerVariable(SamplerHandle handle) const override {
+        return fSamplers.item(handle.toIndex()).fVariable.c_str();
     }
 
     GrSwizzle samplerSwizzle(SamplerHandle handle) const override {
         return fSamplerSwizzles[handle.toIndex()];
-    }
-
-    TexelBufferHandle addTexelBuffer(uint32_t visibility, GrSLPrecision,
-                                     const char* name) override;
-
-    const GrShaderVar& texelBufferVariable(TexelBufferHandle handle) const override {
-        return fTexelBuffers[handle.toIndex()].fVariable;
-    }
-
-    ImageStorageHandle addImageStorage(uint32_t visibility, GrSLType, GrImageStorageFormat,
-                                       GrSLMemoryModel, GrSLRestrict, GrIOType,
-                                       const char* name) override;
-
-    const GrShaderVar& imageStorageVariable(ImageStorageHandle handle) const override {
-        return fImageStorages[handle.toIndex()].fVariable;
     }
 
     void appendUniformDecls(GrShaderFlags visibility, SkString*) const override;
@@ -73,22 +69,20 @@ private:
     void bindUniformLocations(GrGLuint programID, const GrGLCaps& caps);
 
     // Updates the loction of the Uniforms if we cannot bind uniform locations manually
-    void getUniformLocations(GrGLuint programID, const GrGLCaps& caps);
+    void getUniformLocations(GrGLuint programID, const GrGLCaps& caps, bool force);
 
     const GrGLGpu* glGpu() const;
 
-    typedef GrGLProgramDataManager::UniformInfo UniformInfo;
+    typedef GrGLProgramDataManager::GLUniformInfo GLUniformInfo;
     typedef GrGLProgramDataManager::UniformInfoArray UniformInfoArray;
 
     UniformInfoArray    fUniforms;
     UniformInfoArray    fSamplers;
     SkTArray<GrSwizzle> fSamplerSwizzles;
-    UniformInfoArray    fTexelBuffers;
-    UniformInfoArray    fImageStorages;
 
     friend class GrGLProgramBuilder;
 
-    typedef GrGLSLUniformHandler INHERITED;
+    using INHERITED = GrGLSLUniformHandler;
 };
 
 #endif

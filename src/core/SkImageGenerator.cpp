@@ -5,18 +5,18 @@
  * found in the LICENSE file.
  */
 
-#include "SkImage.h"
-#include "SkImageGenerator.h"
-#include "SkNextID.h"
+#include "include/core/SkImageGenerator.h"
+
+#include "include/core/SkImage.h"
+#include "src/core/SkNextID.h"
 
 SkImageGenerator::SkImageGenerator(const SkImageInfo& info, uint32_t uniqueID)
     : fInfo(info)
     , fUniqueID(kNeedNewImageUniqueID == uniqueID ? SkNextID::ImageID() : uniqueID)
 {}
 
-bool SkImageGenerator::getPixels(const SkImageInfo& info, void* pixels, size_t rowBytes,
-                                 const Options* opts) {
-    if (kUnknown_SkColorType == info.colorType() || kIndex_8_SkColorType == info.colorType()) {
+bool SkImageGenerator::getPixels(const SkImageInfo& info, void* pixels, size_t rowBytes) {
+    if (kUnknown_SkColorType == info.colorType()) {
         return false;
     }
     if (nullptr == pixels) {
@@ -27,64 +27,51 @@ bool SkImageGenerator::getPixels(const SkImageInfo& info, void* pixels, size_t r
     }
 
     Options defaultOpts;
-    if (!opts) {
-        opts = &defaultOpts;
-    }
-    return this->onGetPixels(info, pixels, rowBytes, *opts);
+    return this->onGetPixels(info, pixels, rowBytes, defaultOpts);
 }
 
-bool SkImageGenerator::getPixels(const SkImageInfo& info, void* pixels, size_t rowBytes) {
-    return this->getPixels(info, pixels, rowBytes, nullptr);
+bool SkImageGenerator::queryYUVAInfo(const SkYUVAPixmapInfo::SupportedDataTypes& supportedDataTypes,
+                                     SkYUVAPixmapInfo* yuvaPixmapInfo) const {
+    SkASSERT(yuvaPixmapInfo);
+
+    return this->onQueryYUVAInfo(supportedDataTypes, yuvaPixmapInfo) &&
+           yuvaPixmapInfo->isSupported(supportedDataTypes);
 }
 
-bool SkImageGenerator::queryYUV8(SkYUVSizeInfo* sizeInfo, SkYUVColorSpace* colorSpace) const {
-    SkASSERT(sizeInfo);
-
-    return this->onQueryYUV8(sizeInfo, colorSpace);
-}
-
-bool SkImageGenerator::getYUV8Planes(const SkYUVSizeInfo& sizeInfo, void* planes[3]) {
-    SkASSERT(sizeInfo.fSizes[SkYUVSizeInfo::kY].fWidth >= 0);
-    SkASSERT(sizeInfo.fSizes[SkYUVSizeInfo::kY].fHeight >= 0);
-    SkASSERT(sizeInfo.fSizes[SkYUVSizeInfo::kU].fWidth >= 0);
-    SkASSERT(sizeInfo.fSizes[SkYUVSizeInfo::kU].fHeight >= 0);
-    SkASSERT(sizeInfo.fSizes[SkYUVSizeInfo::kV].fWidth >= 0);
-    SkASSERT(sizeInfo.fSizes[SkYUVSizeInfo::kV].fHeight >= 0);
-    SkASSERT(sizeInfo.fWidthBytes[SkYUVSizeInfo::kY] >=
-            (size_t) sizeInfo.fSizes[SkYUVSizeInfo::kY].fWidth);
-    SkASSERT(sizeInfo.fWidthBytes[SkYUVSizeInfo::kU] >=
-            (size_t) sizeInfo.fSizes[SkYUVSizeInfo::kU].fWidth);
-    SkASSERT(sizeInfo.fWidthBytes[SkYUVSizeInfo::kV] >=
-            (size_t) sizeInfo.fSizes[SkYUVSizeInfo::kV].fWidth);
-    SkASSERT(planes && planes[0] && planes[1] && planes[2]);
-
-    return this->onGetYUV8Planes(sizeInfo, planes);
+bool SkImageGenerator::getYUVAPlanes(const SkYUVAPixmaps& yuvaPixmaps) {
+    return this->onGetYUVAPlanes(yuvaPixmaps);
 }
 
 #if SK_SUPPORT_GPU
-#include "GrTextureProxy.h"
+#include "src/gpu/GrSurfaceProxyView.h"
 
-sk_sp<GrTextureProxy> SkImageGenerator::generateTexture(GrContext* ctx, const SkImageInfo& info,
-                                                        const SkIPoint& origin) {
+GrSurfaceProxyView SkImageGenerator::generateTexture(GrRecordingContext* ctx,
+                                                     const SkImageInfo& info,
+                                                     const SkIPoint& origin,
+                                                     GrMipmapped mipMapped,
+                                                     GrImageTexGenPolicy texGenPolicy) {
     SkIRect srcRect = SkIRect::MakeXYWH(origin.x(), origin.y(), info.width(), info.height());
     if (!SkIRect::MakeWH(fInfo.width(), fInfo.height()).contains(srcRect)) {
-        return nullptr;
+        return {};
     }
-    return this->onGenerateTexture(ctx, info, origin);
+    return this->onGenerateTexture(ctx, info, origin, mipMapped, texGenPolicy);
 }
 
-sk_sp<GrTextureProxy> SkImageGenerator::onGenerateTexture(GrContext*, const SkImageInfo&,
-                                                          const SkIPoint&) {
-    return nullptr;
+GrSurfaceProxyView SkImageGenerator::onGenerateTexture(GrRecordingContext*,
+                                                       const SkImageInfo&,
+                                                       const SkIPoint&,
+                                                       GrMipmapped,
+                                                       GrImageTexGenPolicy) {
+    return {};
 }
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "SkBitmap.h"
-#include "SkColorTable.h"
+#include "include/core/SkBitmap.h"
+#include "src/codec/SkColorTable.h"
 
-#include "SkGraphics.h"
+#include "include/core/SkGraphics.h"
 
 static SkGraphics::ImageGeneratorFromEncodedDataFactory gFactory;
 

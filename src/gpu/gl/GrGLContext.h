@@ -9,67 +9,76 @@
 #ifndef GrGLContext_DEFINED
 #define GrGLContext_DEFINED
 
-#include "gl/GrGLExtensions.h"
-#include "gl/GrGLInterface.h"
-#include "GrGLCaps.h"
-#include "GrGLUtil.h"
+#include "include/gpu/gl/GrGLExtensions.h"
+#include "include/gpu/gl/GrGLInterface.h"
+#include "src/gpu/gl/GrGLCaps.h"
+#include "src/gpu/gl/GrGLUtil.h"
+#include "src/gpu/glsl/GrGLSL.h"
 
 struct GrContextOptions;
-namespace SkSL {
-    class Compiler;
-}
 
 /**
  * Encapsulates information about an OpenGL context including the OpenGL
  * version, the GrGLStandard type of the context, and GLSL version.
  */
-class GrGLContextInfo : public SkRefCnt {
+class GrGLContextInfo {
 public:
+    GrGLContextInfo(GrGLContextInfo&&) = default;
+    GrGLContextInfo& operator=(GrGLContextInfo&&) = default;
+
+    virtual ~GrGLContextInfo() {}
+
     GrGLStandard standard() const { return fInterface->fStandard; }
-    GrGLVersion version() const { return fGLVersion; }
+    GrGLVersion version() const { return fDriverInfo.fVersion; }
     GrGLSLGeneration glslGeneration() const { return fGLSLGeneration; }
-    GrGLVendor vendor() const { return fVendor; }
-    GrGLRenderer renderer() const { return fRenderer; }
+    GrGLVendor vendor() const { return fDriverInfo.fVendor; }
+    GrGLRenderer renderer() const { return fDriverInfo.fRenderer; }
+    GrGLANGLEBackend angleBackend() const { return fDriverInfo.fANGLEBackend; }
+    GrGLVendor angleVendor() const { return fDriverInfo.fANGLEVendor; }
+    GrGLRenderer angleRenderer() const { return fDriverInfo.fANGLERenderer; }
     /** What driver is running our GL implementation? This is not necessarily related to the vendor.
         (e.g. Intel GPU being driven by Mesa) */
-    GrGLDriver driver() const { return fDriver; }
-    GrGLDriverVersion driverVersion() const { return fDriverVersion; }
+    GrGLDriver driver() const { return fDriverInfo.fDriver; }
+    GrGLDriverVersion driverVersion() const { return fDriverInfo.fDriverVersion; }
+    bool isOverCommandBuffer() const { return fDriverInfo.fIsOverCommandBuffer; }
+
     const GrGLCaps* caps() const { return fGLCaps.get(); }
     GrGLCaps* caps() { return fGLCaps.get(); }
+
     bool hasExtension(const char* ext) const {
         return fInterface->hasExtension(ext);
     }
 
     const GrGLExtensions& extensions() const { return fInterface->fExtensions; }
 
-    virtual ~GrGLContextInfo() {}
+    /**
+     * Makes a version of this context info that strips the "angle-ness". It will report kUnknown
+     * for angleBackend() and report this info's angleRenderer() as renderer() and similiar for
+     * driver(), driverVersion(), and vendor().
+     */
+    GrGLContextInfo makeNonAngle() const;
 
 protected:
+    GrGLContextInfo& operator=(const GrGLContextInfo&) = default;
+    GrGLContextInfo(const GrGLContextInfo&) = default;
+
     struct ConstructorArgs {
-        const GrGLInterface*                fInterface;
-        GrGLVersion                         fGLVersion;
+        sk_sp<const GrGLInterface>          fInterface;
+        GrGLDriverInfo                      fDriverInfo;
         GrGLSLGeneration                    fGLSLGeneration;
-        GrGLVendor                          fVendor;
-        GrGLRenderer                        fRenderer;
-        GrGLDriver                          fDriver;
-        GrGLDriverVersion                   fDriverVersion;
         const  GrContextOptions*            fContextOptions;
     };
 
-    GrGLContextInfo(const ConstructorArgs& args);
+    GrGLContextInfo(ConstructorArgs&&);
 
     sk_sp<const GrGLInterface> fInterface;
-    GrGLVersion                fGLVersion;
+    GrGLDriverInfo             fDriverInfo;
     GrGLSLGeneration           fGLSLGeneration;
-    GrGLVendor                 fVendor;
-    GrGLRenderer               fRenderer;
-    GrGLDriver                 fDriver;
-    GrGLDriverVersion          fDriverVersion;
     sk_sp<GrGLCaps>            fGLCaps;
 };
 
 /**
- * Extension of GrGLContextInfo that also provides access to GrGLInterface and SkSL::Compiler.
+ * Extension of GrGLContextInfo that also provides access to GrGLInterface.
  */
 class GrGLContext : public GrGLContextInfo {
 public:
@@ -77,22 +86,16 @@ public:
      * Creates a GrGLContext from a GrGLInterface and the currently
      * bound OpenGL context accessible by the GrGLInterface.
      */
-    static GrGLContext* Create(const GrGLInterface* interface, const GrContextOptions& options);
+    static std::unique_ptr<GrGLContext> Make(sk_sp<const GrGLInterface>, const GrContextOptions&);
 
-    const GrGLInterface* interface() const { return fInterface.get(); }
-
-    SkSL::Compiler* compiler() const;
+    const GrGLInterface* glInterface() const { return fInterface.get(); }
 
     ~GrGLContext() override;
 
 private:
-    GrGLContext(const ConstructorArgs& args) 
-    : INHERITED(args)
-    , fCompiler(nullptr) {}
+    GrGLContext(ConstructorArgs&& args) : INHERITED(std::move(args)) {}
 
-    mutable SkSL::Compiler* fCompiler;
-
-    typedef GrGLContextInfo INHERITED;
+    using INHERITED = GrGLContextInfo;
 };
 
 #endif

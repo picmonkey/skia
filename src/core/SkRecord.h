@@ -8,10 +8,10 @@
 #ifndef SkRecord_DEFINED
 #define SkRecord_DEFINED
 
-#include "SkArenaAlloc.h"
-#include "SkRecords.h"
-#include "SkTLogic.h"
-#include "SkTemplates.h"
+#include "include/private/SkTLogic.h"
+#include "include/private/SkTemplates.h"
+#include "src/core/SkArenaAlloc.h"
+#include "src/core/SkRecords.h"
 
 // SkRecord represents a sequence of SkCanvas calls, saved for future use.
 // These future uses may include: replay, optimization, serialization, or combinations of those.
@@ -28,7 +28,7 @@
 class SkRecord : public SkRefCnt {
 public:
     SkRecord() = default;
-    ~SkRecord();
+    ~SkRecord() override;
 
     // Returns the number of canvas commands in this SkRecord.
     int count() const { return fCount; }
@@ -85,19 +85,6 @@ public:
         return fRecords[i].set(this->allocCommand<T>());
     }
 
-    // Replace the i-th command with a new command of type T.
-    // You are expected to placement new an object of type T onto this pointer.
-    // You must show proof that you've already adopted the existing command.
-    template <typename T, typename Existing>
-    T* replace(int i, const SkRecords::Adopted<Existing>& proofOfAdoption) {
-        SkASSERT(i < this->count());
-
-        SkASSERT(Existing::kType == fRecords[i].type());
-        SkASSERT(proofOfAdoption == fRecords[i].ptr());
-
-        return fRecords[i].set(this->allocCommand<T>());
-    }
-
     // Does not return the bytes in any pointers embedded in the Records; callers
     // need to iterate with a visitor to measure those they care for.
     size_t bytesUsed() const;
@@ -129,34 +116,32 @@ private:
     };
 
     template <typename T>
-    SK_WHEN(std::is_empty<T>::value, T*) allocCommand() {
+    std::enable_if_t<std::is_empty<T>::value, T*> allocCommand() {
         static T singleton = {};
         return &singleton;
     }
 
     template <typename T>
-    SK_WHEN(!std::is_empty<T>::value, T*) allocCommand() { return this->alloc<T>(); }
+    std::enable_if_t<!std::is_empty<T>::value, T*> allocCommand() { return this->alloc<T>(); }
 
     void grow();
 
     // A typed pointer to some bytes in fAlloc.  visit() and mutate() allow polymorphic dispatch.
     struct Record {
-        // On 32-bit machines we store type in 4 bytes, followed by a pointer.  Simple.
-        // On 64-bit machines we store a pointer with the type slotted into two top (unused) bytes.
-        // FWIW, SkRecords::Type is tiny.  It can easily fit in one byte.
-        uint64_t fTypeAndPtr;
-        static const int kTypeShift = sizeof(void*) == 4 ? 32 : 48;
+        SkRecords::Type fType;
+        void*           fPtr;
 
         // Point this record to its data in fAlloc.  Returns ptr for convenience.
         template <typename T>
         T* set(T* ptr) {
-            fTypeAndPtr = ((uint64_t)T::kType) << kTypeShift | (uintptr_t)ptr;
+            fType = T::kType;
+            fPtr  = ptr;
             SkASSERT(this->ptr() == ptr && this->type() == T::kType);
             return ptr;
         }
 
-        SkRecords::Type type() const { return (SkRecords::Type)(fTypeAndPtr >> kTypeShift); }
-        void* ptr() const { return (void*)(fTypeAndPtr & ((1ull<<kTypeShift)-1)); }
+        SkRecords::Type type() const { return fType; }
+        void* ptr() const { return fPtr; }
 
         // Visit this record with functor F (see public API above).
         template <typename F>
@@ -165,7 +150,8 @@ private:
             switch(this->type()) { SK_RECORD_TYPES(CASE) }
         #undef CASE
             SkDEBUGFAIL("Unreachable");
-            return f(SkRecords::NoOp());
+            static const SkRecords::NoOp noop{};
+            return f(noop);
         }
 
         // Mutate this record with functor F (see public API above).
@@ -175,7 +161,8 @@ private:
             switch(this->type()) { SK_RECORD_TYPES(CASE) }
         #undef CASE
             SkDEBUGFAIL("Unreachable");
-            return f((SkRecords::NoOp*)nullptr);
+            static const SkRecords::NoOp noop{};
+            return f(const_cast<SkRecords::NoOp*>(&noop));
         }
     };
 

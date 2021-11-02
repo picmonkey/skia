@@ -5,15 +5,17 @@
  * found in the LICENSE file.
  */
 
-#include "Benchmark.h"
-#include "sk_tool_utils.h"
-#include "SkCanvas.h"
-#include "SkImage.h"
-#include "SkSurface.h"
+#include "bench/Benchmark.h"
+#include "include/core/SkCanvas.h"
+#include "include/core/SkImage.h"
+#include "include/core/SkSurface.h"
+#include "include/gpu/GrDirectContext.h"
+#include "src/gpu/GrDirectContextPriv.h"
+#include "src/gpu/GrResourceCache.h"
+#include "tools/ToolUtils.h"
 
-#if SK_SUPPORT_GPU
 
-#include "GrContext.h"
+#include <utility>
 
 /** These benchmarks were designed to measure changes to GrResourceCache's replacement policy */
 
@@ -26,9 +28,7 @@ static constexpr int kS = 25;
 
 static void make_images(sk_sp<SkImage> imgs[], int cnt) {
     for (int i = 0; i < cnt; ++i) {
-        SkBitmap bmp = sk_tool_utils::create_checkerboard_bitmap(kS, kS, SK_ColorBLACK,
-                                                                 SK_ColorCYAN, 10);
-        imgs[i] = SkImage::MakeFromBitmap(bmp);
+        imgs[i] = ToolUtils::create_checkerboard_image(kS, kS, SK_ColorBLACK, SK_ColorCYAN, 10);
     }
 }
 
@@ -37,25 +37,25 @@ static void draw_image(SkCanvas* canvas, SkImage* img) {
     // optmizations
     SkPaint paint;
     paint.setAlpha(0x10);
-    canvas->drawImage(img, 0, 0, &paint);
+    canvas->drawImage(img, 0, 0, SkSamplingOptions(), &paint);
 }
 
 void set_cache_budget(SkCanvas* canvas, int approxImagesInBudget) {
     // This is inexact but we attempt to figure out a baseline number of resources GrContext needs
     // to render an SkImage and add one additional resource for each image we'd like to fit.
-    GrContext* context =  canvas->getGrContext();
+    auto context =  canvas->recordingContext()->asDirectContext();
     SkASSERT(context);
-    context->flush();
-    context->purgeAllUnlockedResources();
+    context->flushAndSubmit();
+    context->priv().getResourceCache()->purgeUnlockedResources();
     sk_sp<SkImage> image;
     make_images(&image, 1);
     draw_image(canvas, image.get());
-    context->flush();
+    context->flushAndSubmit();
     int baselineCount;
     context->getResourceCacheUsage(&baselineCount, nullptr);
     baselineCount -= 1; // for the image's textures.
     context->setResourceCacheLimits(baselineCount + approxImagesInBudget, 1 << 30);
-    context->purgeAllUnlockedResources();
+    context->priv().getResourceCache()->purgeUnlockedResources();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -88,9 +88,9 @@ protected:
     }
 
     void onPerCanvasPreDraw(SkCanvas* canvas) override {
-        GrContext* context = canvas->getGrContext();
+        auto context = canvas->recordingContext()->asDirectContext();
         SkASSERT(context);
-        context->getResourceCacheLimits(&fOldCount, &fOldBytes);
+        fOldBytes = context->getResourceCacheLimit();
         set_cache_budget(canvas, fBudgetSize);
         make_images(fImages, kImagesToDraw);
         if (fShuffle) {
@@ -103,16 +103,17 @@ protected:
                 }
                 for (int i = 0; i < kImagesToDraw - 1; ++i) {
                     int other = random.nextULessThan(kImagesToDraw - i) + i;
-                    SkTSwap(base[i], base[other]);
+                    using std::swap;
+                    swap(base[i], base[other]);
                 }
             }
         }
     }
 
     void onPerCanvasPostDraw(SkCanvas* canvas) override {
-        GrContext* context =  canvas->getGrContext();
+        auto context =  canvas->recordingContext()->asDirectContext();
         SkASSERT(context);
-        context->setResourceCacheLimits(fOldCount, fOldBytes);
+        context->setResourceCacheLimit(fOldBytes);
         for (int i = 0; i < kImagesToDraw; ++i) {
             fImages[i].reset();
         }
@@ -120,6 +121,8 @@ protected:
     }
 
     void onDraw(int loops, SkCanvas* canvas) override {
+        auto dContext = GrAsDirectContext(canvas->recordingContext());
+
         for (int i = 0; i < loops; ++i) {
             for (int frame = 0; frame < kSimulatedFrames; ++frame) {
                 for (int j = 0; j < kImagesToDraw; ++j) {
@@ -132,14 +135,16 @@ protected:
                     draw_image(canvas, fImages[idx].get());
                 }
                 // Simulate a frame boundary by flushing. This should notify GrResourceCache.
-                canvas->flush();
+                if (dContext) {
+                    dContext->flush();
+                }
            }
         }
     }
 
 private:
-    static constexpr int kImagesToDraw = 100;
-    static constexpr int kSimulatedFrames = 5;
+    inline static constexpr int kImagesToDraw = 100;
+    inline static constexpr int kSimulatedFrames = 5;
 
     int                         fBudgetSize;
     bool                        fShuffle;
@@ -147,9 +152,8 @@ private:
     sk_sp<SkImage>              fImages[kImagesToDraw];
     std::unique_ptr<int[]>      fIndices;
     size_t                      fOldBytes;
-    int                         fOldCount;
 
-    typedef Benchmark INHERITED;
+    using INHERITED = Benchmark;
 };
 
 DEF_BENCH( return new ImageCacheBudgetBench(105, false); )
@@ -199,7 +203,7 @@ protected:
     }
 
     void onPerCanvasPreDraw(SkCanvas* canvas) override {
-        GrContext* context =  canvas->getGrContext();
+        auto context = canvas->recordingContext()->asDirectContext();
         SkASSERT(context);
         context->getResourceCacheLimits(&fOldCount, &fOldBytes);
         make_images(fImages, kMaxImagesToDraw);
@@ -207,7 +211,7 @@ protected:
     }
 
     void onPerCanvasPostDraw(SkCanvas* canvas) override {
-        GrContext* context =  canvas->getGrContext();
+        auto context = canvas->recordingContext()->asDirectContext();
         SkASSERT(context);
         context->setResourceCacheLimits(fOldCount, fOldBytes);
         for (int i = 0; i < kMaxImagesToDraw; ++i) {
@@ -216,6 +220,8 @@ protected:
     }
 
     void onDraw(int loops, SkCanvas* canvas) override {
+        auto dContext = GrAsDirectContext(canvas->recordingContext());
+
         int delta = 0;
         switch (fMode) {
             case Mode::kPingPong:
@@ -237,26 +243,26 @@ protected:
                     imgsToDraw += 2 * delta;
                 }
                 // Simulate a frame boundary by flushing. This should notify GrResourceCache.
-                canvas->flush();
+                if (dContext) {
+                    dContext->flush();
+                }
             }
         }
     }
 
 private:
-    static constexpr int kImagesInBudget  = 25;
-    static constexpr int kMinImagesToDraw = 15;
-    static constexpr int kMaxImagesToDraw = 35;
-    static constexpr int kSimulatedFrames = 80;
+    inline static constexpr int kImagesInBudget  = 25;
+    inline static constexpr int kMinImagesToDraw = 15;
+    inline static constexpr int kMaxImagesToDraw = 35;
+    inline static constexpr int kSimulatedFrames = 80;
 
     Mode                        fMode;
     sk_sp<SkImage>              fImages[kMaxImagesToDraw];
     size_t                      fOldBytes;
     int                         fOldCount;
 
-    typedef Benchmark INHERITED;
+    using INHERITED = Benchmark;
 };
 
 DEF_BENCH( return new ImageCacheBudgetDynamicBench(ImageCacheBudgetDynamicBench::Mode::kPingPong); )
 DEF_BENCH( return new ImageCacheBudgetDynamicBench(ImageCacheBudgetDynamicBench::Mode::kFlipFlop); )
-
-#endif

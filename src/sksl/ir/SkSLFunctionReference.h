@@ -8,9 +8,9 @@
 #ifndef SKSL_FUNCTIONREFERENCE
 #define SKSL_FUNCTIONREFERENCE
 
-#include "SkSLContext.h"
-#include "SkSLExpression.h"
-#include "SkSLFunctionDeclaration.h"
+#include "src/sksl/SkSLContext.h"
+#include "src/sksl/ir/SkSLExpression.h"
+#include "src/sksl/ir/SkSLFunctionDeclaration.h"
 
 namespace SkSL {
 
@@ -18,26 +18,43 @@ namespace SkSL {
  * An identifier referring to a function name. This is an intermediate value: FunctionReferences are
  * always eventually replaced by FunctionCalls in valid programs.
  */
-struct FunctionReference : public Expression {
-    FunctionReference(const Context& context, Position position,
-                      std::vector<const FunctionDeclaration*> function)
-    : INHERITED(position, kFunctionReference_Kind, *context.fInvalid_Type)
-    , fFunctions(function) {}
+class FunctionReference final : public Expression {
+public:
+    inline static constexpr Kind kExpressionKind = Kind::kFunctionReference;
 
-    bool hasSideEffects() const override {
+    FunctionReference(const Context& context, int line,
+                      std::vector<const FunctionDeclaration*> functions)
+        : INHERITED(line, kExpressionKind, context.fTypes.fInvalid.get())
+        , fFunctions(std::move(functions)) {}
+
+    const std::vector<const FunctionDeclaration*>& functions() const {
+        return fFunctions;
+    }
+
+    bool hasProperty(Property property) const override {
         return false;
     }
 
+    std::unique_ptr<Expression> clone() const override {
+        return std::unique_ptr<Expression>(new FunctionReference(fLine, this->functions(),
+                                                                 &this->type()));
+    }
+
     String description() const override {
-        ASSERT(false);
         return String("<function>");
     }
 
-    const std::vector<const FunctionDeclaration*> fFunctions;
+private:
+    FunctionReference(int line, std::vector<const FunctionDeclaration*> functions,
+                      const Type* type)
+        : INHERITED(line, kExpressionKind, type)
+        , fFunctions(std::move(functions)) {}
 
-    typedef Expression INHERITED;
+    std::vector<const FunctionDeclaration*> fFunctions;
+
+    using INHERITED = Expression;
 };
 
-} // namespace
+}  // namespace SkSL
 
 #endif

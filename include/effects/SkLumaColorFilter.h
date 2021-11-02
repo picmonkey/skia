@@ -8,45 +8,27 @@
 #ifndef SkLumaColorFilter_DEFINED
 #define SkLumaColorFilter_DEFINED
 
-#include "SkColorFilter.h"
-#include "SkRefCnt.h"
-
-class SkRasterPipeline;
+#include "include/core/SkColorFilter.h"
 
 /**
- *  Luminance-to-alpha color filter, as defined in
- *  http://www.w3.org/TR/SVG/masking.html#Masking
- *  http://www.w3.org/TR/css-masking/#MaskValues
+ *  SkLumaColorFilter multiplies the luma of its input into the alpha channel,
+ *  and sets the red, green, and blue channels to zero.
  *
- *  The resulting color is black with transparency equal to the
- *  luminance value modulated by alpha:
+ *    SkLumaColorFilter(r,g,b,a) = {0,0,0, a * luma(r,g,b)}
  *
- *    C' = [ Lum * a, 0, 0, 0 ]
+ *  This is similar to a luminanceToAlpha feColorMatrix,
+ *  but note how this filter folds in the previous alpha,
+ *  something an feColorMatrix cannot do.
  *
+ *    feColorMatrix(luminanceToAlpha; r,g,b,a) = {0,0,0, luma(r,g,b)}
+ *
+ *  (Despite its name, an feColorMatrix using luminanceToAlpha does
+ *  actually compute luma, a dot-product of gamma-encoded color channels,
+ *  not luminance, a dot-product of linear color channels.  So at least
+ *  SkLumaColorFilter and feColorMatrix+luminanceToAlpha agree there.)
  */
-class SK_API SkLumaColorFilter : public SkColorFilter {
-public:
+struct SK_API SkLumaColorFilter {
     static sk_sp<SkColorFilter> Make();
-
-    void filterSpan(const SkPMColor src[], int count, SkPMColor[]) const override;
-    void filterSpan4f(const SkPM4f src[], int count, SkPM4f result[]) const override;
-
-#if SK_SUPPORT_GPU
-    sk_sp<GrFragmentProcessor> asFragmentProcessor(GrContext*, SkColorSpace*) const override;
-#endif
-
-    SK_TO_STRING_OVERRIDE()
-    SK_DECLARE_PUBLIC_FLATTENABLE_DESERIALIZATION_PROCS(SkLumaColorFilter)
-
-protected:
-    void flatten(SkWriteBuffer&) const override;
-
-private:
-    SkLumaColorFilter();
-    void onAppendStages(SkRasterPipeline*, SkColorSpace*, SkArenaAlloc*,
-                        bool shaderIsOpaque) const override;
-
-    typedef SkColorFilter INHERITED;
 };
 
 #endif

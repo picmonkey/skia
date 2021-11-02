@@ -10,13 +10,12 @@
 #ifndef GrPaint_DEFINED
 #define GrPaint_DEFINED
 
-#include "GrColor.h"
-#include "GrColorSpaceXform.h"
-#include "GrFragmentProcessor.h"
-#include "SkBlendMode.h"
-#include "SkRefCnt.h"
-#include "SkRegion.h"
-#include "SkTLazy.h"
+#include "include/core/SkBlendMode.h"
+#include "include/core/SkRefCnt.h"
+#include "include/core/SkRegion.h"
+#include "src/core/SkTLazy.h"
+#include "src/gpu/GrColor.h"
+#include "src/gpu/GrFragmentProcessor.h"
 
 class GrTextureProxy;
 class GrXPFactory;
@@ -41,47 +40,15 @@ class GrXPFactory;
 class GrPaint {
 public:
     GrPaint() = default;
-    explicit GrPaint(const GrPaint&) = default;
     ~GrPaint() = default;
+
+    static GrPaint Clone(const GrPaint& src) { return GrPaint(src); }
 
     /**
      * The initial color of the drawn primitive. Defaults to solid white.
      */
-    void setColor4f(const GrColor4f& color) { fColor = color; }
-    const GrColor4f& getColor4f() const { return fColor; }
-
-    /**
-     * Legacy getter, until all code handles 4f directly.
-     */
-    GrColor getColor() const { return fColor.toGrColor(); }
-
-    /**
-     * Should shader output conversion from linear to sRGB be disabled.
-     * Only relevant if the destination is sRGB. Defaults to false.
-     */
-    void setDisableOutputConversionToSRGB(bool srgb) { fDisableOutputConversionToSRGB = srgb; }
-    bool getDisableOutputConversionToSRGB() const { return fDisableOutputConversionToSRGB; }
-
-    /**
-     * Should sRGB inputs be allowed to perform sRGB to linear conversion. With this flag
-     * set to false, sRGB textures will be treated as linear (including filtering).
-     */
-    void setAllowSRGBInputs(bool allowSRGBInputs) { fAllowSRGBInputs = allowSRGBInputs; }
-    bool getAllowSRGBInputs() const { return fAllowSRGBInputs; }
-
-    /**
-     * Does one of the fragment processors need a field of distance vectors to the nearest edge?
-     */
-    bool usesDistanceVectorField() const { return fUsesDistanceVectorField; }
-
-    /**
-     * Should rendering be gamma-correct, end-to-end. Causes sRGB render targets to behave
-     * as such (with linear blending), and sRGB inputs to be filtered and decoded correctly.
-     */
-    void setGammaCorrect(bool gammaCorrect) {
-        this->setDisableOutputConversionToSRGB(!gammaCorrect);
-        this->setAllowSRGBInputs(gammaCorrect);
-    }
+    void setColor4f(const SkPMColor4f& color) { fColor = color; }
+    const SkPMColor4f& getColor4f() const { return fColor; }
 
     void setXPFactory(const GrXPFactory* xpFactory) {
         fXPFactory = xpFactory;
@@ -93,51 +60,44 @@ public:
     void setCoverageSetOpXPFactory(SkRegion::Op, bool invertCoverage = false);
 
     /**
-     * Appends an additional color processor to the color computation.
+     * Sets a processor for color computation.
      */
-    void addColorFragmentProcessor(sk_sp<GrFragmentProcessor> fp) {
+    void setColorFragmentProcessor(std::unique_ptr<GrFragmentProcessor> fp) {
         SkASSERT(fp);
-        fUsesDistanceVectorField |= fp->usesDistanceVectorField();
-        fColorFragmentProcessors.push_back(std::move(fp));
+        SkASSERT(fColorFragmentProcessor == nullptr);
+        fColorFragmentProcessor = std::move(fp);
         fTrivial = false;
     }
 
     /**
      * Appends an additional coverage processor to the coverage computation.
      */
-    void addCoverageFragmentProcessor(sk_sp<GrFragmentProcessor> fp) {
+    void setCoverageFragmentProcessor(std::unique_ptr<GrFragmentProcessor> fp) {
         SkASSERT(fp);
-        fUsesDistanceVectorField |= fp->usesDistanceVectorField();
-        fCoverageFragmentProcessors.push_back(std::move(fp));
+        SkASSERT(fCoverageFragmentProcessor == nullptr);
+        fCoverageFragmentProcessor = std::move(fp);
         fTrivial = false;
     }
 
-    /**
-     * Helpers for adding color or coverage effects that sample a texture. The matrix is applied
-     * to the src space position to compute texture coordinates.
-     */
-    void addColorTextureProcessor(GrResourceProvider*, sk_sp<GrTextureProxy>,
-                                  sk_sp<GrColorSpaceXform>, const SkMatrix&);
-    void addColorTextureProcessor(GrResourceProvider*, sk_sp<GrTextureProxy>,
-                                  sk_sp<GrColorSpaceXform>, const SkMatrix&,
-                                  const GrSamplerParams&);
-
-    void addCoverageTextureProcessor(GrResourceProvider*, sk_sp<GrTextureProxy>, const SkMatrix&);
-    void addCoverageTextureProcessor(GrResourceProvider*, sk_sp<GrTextureProxy>,
-                                     const SkMatrix&, const GrSamplerParams&);
-
-    int numColorFragmentProcessors() const { return fColorFragmentProcessors.count(); }
-    int numCoverageFragmentProcessors() const { return fCoverageFragmentProcessors.count(); }
-    int numTotalFragmentProcessors() const { return this->numColorFragmentProcessors() +
-                                              this->numCoverageFragmentProcessors(); }
+    bool hasColorFragmentProcessor() const { return fColorFragmentProcessor ? true : false; }
+    int hasCoverageFragmentProcessor() const { return fCoverageFragmentProcessor ? true : false; }
+    int numTotalFragmentProcessors() const {
+        return (this->hasColorFragmentProcessor() ? 1 : 0) +
+               (this->hasCoverageFragmentProcessor() ? 1 : 0);
+    }
 
     const GrXPFactory* getXPFactory() const { return fXPFactory; }
 
-    GrFragmentProcessor* getColorFragmentProcessor(int i) const {
-        return fColorFragmentProcessors[i].get();
+    GrFragmentProcessor* getColorFragmentProcessor() const {
+        return fColorFragmentProcessor.get();
     }
-    GrFragmentProcessor* getCoverageFragmentProcessor(int i) const {
-        return fCoverageFragmentProcessors[i].get();
+    GrFragmentProcessor* getCoverageFragmentProcessor() const {
+        return fCoverageFragmentProcessor.get();
+    }
+    bool usesLocalCoords() const {
+        // The sample coords for the top level FPs are implicitly the GP's local coords.
+        return (fColorFragmentProcessor && fColorFragmentProcessor->usesSampleCoords()) ||
+               (fCoverageFragmentProcessor && fCoverageFragmentProcessor->usesSampleCoords());
     }
 
     /**
@@ -146,7 +106,7 @@ public:
      * coverage and color, so the actual values written to pixels with partial coverage may still
      * not seem constant, even if this function returns true.
      */
-    bool isConstantBlendedColor(GrColor* constantColor) const;
+    bool isConstantBlendedColor(SkPMColor4f* constantColor) const;
 
     /**
      * A trivial paint is one that uses src-over and has no fragment processors.
@@ -154,62 +114,24 @@ public:
      **/
     bool isTrivial() const { return fTrivial; }
 
-private:
-    template <bool> class MoveOrImpl;
-
-public:
-    /**
-     * A temporary instance of this class can be used to select between moving an existing paint or
-     * a temporary copy of an existing paint into a call site. MoveOrClone(paint, false) is a rvalue
-     * reference to paint while MoveOrClone(paint, true) is a rvalue reference to a copy of paint.
-     */
-    using MoveOrClone = MoveOrImpl<true>;
-
-    /**
-     * A temporary instance of this class can be used to select between moving an existing or a
-     * newly default constructed paint into a call site. MoveOrNew(paint, false) is a rvalue
-     * reference to paint while MoveOrNew(paint, true) is a rvalue reference to a default paint.
-     */
-    using MoveOrNew = MoveOrImpl<false>;
+    friend void assert_alive(GrPaint& p) {
+        SkASSERT(p.fAlive);
+    }
 
 private:
+    // Since paint copying is expensive if there are fragment processors, we require going through
+    // the Clone() method.
+    GrPaint(const GrPaint&);
     GrPaint& operator=(const GrPaint&) = delete;
 
     friend class GrProcessorSet;
 
     const GrXPFactory* fXPFactory = nullptr;
-    SkSTArray<4, sk_sp<GrFragmentProcessor>>  fColorFragmentProcessors;
-    SkSTArray<2, sk_sp<GrFragmentProcessor>>  fCoverageFragmentProcessors;
-    bool fDisableOutputConversionToSRGB = false;
-    bool fAllowSRGBInputs = false;
-    bool fUsesDistanceVectorField = false;
+    std::unique_ptr<GrFragmentProcessor> fColorFragmentProcessor;
+    std::unique_ptr<GrFragmentProcessor> fCoverageFragmentProcessor;
     bool fTrivial = true;
-    GrColor4f fColor = GrColor4f::OpaqueWhite();
-};
-
-/** This is the implementation of MoveOrCopy and MoveOrNew. */
-template <bool COPY_IF_NEW>
-class GrPaint::MoveOrImpl {
-public:
-    MoveOrImpl(GrPaint& paint, bool newPaint) {
-        if (newPaint) {
-            if (COPY_IF_NEW) {
-                fStorage.init(paint);
-            } else {
-                fStorage.init();
-            };
-            fPaint = fStorage.get();
-        } else {
-            fPaint = &paint;
-        }
-    }
-
-    operator GrPaint&&() && { return std::move(*fPaint); }
-    GrPaint& paint() { return *fPaint; }
-
-private:
-    SkTLazy<GrPaint> fStorage;
-    GrPaint* fPaint;
+    SkPMColor4f fColor = SK_PMColor4fWHITE;
+    SkDEBUGCODE(bool fAlive = true;)  // Set false after moved from.
 };
 
 #endif

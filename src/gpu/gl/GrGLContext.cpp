@@ -5,84 +5,100 @@
  * found in the LICENSE file.
  */
 
-#include "GrGLContext.h"
-#include "GrGLGLSL.h"
-#include "SkSLCompiler.h"
+#include "src/gpu/gl/GrGLContext.h"
+
+#include "include/gpu/GrContextOptions.h"
+#include "src/gpu/gl/GrGLGLSL.h"
+
+#ifdef SK_BUILD_FOR_ANDROID
+#include <sys/system_properties.h>
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GrGLContext* GrGLContext::Create(const GrGLInterface* interface, const GrContextOptions& options) {
-    // We haven't validated the GrGLInterface yet, so check for GetString function pointer
-    if (!interface->fFunctions.fGetString) {
-        return nullptr;
-    }
-    ConstructorArgs args;
-    args.fInterface = interface;
-
-    const GrGLubyte* verUByte;
-    GR_GL_CALL_RET(interface, verUByte, GetString(GR_GL_VERSION));
-    const char* ver = reinterpret_cast<const char*>(verUByte);
-
-    const GrGLubyte* rendererUByte;
-    GR_GL_CALL_RET(interface, rendererUByte, GetString(GR_GL_RENDERER));
-    const char* renderer = reinterpret_cast<const char*>(rendererUByte);
-
+std::unique_ptr<GrGLContext> GrGLContext::Make(sk_sp<const GrGLInterface> interface,
+                                               const GrContextOptions& options) {
     if (!interface->validate()) {
         return nullptr;
     }
 
-    args.fGLVersion = GrGLGetVersionFromString(ver);
-    if (GR_GL_INVALID_VER == args.fGLVersion) {
+    ConstructorArgs args;
+    args.fDriverInfo = GrGLGetDriverInfo(interface.get());
+    if (args.fDriverInfo.fVersion == GR_GL_INVALID_VER) {
         return nullptr;
     }
 
-    if (!GrGLGetGLSLGeneration(interface, &args.fGLSLGeneration)) {
+    if (!GrGLGetGLSLGeneration(args.fDriverInfo, &args.fGLSLGeneration)) {
         return nullptr;
     }
-
-    args.fVendor = GrGLGetVendor(interface);
-
-    args.fRenderer = GrGLGetRendererFromString(renderer);
 
     /*
      * Qualcomm drivers for the 3xx series have a horrendous bug with some drivers. Though they
      * claim to support GLES 3.00, some perfectly valid GLSL300 shaders will only compile with
      * #version 100, and will fail to compile with #version 300 es.  In the long term, we
      * need to lock this down to a specific driver version.
+     * ?????/2019 - Qualcomm has fixed this for Android O+ devices (API 26+)
      * ?????/2015 - This bug is still present in Lollipop pre-mr1
      * 06/18/2015 - This bug does not affect the nexus 6 (which has an Adreno 4xx).
      */
-    if (kAdreno3xx_GrGLRenderer == args.fRenderer) {
+#ifdef SK_BUILD_FOR_ANDROID
+    if (!options.fDisableDriverCorrectnessWorkarounds &&
+        args.fDriverInfo.fRenderer == GrGLRenderer::kAdreno3xx) {
+        char androidAPIVersion[PROP_VALUE_MAX];
+        int strLength = __system_property_get("ro.build.version.sdk", androidAPIVersion);
+        if (strLength == 0 || atoi(androidAPIVersion) < 26) {
+            args.fGLSLGeneration = k110_GrGLSLGeneration;
+        }
+    }
+#endif
+
+    // Many ES3 drivers only advertise the ES2 image_external extension, but support the _essl3
+    // extension, and require that it be enabled to work with ESSL3. Other devices require the ES2
+    // extension to be enabled, even when using ESSL3. Some devices appear to only support the ES2
+    // extension. As an extreme (optional) solution, we can fallback to using ES2 shading language
+    // if we want to prioritize external texture support. skbug.com/7713
+    if (GR_IS_GR_GL_ES(interface->fStandard) &&
+        options.fPreferExternalImagesOverES3 &&
+        !options.fDisableDriverCorrectnessWorkarounds &&
+        interface->hasExtension("GL_OES_EGL_image_external") &&
+        args.fGLSLGeneration >= k330_GrGLSLGeneration &&
+        !interface->hasExtension("GL_OES_EGL_image_external_essl3") &&
+        !interface->hasExtension("OES_EGL_image_external_essl3")) {
         args.fGLSLGeneration = k110_GrGLSLGeneration;
     }
 
-    GrGLGetDriverInfo(interface->fStandard, args.fVendor, renderer, ver,
-                      &args.fDriver, &args.fDriverVersion);
-
     args.fContextOptions = &options;
+    args.fInterface = std::move(interface);
 
-    return new GrGLContext(args);
+    return std::unique_ptr<GrGLContext>(new GrGLContext(std::move(args)));
 }
 
-GrGLContext::~GrGLContext() {
-    delete fCompiler;
-}
+GrGLContext::~GrGLContext() {}
 
-SkSL::Compiler* GrGLContext::compiler() const {
-    if (!fCompiler) {
-        fCompiler = new SkSL::Compiler();
+GrGLContextInfo GrGLContextInfo::makeNonAngle() const {
+    GrGLContextInfo copy = *this;
+    if (fDriverInfo.fANGLEBackend == GrGLANGLEBackend::kUnknown) {
+        return copy;
     }
-    return fCompiler;
+
+    copy.fDriverInfo.fVendor        = copy.fDriverInfo.fANGLEVendor;
+    copy.fDriverInfo.fDriver        = copy.fDriverInfo.fANGLEDriver;
+    copy.fDriverInfo.fDriverVersion = copy.fDriverInfo.fANGLEDriverVersion;
+    copy.fDriverInfo.fRenderer      = copy.fDriverInfo.fANGLERenderer;
+
+    copy.fDriverInfo.fANGLEBackend       = GrGLANGLEBackend::kUnknown;
+    copy.fDriverInfo.fANGLEVendor        = GrGLVendor::kOther;
+    copy.fDriverInfo.fANGLEDriver        = GrGLDriver::kUnknown;
+    copy.fDriverInfo.fANGLEDriverVersion = GR_GL_DRIVER_UNKNOWN_VER;
+    copy.fDriverInfo.fANGLERenderer      = GrGLRenderer::kOther;
+
+    return copy;
 }
 
-GrGLContextInfo::GrGLContextInfo(const ConstructorArgs& args) {
-    fInterface.reset(SkRef(args.fInterface));
-    fGLVersion = args.fGLVersion;
+GrGLContextInfo::GrGLContextInfo(ConstructorArgs&& args) {
+    fInterface = std::move(args.fInterface);
+    fDriverInfo = args.fDriverInfo;
     fGLSLGeneration = args.fGLSLGeneration;
-    fVendor = args.fVendor;
-    fRenderer = args.fRenderer;
-    fDriver = args.fDriver;
-    fDriverVersion = args.fDriverVersion;
 
     fGLCaps = sk_make_sp<GrGLCaps>(*args.fContextOptions, *this, fInterface.get());
 }

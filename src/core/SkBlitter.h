@@ -8,15 +8,17 @@
 #ifndef SkBlitter_DEFINED
 #define SkBlitter_DEFINED
 
-#include "SkAutoMalloc.h"
-#include "SkBitmapProcShader.h"
-#include "SkColor.h"
-#include "SkRect.h"
-#include "SkRegion.h"
-#include "SkShader.h"
+#include "include/core/SkColor.h"
+#include "include/core/SkRect.h"
+#include "include/core/SkRegion.h"
+#include "include/private/SkTo.h"
+#include "src/core/SkAutoMalloc.h"
+#include "src/core/SkImagePriv.h"
+#include "src/shaders/SkShaderBase.h"
 
 class SkArenaAlloc;
 class SkMatrix;
+class SkMatrixProvider;
 class SkPaint;
 class SkPixmap;
 struct SkMask;
@@ -61,6 +63,9 @@ public:
     */
     virtual void blitAntiRect(int x, int y, int width, int height,
                               SkAlpha leftAlpha, SkAlpha rightAlpha);
+
+    // Blit a rect in AA with size at least 3 x 3 (small rect has too many edge cases...)
+    void blitFatAntiRect(const SkRect& rect);
 
     /// Blit a pattern of pixels defined by a rectangle-clipped mask;
     /// typically used for text.
@@ -136,21 +141,20 @@ public:
         Return the correct blitter to use given the specified context.
      */
     static SkBlitter* Choose(const SkPixmap& dst,
-                             const SkMatrix& matrix,
+                             const SkMatrixProvider& matrixProvider,
                              const SkPaint& paint,
                              SkArenaAlloc*,
-                             bool drawCoverage = false);
+                             bool drawCoverage,
+                             sk_sp<SkShader> clipShader);
 
     static SkBlitter* ChooseSprite(const SkPixmap& dst,
                                    const SkPaint&,
                                    const SkPixmap& src,
                                    int left, int top,
-                                   SkArenaAlloc*);
+                                   SkArenaAlloc*, sk_sp<SkShader> clipShader);
     ///@}
 
-    static SkShader::ContextRec::DstType PreferredShaderDest(const SkImageInfo&);
-
-    static bool UseRasterPipelineBlitter(const SkPixmap&, const SkPaint&);
+    static bool UseLegacyBlitter(const SkPixmap&, const SkPaint&, const SkMatrix&);
 
 protected:
     SkAutoMalloc fBlitMemory;
@@ -185,8 +189,8 @@ public:
     void blitAntiH(int x, int y, const SkAlpha[], const int16_t runs[]) override;
     void blitV(int x, int y, int height, SkAlpha alpha) override;
     void blitRect(int x, int y, int width, int height) override;
-    virtual void blitAntiRect(int x, int y, int width, int height,
-                     SkAlpha leftAlpha, SkAlpha rightAlpha) override;
+    void blitAntiRect(int x, int y, int width, int height,
+                      SkAlpha leftAlpha, SkAlpha rightAlpha) override;
     void blitMask(const SkMask&, const SkIRect& clip) override;
     const SkPixmap* justAnOpaqueColor(uint32_t* value) override;
 
@@ -286,5 +290,34 @@ private:
     SkRectClipBlitter   fRectBlitter;
     SkRgnClipBlitter    fRgnBlitter;
 };
+
+#define SHARD(code)   fA->code; fB->code;
+
+class SkPairBlitter : public SkBlitter {
+    SkBlitter*  fA = nullptr;
+    SkBlitter*  fB = nullptr;
+public:
+    SkPairBlitter(SkBlitter* a, SkBlitter* b) : fA(a), fB(b) {}
+
+    void blitH(int x, int y, int width) override { SHARD(blitH(x, y, width)) }
+    void blitAntiH(int x, int y, const SkAlpha alphas[], const int16_t runs[]) override {
+         SHARD(blitAntiH(x, y, alphas, runs))
+    }
+    void blitV(int x, int y, int height, SkAlpha alpha) override {
+        SHARD(blitV(x, y, height, alpha))
+    }
+    void blitRect(int x, int y, int width, int height) override {
+        SHARD(blitRect(x, y, width, height))
+    }
+    void blitAntiRect(int x, int y, int width, int height,
+                      SkAlpha leftAlpha, SkAlpha rightAlpha) override {
+        SHARD(blitAntiRect(x, y, width, height, leftAlpha, rightAlpha))
+    }
+    void blitMask(const SkMask& mask, const SkIRect& clip) override { SHARD(blitMask(mask, clip)) }
+    const SkPixmap* justAnOpaqueColor(uint32_t* value) override { return nullptr; }
+    void blitAntiH2(int x, int y, U8CPU a0, U8CPU a1) override { SHARD(blitAntiH2(x, y, a0, a1)) }
+    void blitAntiV2(int x, int y, U8CPU a0, U8CPU a1) override { SHARD(blitAntiV2(x, y, a0, a1)) }
+};
+#undef SHARD
 
 #endif

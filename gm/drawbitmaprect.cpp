@@ -5,18 +5,33 @@
  * found in the LICENSE file.
  */
 
-#include "gm.h"
-#include "sk_tool_utils.h"
-#include "SkBlurMask.h"
-#include "SkBlurMaskFilter.h"
-#include "SkColorPriv.h"
-#include "SkGradientShader.h"
-#include "SkImage.h"
-#include "SkImage_Base.h"
-#include "SkMathPriv.h"
-#include "SkShader.h"
-#include "SkSurface.h"
-
+#include "gm/gm.h"
+#include "include/core/SkBitmap.h"
+#include "include/core/SkBlurTypes.h"
+#include "include/core/SkCanvas.h"
+#include "include/core/SkColor.h"
+#include "include/core/SkFont.h"
+#include "include/core/SkImage.h"
+#include "include/core/SkImageInfo.h"
+#include "include/core/SkMaskFilter.h"
+#include "include/core/SkMatrix.h"
+#include "include/core/SkPaint.h"
+#include "include/core/SkPoint.h"
+#include "include/core/SkRect.h"
+#include "include/core/SkRefCnt.h"
+#include "include/core/SkScalar.h"
+#include "include/core/SkShader.h"
+#include "include/core/SkSize.h"
+#include "include/core/SkString.h"
+#include "include/core/SkSurface.h"
+#include "include/core/SkTileMode.h"
+#include "include/core/SkTypeface.h"
+#include "include/core/SkTypes.h"
+#include "include/effects/SkGradientShader.h"
+#include "include/gpu/GrDirectContext.h"
+#include "src/core/SkBlurMask.h"
+#include "src/core/SkMathPriv.h"
+#include "tools/ToolUtils.h"
 
 static SkBitmap make_chessbm(int w, int h) {
     SkBitmap bm;
@@ -28,6 +43,7 @@ static SkBitmap make_chessbm(int w, int h) {
             p[x] = ((x + y) & 1) ? SK_ColorWHITE : SK_ColorBLACK;
         }
     }
+    bm.setImmutable();
     return bm;
 }
 
@@ -35,12 +51,7 @@ static SkBitmap make_chessbm(int w, int h) {
 static sk_sp<SkImage> makebm(SkCanvas* origCanvas, SkBitmap* resultBM, int w, int h) {
     SkImageInfo info = SkImageInfo::MakeN32Premul(w, h);
 
-    auto surface(origCanvas->makeSurface(info));
-    if (nullptr == surface) {
-        // picture canvas will return null, so fall-back to raster
-        surface = SkSurface::MakeRaster(info);
-    }
-
+    auto      surface(ToolUtils::makeSurface(origCanvas, info));
     SkCanvas* canvas = surface->getCanvas();
 
     canvas->clear(SK_ColorTRANSPARENT);
@@ -50,7 +61,7 @@ static sk_sp<SkImage> makebm(SkCanvas* origCanvas, SkBitmap* resultBM, int w, in
 
     SkPoint     pt = { wScalar / 2, hScalar / 2 };
 
-    SkScalar    radius = 4 * SkMaxScalar(wScalar, hScalar);
+    SkScalar    radius = 4 * std::max(wScalar, hScalar);
 
     SkColor     colors[] = { SK_ColorRED, SK_ColorYELLOW,
                              SK_ColorGREEN, SK_ColorMAGENTA,
@@ -73,7 +84,7 @@ static sk_sp<SkImage> makebm(SkCanvas* origCanvas, SkBitmap* resultBM, int w, in
                         pt, radius,
                         colors, pos,
                         SK_ARRAY_COUNT(colors),
-                        SkShader::kRepeat_TileMode,
+                        SkTileMode::kRepeat,
                         0, &mat));
         canvas->drawRect(rect, paint);
         rect.inset(wScalar / 8, hScalar / 8);
@@ -84,7 +95,7 @@ static sk_sp<SkImage> makebm(SkCanvas* origCanvas, SkBitmap* resultBM, int w, in
 
     SkBitmap tempBM;
 
-    image->asLegacyBitmap(&tempBM, SkImage::kRO_LegacyBitmapMode);
+    image->asLegacyBitmap(&tempBM);
 
     // Let backends know we won't change this, so they don't have to deep copy it defensively.
     tempBM.setImmutable();
@@ -94,42 +105,48 @@ static sk_sp<SkImage> makebm(SkCanvas* origCanvas, SkBitmap* resultBM, int w, in
 }
 
 static void bitmapproc(SkCanvas* canvas, SkImage*, const SkBitmap& bm, const SkIRect& srcR,
-                       const SkRect& dstR, const SkPaint* paint) {
-    canvas->drawBitmapRect(bm, srcR, dstR, paint);
+                       const SkRect& dstR, const SkSamplingOptions& sampling,
+                       const SkPaint* paint) {
+    canvas->drawImageRect(bm.asImage(), SkRect::Make(srcR), dstR, sampling, paint,
+                          SkCanvas::kStrict_SrcRectConstraint);
 }
 
 static void bitmapsubsetproc(SkCanvas* canvas, SkImage*, const SkBitmap& bm, const SkIRect& srcR,
-                             const SkRect& dstR, const SkPaint* paint) {
+                             const SkRect& dstR, const SkSamplingOptions& sampling,
+                             const SkPaint* paint) {
     if (!bm.bounds().contains(srcR)) {
-        bitmapproc(canvas, nullptr, bm, srcR, dstR, paint);
+        bitmapproc(canvas, nullptr, bm, srcR, dstR, sampling, paint);
         return;
     }
 
     SkBitmap subset;
     if (bm.extractSubset(&subset, srcR)) {
-        canvas->drawBitmapRect(subset, dstR, paint);
+        canvas->drawImageRect(subset.asImage(), dstR, sampling, paint);
     }
 }
 
 static void imageproc(SkCanvas* canvas, SkImage* image, const SkBitmap&, const SkIRect& srcR,
-                      const SkRect& dstR, const SkPaint* paint) {
-    canvas->drawImageRect(image, srcR, dstR, paint);
+                      const SkRect& dstR, const SkSamplingOptions& sampling, const SkPaint* paint) {
+    canvas->drawImageRect(image, SkRect::Make(srcR), dstR, sampling, paint,
+                          SkCanvas::kStrict_SrcRectConstraint);
 }
 
 static void imagesubsetproc(SkCanvas* canvas, SkImage* image, const SkBitmap& bm,
-                            const SkIRect& srcR, const SkRect& dstR, const SkPaint* paint) {
+                            const SkIRect& srcR, const SkRect& dstR,
+                            const SkSamplingOptions& sampling, const SkPaint* paint) {
     if (!image->bounds().contains(srcR)) {
-        imageproc(canvas, image, bm, srcR, dstR, paint);
+        imageproc(canvas, image, bm, srcR, dstR, sampling, paint);
         return;
     }
 
-    if (sk_sp<SkImage> subset = image->makeSubset(srcR)) {
-        canvas->drawImageRect(subset, dstR, paint);
+    auto direct = GrAsDirectContext(canvas->recordingContext());
+    if (sk_sp<SkImage> subset = image->makeSubset(srcR, direct)) {
+        canvas->drawImageRect(subset, dstR, sampling, paint);
     }
 }
 
 typedef void DrawRectRectProc(SkCanvas*, SkImage*, const SkBitmap&, const SkIRect&, const SkRect&,
-                              const SkPaint*);
+                              const SkSamplingOptions&, const SkPaint*);
 
 constexpr int gSize = 1024;
 constexpr int gBmpSize = 2048;
@@ -158,7 +175,7 @@ protected:
     }
 
     void onDraw(SkCanvas* canvas) override {
-        if (!fImage) {
+        if (!fImage || !fImage->isValid(canvas->recordingContext())) {
             this->setupImage(canvas);
         }
 
@@ -167,21 +184,22 @@ protected:
 
         const int kPadX = 30;
         const int kPadY = 40;
-        SkPaint paint;
-        paint.setAlpha(0x20);
-        canvas->drawImageRect(fImage, SkRect::MakeIWH(gSize, gSize), &paint);
+        SkPaint alphaPaint;
+        alphaPaint.setAlphaf(0.125f);
+        canvas->drawImageRect(fImage, SkRect::MakeIWH(gSize, gSize), SkSamplingOptions(),
+                              &alphaPaint);
         canvas->translate(SK_Scalar1 * kPadX / 2,
                           SK_Scalar1 * kPadY / 2);
         SkPaint blackPaint;
         SkScalar titleHeight = SK_Scalar1 * 24;
         blackPaint.setColor(SK_ColorBLACK);
-        blackPaint.setTextSize(titleHeight);
         blackPaint.setAntiAlias(true);
-        sk_tool_utils::set_portable_typeface(&blackPaint);
+
+        SkFont font(ToolUtils::create_portable_typeface(), titleHeight);
+
         SkString title;
         title.printf("Bitmap size: %d x %d", gBmpSize, gBmpSize);
-        canvas->drawString(title, 0,
-                         titleHeight, blackPaint);
+        canvas->drawString(title, 0, titleHeight, font, blackPaint);
 
         canvas->translate(0, SK_Scalar1 * kPadY / 2  + titleHeight);
         int rowCount = 0;
@@ -190,18 +208,16 @@ protected:
             for (int h = 1; h <= kMaxSrcRectSize; h *= 4) {
 
                 SkIRect srcRect = SkIRect::MakeXYWH((gBmpSize - w) / 2, (gBmpSize - h) / 2, w, h);
-                fProc(canvas, fImage.get(), fLargeBitmap, srcRect, dstRect, nullptr);
+                fProc(canvas, fImage.get(), fLargeBitmap, srcRect, dstRect, SkSamplingOptions(),
+                      nullptr);
 
                 SkString label;
                 label.appendf("%d x %d", w, h);
                 blackPaint.setAntiAlias(true);
                 blackPaint.setStyle(SkPaint::kFill_Style);
-                blackPaint.setTextSize(SK_Scalar1 * 10);
-                SkScalar baseline = dstRect.height() +
-                                    blackPaint.getTextSize() + SK_Scalar1 * 3;
-                canvas->drawString(label,
-                                    0, baseline,
-                                    blackPaint);
+                font.setSize(SK_Scalar1 * 10);
+                SkScalar baseline = dstRect.height() + font.getSize() + SK_Scalar1 * 3;
+                canvas->drawString(label, 0, baseline, font, blackPaint);
                 blackPaint.setStyle(SkPaint::kStroke_Style);
                 blackPaint.setStrokeWidth(SK_Scalar1);
                 blackPaint.setAntiAlias(false);
@@ -222,25 +238,21 @@ protected:
             // test the following code path:
             // SkGpuDevice::drawPath() -> SkGpuDevice::drawWithMaskFilter()
             SkIRect srcRect;
-            SkPaint paint;
-            SkBitmap bm;
-
-            bm = make_chessbm(5, 5);
-            paint.setFilterQuality(kLow_SkFilterQuality);
+            SkPaint maskPaint;
+            SkBitmap bm = make_chessbm(5, 5);
 
             srcRect.setXYWH(1, 1, 3, 3);
-            paint.setMaskFilter(SkBlurMaskFilter::Make(
+            maskPaint.setMaskFilter(SkMaskFilter::MakeBlur(
                 kNormal_SkBlurStyle,
-                SkBlurMask::ConvertRadiusToSigma(SkIntToScalar(5)),
-                SkBlurMaskFilter::kHighQuality_BlurFlag));
+                SkBlurMask::ConvertRadiusToSigma(SkIntToScalar(5))));
 
-            sk_sp<SkImage> image(SkImage::MakeFromBitmap(bm));
-            fProc(canvas, image.get(), bm, srcRect, dstRect, &paint);
+            fProc(canvas, bm.asImage().get(), bm, srcRect, dstRect,
+                  SkSamplingOptions(SkFilterMode::kLinear), &maskPaint);
         }
     }
 
 private:
-    typedef skiagm::GM INHERITED;
+    using INHERITED = skiagm::GM;
 };
 
 DEF_GM( return new DrawBitmapRectGM(bitmapproc      , nullptr); )

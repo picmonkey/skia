@@ -5,148 +5,124 @@
  * found in the LICENSE file.
  */
 
-#include "GrPipeline.h"
+#include "src/gpu/GrPipeline.h"
 
-#include "GrAppliedClip.h"
-#include "GrCaps.h"
-#include "GrGpu.h"
-#include "GrPipelineBuilder.h"
-#include "GrRenderTargetContext.h"
-#include "GrRenderTargetOpList.h"
-#include "GrRenderTargetPriv.h"
-#include "GrXferProcessor.h"
+#include "src/gpu/GrAppliedClip.h"
+#include "src/gpu/GrCaps.h"
+#include "src/gpu/GrXferProcessor.h"
+#include "src/gpu/glsl/GrGLSLProgramDataManager.h"
+#include "src/gpu/glsl/GrGLSLUniformHandler.h"
 
-#include "ops/GrOp.h"
-
-void GrPipeline::init(const InitArgs& args) {
-    SkASSERT(args.fRenderTarget);
-    SkASSERT(args.fProcessors);
-    SkASSERT(args.fProcessors->isFinalized());
-
-    fRenderTarget.reset(args.fRenderTarget);
-
-    fFlags = args.fFlags;
-    if (args.fAppliedClip) {
-        fScissorState = args.fAppliedClip->scissorState();
-        if (args.fAppliedClip->hasStencilClip()) {
-            fFlags |= kHasStencilClip_Flag;
-        }
-        fWindowRectsState = args.fAppliedClip->windowRectsState();
+GrPipeline::GrPipeline(const InitArgs& args,
+                       sk_sp<const GrXferProcessor> xferProcessor,
+                       const GrAppliedHardClip& hardClip)
+        : fDstProxy(args.fDstProxyView)
+        , fWindowRectsState(hardClip.windowRectsState())
+        , fXferProcessor(std::move(xferProcessor))
+        , fWriteSwizzle(args.fWriteSwizzle) {
+    fFlags = (Flags)args.fInputFlags;
+    if (hardClip.hasStencilClip()) {
+        fFlags |= Flags::kHasStencilClip;
     }
-    if (args.fProcessors->usesDistanceVectorField()) {
-        fFlags |= kUsesDistanceVectorField_Flag;
+    if (hardClip.scissorState().enabled()) {
+        fFlags |= Flags::kScissorTestEnabled;
     }
-    if (!args.fUserStencil->isDisabled(fFlags & kHasStencilClip_Flag)) {
-        fFlags |= kStencilEnabled_Flag;
-    }
+    // If we have any special dst sample flags we better also have a dst proxy
+    SkASSERT(this->dstSampleFlags() == GrDstSampleFlags::kNone || this->dstProxyView());
+}
 
-    fUserStencilSettings = args.fUserStencil;
-
-    fXferProcessor = args.fProcessors->refXferProcessor();
-
-    if (args.fDstTexture.texture()) {
-        fDstTexture.reset(args.fDstTexture.texture());
-        fDstTextureOffset = args.fDstTexture.offset();
-    }
-
-    // Copy GrFragmentProcessors from GrPipelineBuilder to Pipeline, possibly removing some of the
-    // color fragment processors.
-    fNumColorProcessors = args.fProcessors->numColorFragmentProcessors();
-    int numTotalProcessors =
-            fNumColorProcessors + args.fProcessors->numCoverageFragmentProcessors();
-    if (args.fAppliedClip && args.fAppliedClip->clipCoverageFragmentProcessor()) {
-        ++numTotalProcessors;
-    }
+GrPipeline::GrPipeline(const InitArgs& args, GrProcessorSet&& processors,
+                       GrAppliedClip&& appliedClip)
+        : GrPipeline(args, processors.refXferProcessor(), appliedClip.hardClip()) {
+    SkASSERT(processors.isFinalized());
+    // Copy GrFragmentProcessors from GrProcessorSet to Pipeline
+    fNumColorProcessors = processors.hasColorFragmentProcessor() ? 1 : 0;
+    int numTotalProcessors = fNumColorProcessors +
+                             (processors.hasCoverageFragmentProcessor() ? 1 : 0) +
+                             (appliedClip.hasCoverageFragmentProcessor() ? 1 : 0);
     fFragmentProcessors.reset(numTotalProcessors);
+
     int currFPIdx = 0;
-    for (int i = 0; i < args.fProcessors->numColorFragmentProcessors(); ++i, ++currFPIdx) {
-        const GrFragmentProcessor* fp = args.fProcessors->colorFragmentProcessor(i);
-        fFragmentProcessors[currFPIdx].reset(fp);
-        if (fp->isBad()) {
-            this->markAsBad();
-        }
+    if (processors.hasColorFragmentProcessor()) {
+        fFragmentProcessors[currFPIdx++] = processors.detachColorFragmentProcessor();
     }
-
-    for (int i = 0; i < args.fProcessors->numCoverageFragmentProcessors(); ++i, ++currFPIdx) {
-        const GrFragmentProcessor* fp = args.fProcessors->coverageFragmentProcessor(i);
-        fFragmentProcessors[currFPIdx].reset(fp);
-        if (fp->isBad()) {
-            this->markAsBad();
-        }
+    if (processors.hasCoverageFragmentProcessor()) {
+        fFragmentProcessors[currFPIdx++] = processors.detachCoverageFragmentProcessor();
     }
-    if (args.fAppliedClip) {
-        if (const GrFragmentProcessor* fp = args.fAppliedClip->clipCoverageFragmentProcessor()) {
-            fFragmentProcessors[currFPIdx].reset(fp);
-            if (fp->isBad()) {
-                this->markAsBad();
-            }
-        }
+    if (appliedClip.hasCoverageFragmentProcessor()) {
+        fFragmentProcessors[currFPIdx++] = appliedClip.detachCoverageFragmentProcessor();
     }
 }
 
-// MDB TODO: re-enable when TextureSamplers store texture proxies
-#if 0
-static void add_dependencies_for_processor(const GrFragmentProcessor* proc,
-                                           GrRenderTargetProxy* rtp) {
-    GrFragmentProcessor::TextureAccessIter iter(proc);
-    while (const GrResourceIOProcessor::TextureSampler* sampler = iter.next()) {
-        SkASSERT(rtp->getLastOpList());
-        rtp->getLastOpList()->addDependency(sampler->texture());
+GrXferBarrierType GrPipeline::xferBarrierType(const GrCaps& caps) const {
+    if (this->dstSampleFlags() & GrDstSampleFlags::kRequiresTextureBarrier) {
+        return kTexture_GrXferBarrierType;
     }
+    return this->getXferProcessor().xferBarrierType(caps);
 }
-#endif
 
-void GrPipeline::addDependenciesTo(GrRenderTargetProxy* rtp) const {
-    // MDB TODO: re-enable when TextureSamplers store texture proxies
-#if 0
-    for (int i = 0; i < fFragmentProcessors.count(); ++i) {
-        add_dependencies_for_processor(fFragmentProcessors[i].get(), rtp);
-    }
-#endif
-
-    if (fDstTexture) {
-        //SkASSERT(rtp->getLastOpList());
-        // MDB TODO: re-enable when TextureSamplers store texture proxies
-        //rtp->getLastOpList()->addDependency(fDstTexture.get());
+GrPipeline::GrPipeline(GrScissorTest scissorTest,
+                       sk_sp<const GrXferProcessor> xp,
+                       const GrSwizzle& writeSwizzle,
+                       InputFlags inputFlags)
+        : fWindowRectsState()
+        , fFlags((Flags)inputFlags)
+        , fXferProcessor(std::move(xp))
+        , fWriteSwizzle(writeSwizzle) {
+    if (GrScissorTest::kEnabled == scissorTest) {
+        fFlags |= Flags::kScissorTestEnabled;
     }
 }
 
-GrPipeline::GrPipeline(GrRenderTarget* rt, SkBlendMode blendmode)
-        : fRenderTarget(rt)
-        , fScissorState()
-        , fWindowRectsState()
-        , fUserStencilSettings(&GrUserStencilSettings::kUnused)
-        , fFlags()
-        , fXferProcessor(GrPorterDuffXPFactory::MakeNoCoverageXP(blendmode))
-        , fFragmentProcessors()
-        , fNumColorProcessors(0) {}
+void GrPipeline::genKey(GrProcessorKeyBuilder* b, const GrCaps& caps) const {
+    // kSnapVerticesToPixelCenters is implemented in a shader.
+    InputFlags ignoredFlags = InputFlags::kSnapVerticesToPixelCenters;
+    b->add32((uint32_t)fFlags & ~(uint32_t)ignoredFlags, "flags");
 
-////////////////////////////////////////////////////////////////////////////////
+    const GrXferProcessor::BlendInfo& blendInfo = this->getXferProcessor().getBlendInfo();
 
-bool GrPipeline::AreEqual(const GrPipeline& a, const GrPipeline& b) {
-    SkASSERT(&a != &b);
+    static constexpr uint32_t kBlendCoeffSize = 5;
+    static constexpr uint32_t kBlendEquationSize = 5;
+    static_assert(kLast_GrBlendCoeff < (1 << kBlendCoeffSize));
+    static_assert(kLast_GrBlendEquation < (1 << kBlendEquationSize));
 
-    if (a.getRenderTarget() != b.getRenderTarget() ||
-        a.fFragmentProcessors.count() != b.fFragmentProcessors.count() ||
-        a.fNumColorProcessors != b.fNumColorProcessors ||
-        a.fScissorState != b.fScissorState ||
-        a.fWindowRectsState != b.fWindowRectsState ||
-        a.fFlags != b.fFlags ||
-        a.fUserStencilSettings != b.fUserStencilSettings) {
-        return false;
+    b->addBool(blendInfo.fWriteColor, "writeColor");
+    b->addBits(kBlendCoeffSize, blendInfo.fSrcBlend, "srcBlend");
+    b->addBits(kBlendCoeffSize, blendInfo.fDstBlend, "dstBlend");
+    b->addBits(kBlendEquationSize, blendInfo.fEquation, "equation");
+    b->addBool(this->usesDstInputAttachment(), "inputAttach");
+}
+
+void GrPipeline::visitTextureEffects(
+        const std::function<void(const GrTextureEffect&)>& func) const {
+    for (auto& fp : fFragmentProcessors) {
+        fp->visitTextureEffects(func);
     }
+}
 
-    // Most of the time both are nullptr
-    if (a.fXferProcessor.get() || b.fXferProcessor.get()) {
-        if (!a.getXferProcessor().isEqual(b.getXferProcessor())) {
-            return false;
+void GrPipeline::visitProxies(const GrVisitProxyFunc& func) const {
+    // This iteration includes any clip coverage FPs
+    for (auto& fp : fFragmentProcessors) {
+        fp->visitProxies(func);
+    }
+    if (this->usesDstTexture()) {
+        func(this->dstProxyView().proxy(), GrMipmapped::kNo);
+    }
+}
+
+void GrPipeline::setDstTextureUniforms(const GrGLSLProgramDataManager& pdm,
+                                       GrGLSLBuiltinUniformHandles* fBuiltinUniformHandles) const {
+    GrTexture* dstTexture = this->peekDstTexture();
+
+    if (dstTexture) {
+        if (fBuiltinUniformHandles->fDstTextureCoordsUni.isValid()) {
+            pdm.set4f(fBuiltinUniformHandles->fDstTextureCoordsUni,
+                      static_cast<float>(this->dstTextureOffset().fX),
+                      static_cast<float>(this->dstTextureOffset().fY),
+                      1.f / dstTexture->width(),
+                      1.f / dstTexture->height());
         }
+    } else {
+        SkASSERT(!fBuiltinUniformHandles->fDstTextureCoordsUni.isValid());
     }
-
-    for (int i = 0; i < a.numFragmentProcessors(); i++) {
-        if (!a.getFragmentProcessor(i).isEqual(b.getFragmentProcessor(i))) {
-            return false;
-        }
-    }
-    return true;
 }

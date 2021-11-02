@@ -4,14 +4,16 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
-#include "SampleCode.h"
-#include "SkBlurMask.h"
-#include "SkBlurMaskFilter.h"
-#include "SkCanvas.h"
-#include "SkParsePath.h"
-#include "SkPath.h"
-#include "SkRandom.h"
-#include "SkView.h"
+
+#include "samplecode/Sample.h"
+
+#include "include/core/SkCanvas.h"
+#include "include/core/SkFont.h"
+#include "include/core/SkMaskFilter.h"
+#include "include/core/SkPath.h"
+#include "include/utils/SkParsePath.h"
+#include "include/utils/SkRandom.h"
+#include "src/core/SkBlurMask.h"
 
 
 static void test_huge_stroke(SkCanvas* canvas) {
@@ -33,9 +35,7 @@ static void test_huge_stroke(SkCanvas* canvas) {
     paint.setStrokeJoin(SkPaint::kRound_Join);
     paint.setStyle(SkPaint::kStroke_Style);
 
-    SkMatrix matrix;
-    matrix.setRectToRect(srcR, dstR, SkMatrix::kCenter_ScaleToFit);
-    canvas->concat(matrix);
+    canvas->concat(SkMatrix::RectToRect(srcR, dstR, SkMatrix::kCenter_ScaleToFit));
 
     canvas->drawPath(path, paint);
 }
@@ -94,7 +94,7 @@ static const struct {
     { SkPaint::kStrokeAndFill_Style,    SkPaint::kMiter_Join,   10 },
 };
 
-class StrokePathView : public SampleView {
+class StrokePathView : public Sample {
     SkScalar    fWidth;
     SkPath      fPath;
 protected:
@@ -110,8 +110,8 @@ protected:
             "Z";
         SkParsePath::FromSVGString(str, &fPath);
 #else
-        fPath.addCircle(0, 0, SkIntToScalar(50), SkPath::kCW_Direction);
-        fPath.addCircle(0, SkIntToScalar(-50), SkIntToScalar(30), SkPath::kCW_Direction);
+        fPath.addCircle(0, 0, SkIntToScalar(50), SkPathDirection::kCW);
+        fPath.addCircle(0, SkIntToScalar(-50), SkIntToScalar(30), SkPathDirection::kCW);
 #endif
 
         scale_to_width(&fPath, fWidth);
@@ -121,14 +121,7 @@ protected:
         this->setBGColor(0xFFDDDDDD);
     }
 
-    // overrides from SkEventSink
-    bool onQuery(SkEvent* evt) override {
-        if (SampleCode::TitleQ(*evt)) {
-            SampleCode::TitleR(evt, "StrokePath");
-            return true;
-        }
-        return this->INHERITED::onQuery(evt);
-    }
+    SkString name() override { return SkString("StrokePath"); }
 
     SkRandom rand;
 
@@ -154,7 +147,7 @@ protected:
         if (true) {
             canvas->drawColor(SK_ColorBLACK);
 
-            paint.setTextSize(24);
+            SkFont font(nullptr, 24);
             paint.setColor(SK_ColorWHITE);
             canvas->translate(10, 30);
 
@@ -168,9 +161,9 @@ protected:
                 SkScalar sigma = SkBlurMask::ConvertRadiusToSigma(SkIntToScalar(4));
                 for (int y = 0; y < 10; y++) {
                     if (x) {
-                        paint.setMaskFilter(SkBlurMaskFilter::Make(gStyle[x - 1], sigma));
+                        paint.setMaskFilter(SkMaskFilter::MakeBlur(gStyle[x - 1], sigma));
                     }
-                    canvas->drawString("Title Bar", x*SkIntToScalar(100), y*SkIntToScalar(30), paint);
+                    canvas->drawString("Title Bar", x * 100.0f, y * 30.0f, font, paint);
                     sigma *= 0.75f;
                 }
 
@@ -197,24 +190,18 @@ protected:
         fPath.offset(100, 0);
 #endif
 
-        fPath.setFillType(SkPath::kWinding_FillType);
+        fPath.setFillType(SkPathFillType::kWinding);
         drawSet(canvas, &paint);
 
         canvas->translate(0, fPath.getBounds().height() * 5 / 4);
-        fPath.setFillType(SkPath::kEvenOdd_FillType);
+        fPath.setFillType(SkPathFillType::kEvenOdd);
         drawSet(canvas, &paint);
     }
 
-    virtual SkView::Click* onFindClickHandler(SkScalar x, SkScalar y,
-                                              unsigned modi) override {
-        this->inval(nullptr);
-        return this->INHERITED::onFindClickHandler(x, y, modi);
-    }
 private:
-    typedef SampleView INHERITED;
+    using INHERITED = Sample;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
-static SkView* MyFactory() { return new StrokePathView; }
-static SkViewRegister reg(MyFactory);
+DEF_SAMPLE( return new StrokePathView(); )

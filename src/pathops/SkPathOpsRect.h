@@ -7,16 +7,18 @@
 #ifndef SkPathOpsRect_DEFINED
 #define SkPathOpsRect_DEFINED
 
-#include "SkPathOpsPoint.h"
+#include "src/pathops/SkPathOpsPoint.h"
+
+class SkTCurve;
 
 struct SkDRect {
     double fLeft, fTop, fRight, fBottom;
 
     void add(const SkDPoint& pt) {
-        fLeft = SkTMin(fLeft, pt.fX);
-        fTop = SkTMin(fTop, pt.fY);
-        fRight = SkTMax(fRight, pt.fX);
-        fBottom = SkTMax(fBottom, pt.fY);
+        fLeft = std::min(fLeft, pt.fX);
+        fTop = std::min(fTop, pt.fY);
+        fRight = std::max(fRight, pt.fX);
+        fBottom = std::max(fBottom, pt.fY);
     }
 
     bool contains(const SkDPoint& pt) const {
@@ -64,6 +66,8 @@ struct SkDRect {
     }
 
     void setBounds(const SkDQuad& curve, const SkDQuad& sub, double tStart, double tEnd);
+
+    void setBounds(const SkTCurve& curve);
 
     bool valid() const {
         return fLeft <= fRight && fTop <= fBottom;

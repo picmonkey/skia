@@ -4,32 +4,27 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
-#include "SampleCode.h"
-#include "SkView.h"
-#include "SkBlurMaskFilter.h"
-#include "SkCanvas.h"
-#include "SkColorShader.h"
-#include "SkGradientShader.h"
-#include "SkGraphics.h"
-#include "SkPath.h"
-#include "SkRandom.h"
-#include "SkRegion.h"
-#include "SkShader.h"
-#include "SkUtils.h"
-#include "SkColorPriv.h"
-#include "SkColorFilter.h"
-#include "SkTime.h"
-#include "SkTypeface.h"
-#include "SkTextBox.h"
-#include "SkOSFile.h"
-#include "SkStream.h"
-#include "SkKey.h"
+#include "samplecode/Sample.h"
 
-extern void skia_set_text_gamma(float blackGamma, float whiteGamma);
+#include "include/core/SkCanvas.h"
+#include "include/core/SkColorFilter.h"
+#include "include/core/SkColorPriv.h"
+#include "include/core/SkGraphics.h"
+#include "include/core/SkPath.h"
+#include "include/core/SkRegion.h"
+#include "include/core/SkShader.h"
+#include "include/core/SkStream.h"
+#include "include/core/SkTextBlob.h"
+#include "include/core/SkTime.h"
+#include "include/core/SkTypeface.h"
+#include "include/effects/SkGradientShader.h"
+#include "include/utils/SkRandom.h"
+#include "modules/skshaper/include/SkShaper.h"
+#include "src/core/SkOSFile.h"
+#include "src/shaders/SkColorShader.h"
+#include "src/utils/SkUTF.h"
 
-#if defined(SK_BUILD_FOR_WIN) && defined(SK_FONTHOST_WIN_GDI)
-extern SkTypeface* SkCreateTypefaceFromLOGFONT(const LOGFONT&);
-#endif
+typedef std::unique_ptr<SkShaper> (*ShaperFactory)();
 
 static const char gText[] =
     "When in the Course of human events it becomes necessary for one people "
@@ -39,59 +34,71 @@ static const char gText[] =
     "a decent respect to the opinions of mankind requires that they should "
     "declare the causes which impel them to the separation.";
 
-class TextBoxView : public SampleView {
+class TextBoxView : public Sample {
+    SkString fName;
 public:
-    TextBoxView() {
-#if defined(SK_BUILD_FOR_WIN) && defined(SK_FONTHOST_WIN_GDI)
-        LOGFONT lf;
-        sk_bzero(&lf, sizeof(lf));
-        lf.lfHeight = 9;
-        SkTypeface* tf0 = SkCreateTypefaceFromLOGFONT(lf);
-        lf.lfHeight = 12;
-        SkTypeface* tf1 = SkCreateTypefaceFromLOGFONT(lf);
-        // we assert that different sizes should not affect which face we get
-        SkASSERT(tf0 == tf1);
-        tf0->unref();
-        tf1->unref();
-#endif
+    TextBoxView(ShaperFactory fact, const char suffix[]) : fShaper(fact()) {
+        fName.printf("TextBox_%s", suffix);
     }
 
 protected:
-    // overrides from SkEventSink
-    virtual bool onQuery(SkEvent* evt)  {
-        if (SampleCode::TitleQ(*evt)) {
-            SampleCode::TitleR(evt, "TextBox");
-            return true;
-        }
-        return this->INHERITED::onQuery(evt);
-    }
+    SkString name() override { return fName; }
 
     void drawTest(SkCanvas* canvas, SkScalar w, SkScalar h, SkColor fg, SkColor bg) {
         SkAutoCanvasRestore acr(canvas, true);
 
         canvas->clipRect(SkRect::MakeWH(w, h));
         canvas->drawColor(bg);
+
         SkScalar margin = 20;
-        SkTextBox tbox;
-        tbox.setMode(SkTextBox::kLineBreak_Mode);
-        tbox.setBox(margin, margin,
-                    w - margin, h - margin);
-        tbox.setSpacing(SkIntToScalar(3)/3, 0);
 
         SkPaint paint;
-        paint.setAntiAlias(true);
-        paint.setLCDRenderText(true);
         paint.setColor(fg);
-        tbox.setText(gText, strlen(gText), paint);
 
         for (int i = 9; i < 24; i += 2) {
-            paint.setTextSize(SkIntToScalar(i));
-            tbox.draw(canvas);
-            canvas->translate(0, tbox.getTextHeight() + paint.getFontSpacing());
+            SkShaper::PurgeCaches();
+            SkTextBlobBuilderRunHandler builder(gText, { margin, margin });
+            SkFont srcFont(nullptr, SkIntToScalar(i));
+            srcFont.setEdging(SkFont::Edging::kSubpixelAntiAlias);
+            srcFont.setSubpixel(true);
+
+            const char* utf8 = gText;
+            size_t utf8Bytes = sizeof(gText) - 1;
+
+            std::unique_ptr<SkShaper::BiDiRunIterator> bidi(
+                SkShaper::MakeBiDiRunIterator(utf8, utf8Bytes, 0xfe));
+            if (!bidi) {
+                return;
+            }
+
+            std::unique_ptr<SkShaper::LanguageRunIterator> language(
+                SkShaper::MakeStdLanguageRunIterator(utf8, utf8Bytes));
+            if (!language) {
+                return;
+            }
+
+            SkFourByteTag undeterminedScript = SkSetFourByteTag('Z','y','y','y');
+            std::unique_ptr<SkShaper::ScriptRunIterator> script(
+                SkShaper::MakeScriptRunIterator(utf8, utf8Bytes, undeterminedScript));
+            if (!script) {
+                return;
+            }
+
+            std::unique_ptr<SkShaper::FontRunIterator> font(
+                SkShaper::MakeFontMgrRunIterator(utf8, utf8Bytes, srcFont, SkFontMgr::RefDefault(),
+                                                 "Arial", SkFontStyle::Bold(), &*language));
+            if (!font) {
+                return;
+            }
+
+            fShaper->shape(utf8, utf8Bytes, *font, *bidi, *script, *language, w - margin, &builder);
+            canvas->drawTextBlob(builder.makeBlob(), 0, 0, paint);
+
+            canvas->translate(0, builder.endPoint().y());
         }
     }
 
-    virtual void onDrawContent(SkCanvas* canvas) {
+    void onDrawContent(SkCanvas* canvas) override {
         SkScalar width = this->width() / 3;
         drawTest(canvas, width, this->height(), SK_ColorBLACK, SK_ColorWHITE);
         canvas->translate(width, 0);
@@ -103,10 +110,81 @@ protected:
     }
 
 private:
-    typedef SampleView INHERITED;
+    std::unique_ptr<SkShaper> fShaper;
+    using INHERITED = Sample;
 };
 
-//////////////////////////////////////////////////////////////////////////////
+DEF_SAMPLE( return new TextBoxView([](){ return SkShaper::Make(); }, "default"); );
+#ifdef SK_SHAPER_CORETEXT_AVAILABLE
+DEF_SAMPLE( return new TextBoxView(SkShaper::MakeCoreText, "coretext"); );
+#endif
 
-static SkView* MyFactory() { return new TextBoxView; }
-static SkViewRegister reg(MyFactory);
+class SampleShaper : public Sample {
+public:
+    SampleShaper() {}
+
+protected:
+    SkString name() override { return SkString("shaper"); }
+
+    void drawTest(SkCanvas* canvas, const char str[], SkScalar size,
+                  std::unique_ptr<SkShaper> shaper) {
+        if (!shaper) return;
+
+        SkTextBlobBuilderRunHandler builder(str, {0, 0});
+        SkFont srcFont;
+        srcFont.setSize(size);
+        srcFont.setEdging(SkFont::Edging::kSubpixelAntiAlias);
+        srcFont.setSubpixel(true);
+
+        size_t len = strlen(str);
+
+        std::unique_ptr<SkShaper::BiDiRunIterator> bidi(
+            SkShaper::MakeBiDiRunIterator(str, len, 0xfe));
+        if (!bidi) {
+            return;
+        }
+
+        std::unique_ptr<SkShaper::LanguageRunIterator> language(
+            SkShaper::MakeStdLanguageRunIterator(str, len));
+        if (!language) {
+            return;
+        }
+
+        SkFourByteTag undeterminedScript = SkSetFourByteTag('Z','y','y','y');
+        std::unique_ptr<SkShaper::ScriptRunIterator> script(
+            SkShaper::MakeScriptRunIterator(str, len, undeterminedScript));
+        if (!script) {
+            return;
+        }
+
+        std::unique_ptr<SkShaper::FontRunIterator> font(
+            SkShaper::MakeFontMgrRunIterator(str, len, srcFont, SkFontMgr::RefDefault(),
+                                             "Arial", SkFontStyle::Bold(), &*language));
+        if (!font) {
+            return;
+        }
+
+        shaper->shape(str, len, *font, *bidi, *script, *language, 2000, &builder);
+
+        canvas->drawTextBlob(builder.makeBlob(), 0, 0, SkPaint());
+    }
+
+    void onDrawContent(SkCanvas* canvas) override {
+        canvas->translate(10, 30);
+
+        const char text[] = "world";
+
+        for (SkScalar size = 30; size <= 30; size += 10) {
+            this->drawTest(canvas, text, size, SkShaper::Make());
+            canvas->translate(0, size + 5);
+            #ifdef SK_SHAPER_CORETEXT_AVAILABLE
+            this->drawTest(canvas, text, size, SkShaper::MakeCoreText());
+            #endif
+            canvas->translate(0, size*2);
+        }
+    }
+
+private:
+    using INHERITED = Sample;
+};
+DEF_SAMPLE( return new SampleShaper; );

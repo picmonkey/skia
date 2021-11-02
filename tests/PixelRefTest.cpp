@@ -5,10 +5,11 @@
  * found in the LICENSE file.
  */
 
-#include "Test.h"
+#include "tests/Test.h"
 
-#include "SkMallocPixelRef.h"
-#include "SkPixelRef.h"
+#include "include/core/SkMallocPixelRef.h"
+#include "include/core/SkPixelRef.h"
+#include "include/private/SkIDChangeListener.h"
 
 static void decrement_counter_proc(void* pixels, void* ctx) {
     int* counter = (int*)ctx;
@@ -23,21 +24,21 @@ static void test_dont_leak_install(skiatest::Reporter* reporter) {
 
     info = SkImageInfo::MakeN32Premul(0, 0);
     release_counter = 1;
-    success = bm.installPixels(info, nullptr, 0, nullptr, decrement_counter_proc, &release_counter);
+    success = bm.installPixels(info, nullptr, 0, decrement_counter_proc, &release_counter);
     REPORTER_ASSERT(reporter, true == success);
     bm.reset();
     REPORTER_ASSERT(reporter, 0 == release_counter);
 
     info = SkImageInfo::MakeN32Premul(10, 10);
     release_counter = 1;
-    success = bm.installPixels(info, nullptr, 0, nullptr, decrement_counter_proc, &release_counter);
+    success = bm.installPixels(info, nullptr, 0, decrement_counter_proc, &release_counter);
     REPORTER_ASSERT(reporter, true == success);
     bm.reset();
     REPORTER_ASSERT(reporter, 0 == release_counter);
 
     info = SkImageInfo::MakeN32Premul(-10, -10);
     release_counter = 1;
-    success = bm.installPixels(info, nullptr, 0, nullptr, decrement_counter_proc, &release_counter);
+    success = bm.installPixels(info, nullptr, 0, decrement_counter_proc, &release_counter);
     REPORTER_ASSERT(reporter, false == success);
     bm.reset();
     REPORTER_ASSERT(reporter, 0 == release_counter);
@@ -58,10 +59,10 @@ static void test_install(skiatest::Reporter* reporter) {
 
 }
 
-class TestListener : public SkPixelRef::GenIDChangeListener {
+class TestListener : public SkIDChangeListener {
 public:
     explicit TestListener(int* ptr) : fPtr(ptr) {}
-    void onChange() override { (*fPtr)++; }
+    void changed() override { (*fPtr)++; }
 private:
     int* fPtr;
 };
@@ -69,11 +70,11 @@ private:
 DEF_TEST(PixelRef_GenIDChange, r) {
     SkImageInfo info = SkImageInfo::MakeN32Premul(10, 10);
 
-    sk_sp<SkPixelRef> pixelRef = SkMallocPixelRef::MakeAllocate(info, 0, nullptr);
+    sk_sp<SkPixelRef> pixelRef = SkMallocPixelRef::MakeAllocate(info, 0);
 
     // Register a listener.
     int count = 0;
-    pixelRef->addGenIDChangeListener(new TestListener(&count));
+    pixelRef->addGenIDChangeListener(sk_make_sp<TestListener>(&count));
     REPORTER_ASSERT(r, 0 == count);
 
     // No one has looked at our pixelRef's generation ID, so invalidating it doesn't make sense.
@@ -90,9 +91,28 @@ DEF_TEST(PixelRef_GenIDChange, r) {
 
     // Force the generation ID to be recalculated, then add a listener.
     REPORTER_ASSERT(r, 0 != pixelRef->getGenerationID());
-    pixelRef->addGenIDChangeListener(new TestListener(&count));
+    pixelRef->addGenIDChangeListener(sk_make_sp<TestListener>(&count));
     pixelRef->notifyPixelsChanged();
     REPORTER_ASSERT(r, 1 == count);
+
+    // Check that asking for deregistration causes the listener to not be called.
+    REPORTER_ASSERT(r, 0 != pixelRef->getGenerationID());
+    auto listener = sk_make_sp<TestListener>(&count);
+    pixelRef->addGenIDChangeListener(listener);
+    REPORTER_ASSERT(r, 1 == count);
+    listener->markShouldDeregister();
+    pixelRef->notifyPixelsChanged();
+    REPORTER_ASSERT(r, 1 == count);
+
+    // Check that we use deregistration to prevent unbounded growth.
+    REPORTER_ASSERT(r, 0 != pixelRef->getGenerationID());
+    listener = sk_make_sp<TestListener>(&count);
+    pixelRef->addGenIDChangeListener(listener);
+    REPORTER_ASSERT(r, 1 == count);
+    listener->markShouldDeregister();
+    // Add second listener. Should deregister first listener.
+    pixelRef->addGenIDChangeListener(sk_make_sp<TestListener>(&count));
+    REPORTER_ASSERT(r, listener->unique());
 
     // Quick check that nullptr is safe.
     REPORTER_ASSERT(r, 0 != pixelRef->getGenerationID());

@@ -5,62 +5,37 @@
  * found in the LICENSE file.
  */
 
-#include "GrOnFlushResourceProvider.h"
+#include "src/gpu/GrOnFlushResourceProvider.h"
 
-#include "GrDrawingManager.h"
-#include "GrSurfaceProxy.h"
+#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/GrRecordingContext.h"
+#include "src/gpu/GrDirectContextPriv.h"
+#include "src/gpu/GrDrawingManager.h"
+#include "src/gpu/GrProxyProvider.h"
+#include "src/gpu/GrRecordingContextPriv.h"
+#include "src/gpu/GrResourceProvider.h"
+#include "src/gpu/GrSurfaceProxy.h"
+#include "src/gpu/GrSurfaceProxyPriv.h"
+#include "src/gpu/GrTextureResolveRenderTask.h"
 
-sk_sp<GrRenderTargetContext> GrOnFlushResourceProvider::makeRenderTargetContext(
-                                                        const GrSurfaceDesc& desc,
-                                                        sk_sp<SkColorSpace> colorSpace,
-                                                        const SkSurfaceProps* props) {
-    GrSurfaceDesc tmpDesc = desc;
-    tmpDesc.fFlags |= kRenderTarget_GrSurfaceFlag;
+bool GrOnFlushResourceProvider::instatiateProxy(GrSurfaceProxy* proxy) {
+    SkASSERT(proxy->canSkipResourceAllocator());
 
-    // Because this is being allocated at the start of a flush we must ensure the proxy
-    // will, when instantiated, have no pending IO.
-    // TODO: fold the kNoPendingIO_Flag into GrSurfaceFlags?
-    sk_sp<GrSurfaceProxy> proxy = GrSurfaceProxy::MakeDeferred(
-                                                    fDrawingMgr->getContext()->resourceProvider(),
-                                                    tmpDesc,
-                                                    SkBackingFit::kExact,
-                                                    SkBudgeted::kYes,
-                                                    GrResourceProvider::kNoPendingIO_Flag);
-    if (!proxy->asRenderTargetProxy()) {
-        return nullptr;
+    // TODO: this class should probably just get a GrDirectContext
+    auto direct = fDrawingMgr->getContext()->asDirectContext();
+    if (!direct) {
+        return false;
     }
 
-    sk_sp<GrRenderTargetContext> renderTargetContext(
-        fDrawingMgr->makeRenderTargetContext(std::move(proxy),
-                                             std::move(colorSpace),
-                                             props));
+    auto resourceProvider = direct->priv().resourceProvider();
 
-    if (!renderTargetContext) {
-        return nullptr;
+    if (proxy->isLazy()) {
+        return proxy->priv().doLazyInstantiation(resourceProvider);
     }
 
-    renderTargetContext->discard();
-
-    return renderTargetContext;
+    return proxy->instantiate(resourceProvider);
 }
 
-// TODO: we only need this entry point as long as we have to pre-allocate the atlas.
-// Remove it ASAP.
-sk_sp<GrRenderTargetContext> GrOnFlushResourceProvider::makeRenderTargetContext(
-                                                        sk_sp<GrSurfaceProxy> proxy,
-                                                        sk_sp<SkColorSpace> colorSpace,
-                                                        const SkSurfaceProps* props) {
-    sk_sp<GrRenderTargetContext> renderTargetContext(
-        fDrawingMgr->makeRenderTargetContext(std::move(proxy),
-                                             std::move(colorSpace),
-                                             props));
-
-    if (!renderTargetContext) {
-        return nullptr;
-    }
-
-    renderTargetContext->discard();
-
-    return renderTargetContext;
+const GrCaps* GrOnFlushResourceProvider::caps() const {
+    return fDrawingMgr->getContext()->priv().caps();
 }
-

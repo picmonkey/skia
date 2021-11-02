@@ -8,11 +8,10 @@
 #ifndef SkPaintPriv_DEFINED
 #define SkPaintPriv_DEFINED
 
-#include "SkPaint.h"
-#include "SkMatrix.h"
+#include "include/core/SkPaint.h"
 
-class SkBitmap;
-class SkImage;
+class SkReadBuffer;
+class SkWriteBuffer;
 
 class SkPaintPriv {
 public:
@@ -30,38 +29,35 @@ public:
      */
     static bool Overwrites(const SkPaint* paint, ShaderOverrideOpacity);
 
-    static bool Overwrites(const SkPaint& paint) {
-        return Overwrites(&paint, kNone_ShaderOverrideOpacity);
-    }
+    static bool ShouldDither(const SkPaint&, SkColorType);
 
-    /**
-     *  Returns true if drawing this bitmap with this paint (or nullptr) will ovewrite all affected
-     *  pixels.
+    /*
+     * The luminance color is used to determine which Gamma Canonical color to map to.  This is
+     * really only used by backends which want to cache glyph masks, and need some way to know if
+     * they need to generate new masks based off a given color.
      */
-    static bool Overwrites(const SkBitmap&, const SkPaint* paint);
+    static SkColor ComputeLuminanceColor(const SkPaint&);
 
-    /**
-     *  Returns true if drawing this image with this paint (or nullptr) will ovewrite all affected
-     *  pixels.
-     */
-    static bool Overwrites(const SkImage*, const SkPaint* paint);
+    /** Serializes SkPaint into a buffer. A companion unflatten() call
+    can reconstitute the paint at a later time.
 
-    static void ScaleFontMetrics(SkPaint::FontMetrics*, SkScalar);
+    @param buffer  SkWriteBuffer receiving the flattened SkPaint data
+    */
+    static void Flatten(const SkPaint& paint, SkWriteBuffer& buffer);
 
-    /**
-     *  Return a matrix that applies the paint's text values: size, scale, skew
-     */
-    static void MakeTextMatrix(SkMatrix* matrix, SkScalar size, SkScalar scaleX, SkScalar skewX) {
-        matrix->setScale(size * scaleX, size);
-        if (skewX) {
-            matrix->postSkew(skewX, 0);
-        }
-    }
+    /** Populates SkPaint, typically from a serialized stream, created by calling
+        flatten() at an earlier time.
+    */
+    static SkPaint Unflatten(SkReadBuffer& buffer);
 
-    static void MakeTextMatrix(SkMatrix* matrix, const SkPaint& paint) {
-        MakeTextMatrix(matrix, paint.getTextSize(), paint.getTextScaleX(), paint.getTextSkewX());
-    }
-    
+    // If this paint has any color filter, fold it into the shader and/or paint color
+    // so that it draws the same but getColorFilter() returns nullptr.
+    //
+    // Since we may be filtering now, we need to know what color space to filter in,
+    // typically the color space of the device we're drawing into.
+    static void RemoveColorFilter(SkPaint*, SkColorSpace* dstCS);
+
+    static SkScalar ComputeResScaleForStroking(const SkMatrix&);
 };
 
 #endif

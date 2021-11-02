@@ -8,10 +8,12 @@
 #ifndef GrShadowGeoProc_DEFINED
 #define GrShadowGeoProc_DEFINED
 
-#include "GrProcessor.h"
-#include "GrGeometryProcessor.h"
+#include "src/core/SkArenaAlloc.h"
+#include "src/gpu/GrGeometryProcessor.h"
+#include "src/gpu/GrProcessor.h"
 
 class GrGLRRectShadowGeoProc;
+class GrSurfaceProxyView;
 
 /**
  * The output color of this effect is a coverage mask for a rrect shadow,
@@ -19,37 +21,40 @@ class GrGLRRectShadowGeoProc;
  */
 class GrRRectShadowGeoProc : public GrGeometryProcessor {
 public:
-    static sk_sp<GrGeometryProcessor> Make(const SkMatrix& localMatrix) {
-        return sk_sp<GrGeometryProcessor>(new GrRRectShadowGeoProc(localMatrix));
+    static GrGeometryProcessor* Make(SkArenaAlloc* arena, const GrSurfaceProxyView& lutView) {
+        return arena->make([&](void* ptr) {
+            return new (ptr) GrRRectShadowGeoProc(lutView);
+        });
     }
-
-    ~GrRRectShadowGeoProc() override {}
 
     const char* name() const override { return "RRectShadow"; }
 
-    const Attribute* inPosition() const { return fInPosition; }
-    const Attribute* inColor() const { return fInColor; }
-    const Attribute* inShadowParams() const { return fInShadowParams; }
+    const Attribute& inPosition() const { return fInPosition; }
+    const Attribute& inColor() const { return fInColor; }
+    const Attribute& inShadowParams() const { return fInShadowParams; }
     GrColor color() const { return fColor; }
-    const SkMatrix& localMatrix() const { return fLocalMatrix; }
 
-    void getGLSLProcessorKey(const GrShaderCaps& caps, GrProcessorKeyBuilder* b) const override;
+    void addToKey(const GrShaderCaps&, GrProcessorKeyBuilder*) const override {}
 
-    GrGLSLPrimitiveProcessor* createGLSLInstance(const GrShaderCaps&) const override;
+    std::unique_ptr<ProgramImpl> makeProgramImpl(const GrShaderCaps&) const override;
 
 private:
-    GrRRectShadowGeoProc(const SkMatrix& localMatrix);
+    class Impl;
+
+    GrRRectShadowGeoProc(const GrSurfaceProxyView& lutView);
+
+    const TextureSampler& onTextureSampler(int i) const override { return fLUTTextureSampler; }
 
     GrColor          fColor;
-    SkMatrix         fLocalMatrix;
-    const Attribute* fInPosition;
-    const Attribute* fInColor;
-    const Attribute* fInShadowParams;
+    TextureSampler   fLUTTextureSampler;
 
-    GR_DECLARE_GEOMETRY_PROCESSOR_TEST;
+    Attribute fInPosition;
+    Attribute fInColor;
+    Attribute fInShadowParams;
 
-    typedef GrGeometryProcessor INHERITED;
+    GR_DECLARE_GEOMETRY_PROCESSOR_TEST
+
+    using INHERITED = GrGeometryProcessor;
 };
-
 
 #endif

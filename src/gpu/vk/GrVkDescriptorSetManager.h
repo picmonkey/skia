@@ -8,11 +8,12 @@
 #ifndef GrVkDescriptorSetManager_DEFINED
 #define GrVkDescriptorSetManager_DEFINED
 
-#include "GrResourceHandle.h"
-#include "GrVkDescriptorPool.h"
-#include "SkRefCnt.h"
-#include "SkTArray.h"
-#include "vk/GrVkDefines.h"
+#include "include/core/SkRefCnt.h"
+#include "include/gpu/vk/GrVkTypes.h"
+#include "include/private/SkTArray.h"
+#include "src/gpu/GrResourceHandle.h"
+#include "src/gpu/vk/GrVkDescriptorPool.h"
+#include "src/gpu/vk/GrVkSampler.h"
 
 class GrVkDescriptorSet;
 class GrVkGpu;
@@ -29,13 +30,14 @@ public:
     static GrVkDescriptorSetManager* CreateUniformManager(GrVkGpu* gpu);
     static GrVkDescriptorSetManager* CreateSamplerManager(GrVkGpu* gpu, VkDescriptorType type,
                                                           const GrVkUniformHandler&);
-    static GrVkDescriptorSetManager* CreateSamplerManager(GrVkGpu* gpu, VkDescriptorType type,
-                                                          const SkTArray<uint32_t>& visibilities);
+    // See GrVkResourceProvider::getZeroSamplerDescriptorSetHandle() for more info on what the zero
+    // sampler is for.
+    static GrVkDescriptorSetManager* CreateZeroSamplerManager(GrVkGpu* gpu);
+    static GrVkDescriptorSetManager* CreateInputManager(GrVkGpu* gpu);
 
     ~GrVkDescriptorSetManager() {}
 
-    void abandon();
-    void release(const GrVkGpu* gpu);
+    void release(GrVkGpu* gpu);
 
     VkDescriptorSetLayout layout() const { return fPoolManager.fDescLayout; }
 
@@ -44,24 +46,22 @@ public:
     void recycleDescriptorSet(const GrVkDescriptorSet*);
 
     bool isCompatible(VkDescriptorType type, const GrVkUniformHandler*) const;
-    bool isCompatible(VkDescriptorType type,
-                      const SkTArray<uint32_t>& visibilities) const;
+
+    bool isZeroSampler() const;
 
 private:
     struct DescriptorPoolManager {
-        DescriptorPoolManager(VkDescriptorType type, GrVkGpu* gpu,
-                              const SkTArray<uint32_t>& visibilities);
-
+        DescriptorPoolManager(VkDescriptorSetLayout, VkDescriptorType type,
+                              uint32_t descCountPerSet);
 
         ~DescriptorPoolManager() {
             SkASSERT(!fDescLayout);
             SkASSERT(!fPool);
         }
 
-        void getNewDescriptorSet(GrVkGpu* gpu, VkDescriptorSet* ds);
+        bool getNewDescriptorSet(GrVkGpu* gpu, VkDescriptorSet* ds);
 
-        void freeGPUResources(const GrVkGpu* gpu);
-        void abandonGPUResources();
+        void freeGPUResources(GrVkGpu* gpu);
 
         VkDescriptorSetLayout  fDescLayout;
         VkDescriptorType       fDescType;
@@ -72,22 +72,28 @@ private:
 
     private:
         enum {
-            kUniformDescPerSet = 2,
             kMaxDescriptors = 1024,
             kStartNumDescriptors = 16, // must be less than kMaxUniformDescriptors
         };
 
-        void getNewPool(GrVkGpu* gpu);
+        bool getNewPool(GrVkGpu* gpu);
     };
 
+    static GrVkDescriptorSetManager* Create(GrVkGpu* gpu,
+                                            VkDescriptorType,
+                                            const SkTArray<uint32_t>& visibilities,
+                                            const SkTArray<const GrVkSampler*>& immutableSamplers);
+
     GrVkDescriptorSetManager(GrVkGpu* gpu,
-                             VkDescriptorType,
-                             const SkTArray<uint32_t>& visibilities);
+                             VkDescriptorType, VkDescriptorSetLayout, uint32_t descCountPerSet,
+                             const SkTArray<uint32_t>& visibilities,
+                             const SkTArray<const GrVkSampler*>& immutableSamplers);
 
 
     DescriptorPoolManager                    fPoolManager;
     SkTArray<const GrVkDescriptorSet*, true> fFreeSets;
     SkSTArray<4, uint32_t>                   fBindingVisibilities;
+    SkSTArray<4, const GrVkSampler*>         fImmutableSamplers;
 };
 
 #endif

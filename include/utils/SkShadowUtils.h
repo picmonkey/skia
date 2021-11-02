@@ -8,16 +8,17 @@
 #ifndef SkShadowUtils_DEFINED
 #define SkShadowUtils_DEFINED
 
-#include "SkColor.h"
-#include "SkScalar.h"
-#include "../private/SkShadowFlags.h"
-#include <functional>
+#include "include/core/SkColor.h"
+#include "include/core/SkPoint3.h"
+#include "include/core/SkScalar.h"
+#include "include/private/SkShadowFlags.h"
 
 class SkCanvas;
+class SkMatrix;
 class SkPath;
 class SkResourceCache;
 
-class SkShadowUtils {
+class SK_API SkShadowUtils {
 public:
     /**
      * Draw an offset spot shadow and outlining ambient shadow for the given path using a disc
@@ -28,83 +29,57 @@ public:
      * @param path  The occluder used to generate the shadows.
      * @param zPlaneParams  Values for the plane function which returns the Z offset of the
      *  occluder from the canvas based on local x and y values (the current matrix is not applied).
-     * @param lightPos  The 3D position of the light relative to the canvas plane. This is
-     *  independent of the canvas's current matrix.
-     * @param lightRadius  The radius of the disc light.
-     * @param ambientAlpha  The maximum alpha of the ambient shadow.
-     * @param spotAlpha  The maxium alpha of the spot shadow.
-     * @param color  The shadow color.
-     * @param flags  Options controlling opaque occluder optimizations and shadow appearance. See
-     *               SkShadowFlags.
+     * @param lightPos  Generally, the 3D position of the light relative to the canvas plane.
+     *                  If kDirectionalLight_ShadowFlag is set, this specifies a vector pointing
+     *                  towards the light.
+     * @param lightRadius  Generally, the radius of the disc light.
+     *                     If DirectionalLight_ShadowFlag is set, this specifies the amount of
+     *                     blur when the occluder is at Z offset == 1. The blur will grow linearly
+     *                     as the Z value increases.
+     * @param ambientColor  The color of the ambient shadow.
+     * @param spotColor  The color of the spot shadow.
+     * @param flags  Options controlling opaque occluder optimizations, shadow appearance,
+     *               and light position. See SkShadowFlags.
      */
     static void DrawShadow(SkCanvas* canvas, const SkPath& path, const SkPoint3& zPlaneParams,
-                           const SkPoint3& lightPos, SkScalar lightRadius, SkScalar ambientAlpha,
-                           SkScalar spotAlpha, SkColor color,
+                           const SkPoint3& lightPos, SkScalar lightRadius,
+                           SkColor ambientColor, SkColor spotColor,
                            uint32_t flags = SkShadowFlags::kNone_ShadowFlag);
 
     /**
-    * Draw an offset spot shadow and outlining ambient shadow for the given path using a disc
-    * light.
-    *
-    * Deprecated version with height value (to be removed when Android and Flutter are updated).
-    *
-    * @param canvas  The canvas on which to draw the shadows.
-    * @param path  The occluder used to generate the shadows.
-    * @param occluderHeight  The vertical offset of the occluder from the canvas. This is
-    *  independent of the canvas's current matrix.
-    * @param lightPos  The 3D position of the light relative to the canvas plane. This is
-    *  independent of the canvas's current matrix.
-    * @param lightRadius  The radius of the disc light.
-    * @param ambientAlpha  The maximum alpha of the ambient shadow.
-    * @param spotAlpha  The maxium alpha of the spot shadow.
-    * @param color  The shadow color.
-    * @param flags  Options controlling opaque occluder optimizations and shadow appearance. See
-    *               SkShadowFlags.
-    */
-    static void DrawShadow(SkCanvas* canvas, const SkPath& path, SkScalar occluderHeight,
-                           const SkPoint3& lightPos, SkScalar lightRadius, SkScalar ambientAlpha,
-                           SkScalar spotAlpha, SkColor color,
-                           uint32_t flags = SkShadowFlags::kNone_ShadowFlag) {
-        SkPoint3 zPlane = SkPoint3::Make(0, 0, occluderHeight);
-        DrawShadow(canvas, path, zPlane, lightPos, lightRadius, ambientAlpha, spotAlpha,
-                   color, flags);
-    }
-
-#ifdef SK_BUILD_FOR_ANDROID_FRAMEWORK
-    /**
-     * Draw an offset spot shadow and outlining ambient shadow for the given path using a disc
-     * light. Takes a function to vary the z value based on the local x and y position.
-     * This shadow will not be cached, as the assumption is that this will be used for animation.
+     * Generate bounding box for shadows relative to path. Includes both the ambient and spot
+     * shadow bounds.
      *
-     * Deprecated (to be removed when Android is updated).
-     *
-     * @param canvas  The canvas on which to draw the shadows.
+     * @param ctm  Current transformation matrix to device space.
      * @param path  The occluder used to generate the shadows.
-     * @param heightFunc  A function which returns the vertical offset of the occluder from the
-     *  canvas based on local x and y values (the current matrix is not applied).
-     * @param lightPos  The 3D position of the light relative to the canvas plane. This is
-     *  independent of the canvas's current matrix.
-     * @param lightRadius  The radius of the disc light.
-     * @param ambientAlpha  The maximum alpha of the ambient shadow.
-     * @param spotAlpha  The maxium alpha of the spot shadow.
-     * @param color  The shadow color.
-     * @param flags  Options controlling opaque occluder optimizations and shadow appearance. See
-     *               SkShadowFlags.
+     * @param zPlaneParams  Values for the plane function which returns the Z offset of the
+     *  occluder from the canvas based on local x and y values (the current matrix is not applied).
+     * @param lightPos  Generally, the 3D position of the light relative to the canvas plane.
+     *                  If kDirectionalLight_ShadowFlag is set, this specifies a vector pointing
+     *                  towards the light.
+     * @param lightRadius  Generally, the radius of the disc light.
+     *                     If DirectionalLight_ShadowFlag is set, this specifies the amount of
+     *                     blur when the occluder is at Z offset == 1. The blur will grow linearly
+     *                     as the Z value increases.
+     * @param flags  Options controlling opaque occluder optimizations, shadow appearance,
+     *               and light position. See SkShadowFlags.
+     * @param bounds Return value for shadow bounding box.
+     * @return Returns true if successful, false otherwise.
      */
-    static void DrawUncachedShadow(SkCanvas* canvas, const SkPath& path,
-                                   std::function<SkScalar(SkScalar, SkScalar)> heightFunc,
-                                   const SkPoint3& lightPos, SkScalar lightRadius,
-                                   SkScalar ambientAlpha, SkScalar spotAlpha, SkColor color,
-                                   uint32_t flags = SkShadowFlags::kNone_ShadowFlag) {
-        SkPoint3 zPlane;
-        zPlane.fZ = heightFunc(0, 0);
-        zPlane.fX = heightFunc(1, 0) - zPlane.fZ;
-        zPlane.fY = heightFunc(0, 1) - zPlane.fZ;
+    static bool GetLocalBounds(const SkMatrix& ctm, const SkPath& path,
+                               const SkPoint3& zPlaneParams, const SkPoint3& lightPos,
+                               SkScalar lightRadius, uint32_t flags, SkRect* bounds);
 
-        DrawShadow(canvas, path, zPlane, lightPos, lightRadius, ambientAlpha, spotAlpha,
-                   color, flags);
-    }
-#endif
+    /**
+     * Helper routine to compute color values for one-pass tonal alpha.
+     *
+     * @param inAmbientColor  Original ambient color
+     * @param inSpotColor  Original spot color
+     * @param outAmbientColor  Modified ambient color
+     * @param outSpotColor  Modified spot color
+     */
+    static void ComputeTonalColors(SkColor inAmbientColor, SkColor inSpotColor,
+                                   SkColor* outAmbientColor, SkColor* outSpotColor);
 };
 
 #endif

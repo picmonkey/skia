@@ -8,12 +8,13 @@
 #ifndef GrOvalOpFactory_DEFINED
 #define GrOvalOpFactory_DEFINED
 
-#include "GrColor.h"
-#include "SkRefCnt.h"
+#include "include/core/SkRefCnt.h"
+#include "src/gpu/GrColor.h"
+#include "src/gpu/ops/GrOp.h"
 
 class GrDrawOp;
-class GrLegacyMeshDrawOp;
 class GrPaint;
+class GrRecordingContext;
 class GrShaderCaps;
 class GrStyle;
 class SkMatrix;
@@ -26,27 +27,43 @@ class SkStrokeRec;
  */
 class GrOvalOpFactory {
 public:
-    static std::unique_ptr<GrDrawOp> MakeOvalOp(GrPaint&&,
-                                                const SkMatrix&,
-                                                const SkRect& oval,
-                                                const SkStrokeRec&,
-                                                const GrShaderCaps*);
+    static GrOp::Owner MakeCircleOp(GrRecordingContext*,
+                                    GrPaint&&,
+                                    const SkMatrix&,
+                                    const SkRect& oval,
+                                    const GrStyle& style,
+                                    const GrShaderCaps*);
 
-    static std::unique_ptr<GrDrawOp> MakeRRectOp(GrPaint&&,
-                                                 bool needsDistance,
-                                                 const SkMatrix&,
-                                                 const SkRRect&,
-                                                 const SkStrokeRec&,
-                                                 const GrShaderCaps*);
+    static GrOp::Owner MakeOvalOp(GrRecordingContext*,
+                                  GrPaint&&,
+                                  const SkMatrix&,
+                                  const SkRect& oval,
+                                  const GrStyle& style,
+                                  const GrShaderCaps*);
 
-    static std::unique_ptr<GrDrawOp> MakeArcOp(GrPaint&&,
-                                               const SkMatrix&,
-                                               const SkRect& oval,
-                                               SkScalar startAngle,
-                                               SkScalar sweepAngle,
-                                               bool useCenter,
-                                               const GrStyle&,
-                                               const GrShaderCaps*);
+    static GrOp::Owner MakeCircularRRectOp(GrRecordingContext*,
+                                           GrPaint&&,
+                                           const SkMatrix&,
+                                           const SkRRect&,
+                                           const SkStrokeRec&,
+                                           const GrShaderCaps*);
+
+    static GrOp::Owner MakeRRectOp(GrRecordingContext*,
+                                   GrPaint&&,
+                                   const SkMatrix&,
+                                   const SkRRect&,
+                                   const SkStrokeRec&,
+                                   const GrShaderCaps*);
+
+    static GrOp::Owner MakeArcOp(GrRecordingContext*,
+                                 GrPaint&&,
+                                 const SkMatrix&,
+                                 const SkRect& oval,
+                                 SkScalar startAngle,
+                                 SkScalar sweepAngle,
+                                 bool useCenter,
+                                 const GrStyle&,
+                                 const GrShaderCaps*);
 };
 
 #endif  // GrOvalOpFactory_DEFINED

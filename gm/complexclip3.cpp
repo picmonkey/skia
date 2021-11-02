@@ -4,10 +4,23 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
-#include "gm.h"
-#include "sk_tool_utils.h"
-#include "SkCanvas.h"
-#include "SkPath.h"
+
+#include "gm/gm.h"
+#include "include/core/SkCanvas.h"
+#include "include/core/SkClipOp.h"
+#include "include/core/SkColor.h"
+#include "include/core/SkFont.h"
+#include "include/core/SkPaint.h"
+#include "include/core/SkPathBuilder.h"
+#include "include/core/SkRect.h"
+#include "include/core/SkScalar.h"
+#include "include/core/SkSize.h"
+#include "include/core/SkString.h"
+#include "include/core/SkTypeface.h"
+#include "include/core/SkTypes.h"
+#include "tools/ToolUtils.h"
+
+#include <utility>
 
 namespace skiagm {
 
@@ -17,50 +30,45 @@ class ComplexClip3GM : public GM {
 public:
     ComplexClip3GM(bool doSimpleClipFirst)
         : fDoSimpleClipFirst(doSimpleClipFirst) {
-        this->setBGColor(sk_tool_utils::color_to_565(0xFFDDDDDD));
+        this->setBGColor(0xFFDDDDDD);
     }
 
 protected:
 
-    SkString onShortName() {
+    SkString onShortName() override {
         SkString str;
         str.printf("complexclip3_%s", fDoSimpleClipFirst ? "simple" : "complex");
         return str;
     }
 
-    SkISize onISize() { return SkISize::Make(1000, 950); }
+    SkISize onISize() override { return SkISize::Make(400, 950); }
 
-    virtual void onDraw(SkCanvas* canvas) {
-        SkPath clipSimple;
-        clipSimple.addCircle(SkIntToScalar(70), SkIntToScalar(50), SkIntToScalar(20));
+    void onDraw(SkCanvas* canvas) override {
+        SkPath clipSimple = SkPath::Circle(70, 50, 20);
 
         SkRect r1 = { 10, 20, 70, 80 };
-        SkPath clipComplex;
-        clipComplex.moveTo(SkIntToScalar(40),  SkIntToScalar(50));
-        clipComplex.arcTo(r1, SkIntToScalar(30), SkIntToScalar(300), false);
-        clipComplex.close();
+        SkPath clipComplex = SkPathBuilder().moveTo(40,  50)
+                                            .arcTo(r1, 30, 300, false)
+                                            .close()
+                                            .detach();
 
         SkPath* firstClip = &clipSimple;
         SkPath* secondClip = &clipComplex;
-
         if (!fDoSimpleClipFirst) {
-            SkTSwap<SkPath*>(firstClip, secondClip);
+            std::swap(firstClip, secondClip);
         }
 
         SkPaint paint;
         paint.setAntiAlias(true);
-        sk_tool_utils::set_portable_typeface(&paint);
-        paint.setTextSize(SkIntToScalar(20));
+
+        SkFont font(ToolUtils::create_portable_typeface(), 20);
 
         constexpr struct {
             SkClipOp    fOp;
             const char* fName;
         } gOps[] = {
-            {kIntersect_SkClipOp,         "I"},
-            {kDifference_SkClipOp,        "D" },
-            {kUnion_SkClipOp,             "U"},
-            {kXOR_SkClipOp,               "X"  },
-            {kReverseDifference_SkClipOp, "R"}
+            {SkClipOp::kIntersect,         "I"},
+            {SkClipOp::kDifference,        "D" },
         };
 
         canvas->translate(SkIntToScalar(20), SkIntToScalar(20));
@@ -81,10 +89,10 @@ protected:
                         bool doInvB = SkToBool(invB);
                         canvas->save();
                         // set clip
-                        firstClip->setFillType(doInvA ? SkPath::kInverseEvenOdd_FillType :
-                                               SkPath::kEvenOdd_FillType);
-                        secondClip->setFillType(doInvB ? SkPath::kInverseEvenOdd_FillType :
-                                                SkPath::kEvenOdd_FillType);
+                        firstClip->setFillType(doInvA ? SkPathFillType::kInverseEvenOdd :
+                                               SkPathFillType::kEvenOdd);
+                        secondClip->setFillType(doInvB ? SkPathFillType::kInverseEvenOdd :
+                                                SkPathFillType::kEvenOdd);
                         canvas->clipPath(*firstClip, doAAA);
                         canvas->clipPath(*secondClip, gOps[op].fOp, doAAB);
 
@@ -103,7 +111,7 @@ protected:
                                                    doAAB ? "A" : "B",
                                                    doInvB ? "I" : "N");
 
-                        canvas->drawString(str.c_str(), txtX, SkIntToScalar(130), paint);
+                        canvas->drawString(str.c_str(), txtX, SkIntToScalar(130), font, paint);
                         if (doInvB) {
                             canvas->translate(SkIntToScalar(150),0);
                         } else {
@@ -120,7 +128,7 @@ protected:
 private:
     bool fDoSimpleClipFirst;
 
-    typedef GM INHERITED;
+    using INHERITED = GM;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -129,4 +137,4 @@ private:
 DEF_GM( return new ComplexClip3GM(true); )
 // Complex clip first
 DEF_GM( return new ComplexClip3GM(false); )
-}
+}  // namespace skiagm

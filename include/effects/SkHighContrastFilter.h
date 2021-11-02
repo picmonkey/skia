@@ -8,8 +8,7 @@
 #ifndef SkHighContrastFilter_DEFINED
 #define SkHighContrastFilter_DEFINED
 
-#include "SkColorFilter.h"
-#include "SkPaint.h"
+#include "include/core/SkColorFilter.h"
 
 /**
  *  Configuration struct for SkHighContrastFilter.
@@ -21,6 +20,8 @@ struct SkHighContrastConfig {
         kNoInvert,
         kInvertBrightness,
         kInvertLightness,
+
+        kLast = kInvertLightness
     };
 
     SkHighContrastConfig() {
@@ -70,12 +71,10 @@ struct SkHighContrastConfig {
  * not valid, e.g. if you try to call it with a contrast outside the range of
  * -1.0 to 1.0.
  */
-class SK_API SkHighContrastFilter {
-public:
+
+struct SK_API SkHighContrastFilter {
     // Returns the filter, or nullptr if the config is invalid.
     static sk_sp<SkColorFilter> Make(const SkHighContrastConfig& config);
-
-    SK_DECLARE_FLATTENABLE_REGISTRAR_GROUP()
 };
 
 #endif

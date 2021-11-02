@@ -8,20 +8,12 @@
 #ifndef SkImageEncoderPriv_DEFINED
 #define SkImageEncoderPriv_DEFINED
 
-#include "SkImageEncoder.h"
-#include "SkImageInfoPriv.h"
+#include "include/core/SkImageEncoder.h"
+#include "include/private/SkImageInfoPriv.h"
 
-static inline bool SkPixmapIsValid(const SkPixmap& src,
-                                   SkTransferFunctionBehavior unpremulBehavior)
-{
-    if (SkTransferFunctionBehavior::kRespect == unpremulBehavior) {
-        if (!SkImageInfoIsValidRenderingCS(src.info())) {
-            return false;
-        }
-    } else {
-        if (!SkImageInfoIsValidAllowNumericalCS(src.info())) {
-            return false;
-        }
+static inline bool SkPixmapIsValid(const SkPixmap& src) {
+    if (!SkImageInfoIsValid(src.info())) {
+        return false;
     }
 
     if (!src.addr() || src.rowBytes() < src.info().minRowBytes()) {
@@ -41,6 +33,12 @@ static inline bool SkPixmapIsValid(const SkPixmap& src,
     bool SkEncodeImageWithWIC(SkWStream*, const SkPixmap&, SkEncodedImageFormat, int quality);
 #else
     #define SkEncodeImageWithWIC(...) false
+#endif
+
+#ifdef SK_ENABLE_NDK_IMAGES
+    bool SkEncodeImageWithNDK(SkWStream*, const SkPixmap&, SkEncodedImageFormat, int quality);
+#else
+    #define SkEncodeImageWithNDK(...) false
 #endif
 
 #endif // SkImageEncoderPriv_DEFINED

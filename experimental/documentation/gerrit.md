@@ -1,7 +1,7 @@
 Using Gerrit without git-cl
 ===========================
 
-setup
+Setup
 -----
 
 The following must be executed within the Skia source repository.
@@ -10,19 +10,24 @@ This command sets up a Git commit-message hook to add a unique Change-Id to
 each commit.  Gerrit only accepts changes with a Change-Id and uses it to
 identify which review a change applies to.
 
-    curl -Lo "$(git rev-parse --git-dir)/hooks/commit-msg"
-      'https://gerrit-review.googlesource.com/tools/hooks/commit-msg'
-    chmod +x "$(git rev-parse --git-dir)/hooks/commit-msg"
+    experimental/tools/set-change-id-hook
 
-If you aquired Skia from a mirror (such as github), you need to change the
-`origin` remote to point to point to googlesource.  Advanvced uses will note
+If you acquired Skia from a mirror (such as GitHub), you need to change the
+`origin` remote to point to point to googlesource.  Advanced uses will note
 that there is nothing special about the string `origin` and that you could call
 this remote anything you want, as long as you use that name for `get push`.
 
     git remote set-url origin 'https://skia.googlesource.com/skia.git'
 
 
-creating a change
+Authentication
+--------------
+
+Go to [skia.googlesource.com/new-password](https://skia.googlesource.com/new-password)
+and follow the instructions.
+
+
+Creating a Change
 -----------------
 
 1.  Create a topic branch
@@ -31,7 +36,7 @@ creating a change
 
     You may want to set a tracking branch at this time with:
 
-        git checkout -b TOPIC -t origin/master
+        git checkout -b TOPIC -t origin/main
 
 2.  Make a commit.
 
@@ -49,19 +54,22 @@ creating a change
 
 4.  Push to Gerrit
 
-        git push origin @:refs/for/master
+        git push origin @:refs/for/main
 
     `@` is shorthand for `HEAD`, introduced in git v1.8.5.
 
-    If you want to target a branch other than `master`, that can be specified
+    If you want to target a branch other than `main`, that can be specified
     here, too.  For example:
 
         git push origin @:refs/for/chrome/m57
 
     [Gerrit Upload Documentation](https://gerrit-review.googlesource.com/Documentation/user-upload.html)
 
+5.  Open in web browser:
 
-updating a change
+        bin/sysopen https://skia-review.googlesource.com/c/skia/+/$(bin/gerrit-number @)
+
+Updating a Change
 -----------------
 
 
@@ -78,25 +86,47 @@ updating a change
 
 3.  Push to Gerrit.
 
-        git push origin @:refs/for/master
+        git push origin @:refs/for/main
 
     If you want to set a comment message for this patch set, do this instead:
 
-        git push origin @:refs/for/master%m=this_is_the_patch_set_comment_message
+        M=$(experimental/tools/gerrit_percent_encode 'This is the patch set comment message!')
+        git push origin @:refs/for/main%m=$M
 
-    The title of this patch set will be "this is the patch set comment message".
+    The title of this patch set will be "This is the patch set comment message!".
 
 
-scripting
+Triggering Commit-Queue Dry Run when you upload a patch
+-------------------------------------------------------
+
+    M=$(experimental/tools/gerrit_percent_encode 'This is the patch set comment message!')
+    git push origin @:refs/for/main%l=Commit-Queue+1,m=$M
+
+
+Using `git cl try`
+------------------
+
+On your current branch, after uploading to gerrit:
+
+    git cl issue $(bin/gerrit-number @)
+
+Now `git cl try` and `bin/try` will work correctly.
+
+
+Scripting
 ---------
 
 You may want to make git aliases for common tasks:
 
-    git config alias.gerrit-push 'push origin @:refs/for/master'
+    git config alias.gerrit-push 'push origin @:refs/for/main'
 
 The following alias amends the head without editing the commit message:
 
     git config alias.amend-head 'commit --all --amend --reuse-message=@'
+
+Set the CL issue numnber:
+
+    git config alias.setcl '!git-cl issue $(bin/gerrit-number @)'
 
 The following shell script will squash all commits on the current branch,
 assuming that the branch has an upstream topic branch.
@@ -111,7 +141,7 @@ This shell script pushes to gerrit and adds a message to a patchset:
 
     gerrit_push_with_message() {
         local REMOTE='origin'
-        local REMOTE_BRANCH='master'
+        local REMOTE_BRANCH='main'
         local MESSAGE="$(echo $*|sed 's/[^A-Za-z0-9]/_/g')"
         git push "$REMOTE" "@:refs/for/${REMOTE_BRANCH}%m=${MESSAGE}"
     }
@@ -120,20 +150,26 @@ These shell scripts can be turned into Git aliases with a little hack:
 
     git config alias.squash-branch '!M="$(git log --format=%B ^@{u} @)";git reset --soft $(git merge-base @ @{u});git commit -m "$M" -e'
 
-    git config alias.gerrit-push-message '!f(){ git push origin @:refs/for/master%m=$(echo $*|sed "s/[^A-Za-z0-9]/_/g");};f'
+    git config alias.gerrit-push-message '!f(){ git push origin @:refs/for/main%m=$(echo $*|sed "s/[^A-Za-z0-9]/_/g");};f'
 
 If your branch's upstream branch (set with `git branch --set-upstream-to=...`)
 is set, you can use that to automatically push to that branch:
 
     gerrit_push_upstream() {
-        local UPSTREAM="$(git rev-parse --abbrev-ref --symbolic-full-name @{u})"
+        local UPSTREAM_FULL="$(git rev-parse --symbolic-full-name @{upstream})"
+        case "$UPSTREAM_FULL" in
+            (refs/remotes/*);;
+            (*) echo "Set your remote upstream branch."; return 2;;
+        esac
+        local UPSTREAM="${UPSTREAM_FULL#refs/remotes/}"
         local REMOTE="${UPSTREAM%%/*}"
         local REMOTE_BRANCH="${UPSTREAM#*/}"
         local MESSAGE="$(echo $*|sed 's/[^A-Za-z0-9]/_/g')"
+        echo git push $REMOTE @:refs/for/${REMOTE_BRANCH}%m=${MESSAGE}
         git push "$REMOTE" "@:refs/for/${REMOTE_BRANCH}%m=${MESSAGE}"
     }
 
 As a Git alias:
 
-    git config alias.gerrit-push-upstream '!f()(U="$(git rev-parse --abbrev-ref --symbolic-full-name @{u})";R="${U%%/*}";B="${U#*/}";M="$(echo $*|sed 's/[^A-Za-z0-9]/_/g')";git push "$R" "@:refs/for/${B}%m=$M");f'
+    git config alias.gerrit-push '!f()(F="$(git rev-parse --symbolic-full-name @{u})";case "$F" in (refs/remotes/*);;(*)echo "Set your remote upstream branch.";return 2;;esac;U="${F#refs/remotes/}";R="${U%%/*}";B="${U#*/}";M="$(echo $*|sed 's/[^A-Za-z0-9]/_/g')";echo git push $R @:refs/for/${B}%m=$M;git push "$R" "@:refs/for/${B}%m=$M");f'
 

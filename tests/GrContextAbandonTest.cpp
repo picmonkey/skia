@@ -5,22 +5,21 @@
  * found in the LICENSE file.
  */
 
-#include "SkTypes.h"
+#include "include/core/SkTypes.h"
 
-#if SK_SUPPORT_GPU
-
-#include "GrContextFactory.h"
-#include "Test.h"
+#include "include/gpu/GrDirectContext.h"
+#include "tests/Test.h"
+#include "tools/gpu/GrContextFactory.h"
 
 using namespace sk_gpu_test;
 
-DEF_GPUTEST(GrContext_abandonContext, reporter, /*factory*/) {
+DEF_GPUTEST(GrContext_abandonContext, reporter, options) {
     for (int testType = 0; testType < 6; ++testType) {
         for (int i = 0; i < GrContextFactory::kContextTypeCnt; ++i) {
-            GrContextFactory testFactory;
+            GrContextFactory testFactory(options);
             GrContextFactory::ContextType ctxType = (GrContextFactory::ContextType) i;
             ContextInfo info = testFactory.getContextInfo(ctxType);
-            if (GrContext* context = info.grContext()) {
+            if (auto context = info.directContext()) {
                 switch (testType) {
                     case 0:
                         context->abandonContext();
@@ -49,5 +48,3 @@ DEF_GPUTEST(GrContext_abandonContext, reporter, /*factory*/) {
         }
     }
 }
-
-#endif

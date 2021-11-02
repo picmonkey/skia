@@ -8,8 +8,11 @@
 #ifndef SkAutoBlitterChoose_DEFINED
 #define SkAutoBlitterChoose_DEFINED
 
-#include "SkArenaAlloc.h"
-#include "SkBlitter.h"
+#include "include/private/SkMacros.h"
+#include "src/core/SkArenaAlloc.h"
+#include "src/core/SkBlitter.h"
+#include "src/core/SkDraw.h"
+#include "src/core/SkRasterClip.h"
 
 class SkMatrix;
 class SkPaint;
@@ -17,30 +20,39 @@ class SkPixmap;
 
 class SkAutoBlitterChoose : SkNoncopyable {
 public:
-    SkAutoBlitterChoose() {
-        fBlitter = nullptr;
-    }
-    SkAutoBlitterChoose(const SkPixmap& dst, const SkMatrix& matrix,
+    SkAutoBlitterChoose() {}
+    SkAutoBlitterChoose(const SkDraw& draw, const SkMatrixProvider* matrixProvider,
                         const SkPaint& paint, bool drawCoverage = false) {
-        fBlitter = SkBlitter::Choose(dst, matrix, paint, &fAlloc, drawCoverage);
+        this->choose(draw, matrixProvider, paint, drawCoverage);
     }
 
     SkBlitter*  operator->() { return fBlitter; }
     SkBlitter*  get() const { return fBlitter; }
 
-    void choose(const SkPixmap& dst, const SkMatrix& matrix,
-                const SkPaint& paint, bool drawCoverage = false) {
+    SkBlitter* choose(const SkDraw& draw, const SkMatrixProvider* matrixProvider,
+                      const SkPaint& paint, bool drawCoverage = false) {
         SkASSERT(!fBlitter);
-        fBlitter = SkBlitter::Choose(dst, matrix, paint, &fAlloc, drawCoverage);
+        if (!matrixProvider) {
+            matrixProvider = draw.fMatrixProvider;
+        }
+        fBlitter = SkBlitter::Choose(draw.fDst, *matrixProvider, paint, &fAlloc, drawCoverage,
+                                     draw.fRC->clipShader());
+
+        if (draw.fCoverage) {
+            // hmm, why can't choose ignore the paint if drawCoverage is true?
+            SkBlitter* coverageBlitter =
+                    SkBlitter::Choose(*draw.fCoverage, *matrixProvider, SkPaint(), &fAlloc, true,
+                                      draw.fRC->clipShader());
+            fBlitter = fAlloc.make<SkPairBlitter>(fBlitter, coverageBlitter);
+        }
+        return fBlitter;
     }
 
 private:
     // Owned by fAlloc, which will handle the delete.
-    SkBlitter*          fBlitter;
+    SkBlitter* fBlitter = nullptr;
 
-    char fStorage[kSkBlitterContextSize];
-    SkArenaAlloc fAlloc{fStorage};
+    SkSTArenaAlloc<kSkBlitterContextSize> fAlloc;
 };
-#define SkAutoBlitterChoose(...) SK_REQUIRE_LOCAL_VAR(SkAutoBlitterChoose)
 
 #endif

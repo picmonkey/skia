@@ -5,64 +5,81 @@
  * found in the LICENSE file.
  */
 
-#include "SkAtomics.h"
-#include "SkCanvas.h"
-#include "SkClipStack.h"
-#include "SkPath.h"
-#include "SkPathOps.h"
-#include "SkClipOpPriv.h"
+#include "include/core/SkCanvas.h"
+#include "include/core/SkPath.h"
+#include "src/core/SkClipStack.h"
+#include "src/core/SkRectPriv.h"
+#include "src/shaders/SkShaderBase.h"
 
+#include <atomic>
 #include <new>
 
-
-// 0-2 are reserved for invalid, empty & wide-open
-static const int32_t kFirstUnreservedGenID = 3;
-int32_t SkClipStack::gGenID = kFirstUnreservedGenID;
+#if SK_SUPPORT_GPU
+#include "src/gpu/GrProxyProvider.h"
+#endif
 
 SkClipStack::Element::Element(const Element& that) {
-    switch (that.getType()) {
-        case kEmpty_Type:
-            fRRect.setEmpty();
-            fPath.reset();
+    switch (that.getDeviceSpaceType()) {
+        case DeviceSpaceType::kEmpty:
+            fDeviceSpaceRRect.setEmpty();
+            fDeviceSpacePath.reset();
+            fShader.reset();
             break;
-        case kRect_Type: // Rect uses rrect
-        case kRRect_Type:
-            fPath.reset();
-            fRRect = that.fRRect;
+        case DeviceSpaceType::kRect:  // Rect uses rrect
+        case DeviceSpaceType::kRRect:
+            fDeviceSpacePath.reset();
+            fShader.reset();
+            fDeviceSpaceRRect = that.fDeviceSpaceRRect;
             break;
-        case kPath_Type:
-            fPath.set(that.getPath());
+        case DeviceSpaceType::kPath:
+            fShader.reset();
+            fDeviceSpacePath.set(that.getDeviceSpacePath());
+            break;
+        case DeviceSpaceType::kShader:
+            fDeviceSpacePath.reset();
+            fShader = that.fShader;
             break;
     }
 
     fSaveCount = that.fSaveCount;
     fOp = that.fOp;
-    fType = that.fType;
+    fDeviceSpaceType = that.fDeviceSpaceType;
     fDoAA = that.fDoAA;
+    fIsReplace = that.fIsReplace;
     fFiniteBoundType = that.fFiniteBoundType;
     fFiniteBound = that.fFiniteBound;
     fIsIntersectionOfRects = that.fIsIntersectionOfRects;
     fGenID = that.fGenID;
 }
 
+SkClipStack::Element::~Element() {
+#if SK_SUPPORT_GPU
+    for (int i = 0; i < fKeysToInvalidate.count(); ++i) {
+        fProxyProvider->processInvalidUniqueKey(fKeysToInvalidate[i], nullptr,
+                                                GrProxyProvider::InvalidateGPUResource::kYes);
+    }
+#endif
+}
+
 bool SkClipStack::Element::operator== (const Element& element) const {
     if (this == &element) {
         return true;
     }
-    if (fOp != element.fOp ||
-        fType != element.fType ||
-        fDoAA != element.fDoAA ||
+    if (fOp != element.fOp || fDeviceSpaceType != element.fDeviceSpaceType ||
+        fDoAA != element.fDoAA || fIsReplace != element.fIsReplace ||
         fSaveCount != element.fSaveCount) {
         return false;
     }
-    switch (fType) {
-        case kPath_Type:
-            return this->getPath() == element.getPath();
-        case kRRect_Type:
-            return fRRect == element.fRRect;
-        case kRect_Type:
-            return this->getRect() == element.getRect();
-        case kEmpty_Type:
+    switch (fDeviceSpaceType) {
+        case DeviceSpaceType::kShader:
+            return this->getShader() == element.getShader();
+        case DeviceSpaceType::kPath:
+            return this->getDeviceSpacePath() == element.getDeviceSpacePath();
+        case DeviceSpaceType::kRRect:
+            return fDeviceSpaceRRect == element.fDeviceSpaceRRect;
+        case DeviceSpaceType::kRect:
+            return this->getDeviceSpaceRect() == element.getDeviceSpaceRect();
+        case DeviceSpaceType::kEmpty:
             return true;
         default:
             SkDEBUGFAIL("Unexpected type.");
@@ -70,81 +87,209 @@ bool SkClipStack::Element::operator== (const Element& element) const {
     }
 }
 
+const SkRect& SkClipStack::Element::getBounds() const {
+    static const SkRect kEmpty = {0, 0, 0, 0};
+    static const SkRect kInfinite = SkRectPriv::MakeLargeS32();
+    switch (fDeviceSpaceType) {
+        case DeviceSpaceType::kRect:  // fallthrough
+        case DeviceSpaceType::kRRect:
+            return fDeviceSpaceRRect.getBounds();
+        case DeviceSpaceType::kPath:
+            return fDeviceSpacePath->getBounds();
+        case DeviceSpaceType::kShader:
+            // Shaders have infinite bounds since any pixel could have clipped or full coverage
+            // (which is different from wide-open, where every pixel has 1.0 coverage, or empty
+            //  where every pixel has 0.0 coverage).
+            return kInfinite;
+        case DeviceSpaceType::kEmpty:
+            return kEmpty;
+        default:
+            SkDEBUGFAIL("Unexpected type.");
+            return kEmpty;
+    }
+}
+
+bool SkClipStack::Element::contains(const SkRect& rect) const {
+    switch (fDeviceSpaceType) {
+        case DeviceSpaceType::kRect:
+            return this->getDeviceSpaceRect().contains(rect);
+        case DeviceSpaceType::kRRect:
+            return fDeviceSpaceRRect.contains(rect);
+        case DeviceSpaceType::kPath:
+            return fDeviceSpacePath->conservativelyContainsRect(rect);
+        case DeviceSpaceType::kEmpty:
+        case DeviceSpaceType::kShader:
+            return false;
+        default:
+            SkDEBUGFAIL("Unexpected type.");
+            return false;
+    }
+}
+
+bool SkClipStack::Element::contains(const SkRRect& rrect) const {
+    switch (fDeviceSpaceType) {
+        case DeviceSpaceType::kRect:
+            return this->getDeviceSpaceRect().contains(rrect.getBounds());
+        case DeviceSpaceType::kRRect:
+            // We don't currently have a generalized rrect-rrect containment.
+            return fDeviceSpaceRRect.contains(rrect.getBounds()) || rrect == fDeviceSpaceRRect;
+        case DeviceSpaceType::kPath:
+            return fDeviceSpacePath->conservativelyContainsRect(rrect.getBounds());
+        case DeviceSpaceType::kEmpty:
+        case DeviceSpaceType::kShader:
+            return false;
+        default:
+            SkDEBUGFAIL("Unexpected type.");
+            return false;
+    }
+}
+
 void SkClipStack::Element::invertShapeFillType() {
-    switch (fType) {
-        case kRect_Type:
-            fPath.init();
-            fPath.get()->addRect(this->getRect());
-            fPath.get()->setFillType(SkPath::kInverseEvenOdd_FillType);
-            fType = kPath_Type;
+    switch (fDeviceSpaceType) {
+        case DeviceSpaceType::kRect:
+            fDeviceSpacePath.init();
+            fDeviceSpacePath->addRect(this->getDeviceSpaceRect());
+            fDeviceSpacePath->setFillType(SkPathFillType::kInverseEvenOdd);
+            fDeviceSpaceType = DeviceSpaceType::kPath;
             break;
-        case kRRect_Type:
-            fPath.init();
-            fPath.get()->addRRect(fRRect);
-            fPath.get()->setFillType(SkPath::kInverseEvenOdd_FillType);
-            fType = kPath_Type;
+        case DeviceSpaceType::kRRect:
+            fDeviceSpacePath.init();
+            fDeviceSpacePath->addRRect(fDeviceSpaceRRect);
+            fDeviceSpacePath->setFillType(SkPathFillType::kInverseEvenOdd);
+            fDeviceSpaceType = DeviceSpaceType::kPath;
             break;
-        case kPath_Type:
-            fPath.get()->toggleInverseFillType();
+        case DeviceSpaceType::kPath:
+            fDeviceSpacePath->toggleInverseFillType();
             break;
-        case kEmpty_Type:
+        case DeviceSpaceType::kShader:
+            fShader = as_SB(fShader)->makeInvertAlpha();
+            break;
+        case DeviceSpaceType::kEmpty:
             // Should this set to an empty, inverse filled path?
             break;
     }
 }
 
-void SkClipStack::Element::initPath(int saveCount, const SkPath& path, SkClipOp op,
-                                    bool doAA) {
+void SkClipStack::Element::initCommon(int saveCount, SkClipOp op, bool doAA) {
+    fSaveCount = saveCount;
+    fOp = op;
+    fDoAA = doAA;
+    fIsReplace = false;
+    // A default of inside-out and empty bounds means the bounds are effectively void as it
+    // indicates that nothing is known to be outside the clip.
+    fFiniteBoundType = kInsideOut_BoundsType;
+    fFiniteBound.setEmpty();
+    fIsIntersectionOfRects = false;
+    fGenID = kInvalidGenID;
+}
+
+void SkClipStack::Element::initRect(int saveCount, const SkRect& rect, const SkMatrix& m,
+                                    SkClipOp op, bool doAA) {
+    if (m.rectStaysRect()) {
+        SkRect devRect;
+        m.mapRect(&devRect, rect);
+        fDeviceSpaceRRect.setRect(devRect);
+        fDeviceSpaceType = DeviceSpaceType::kRect;
+        this->initCommon(saveCount, op, doAA);
+        return;
+    }
+    SkPath path;
+    path.addRect(rect);
+    path.setIsVolatile(true);
+    this->initAsPath(saveCount, path, m, op, doAA);
+}
+
+void SkClipStack::Element::initRRect(int saveCount, const SkRRect& rrect, const SkMatrix& m,
+                                     SkClipOp op, bool doAA) {
+    if (rrect.transform(m, &fDeviceSpaceRRect)) {
+        SkRRect::Type type = fDeviceSpaceRRect.getType();
+        if (SkRRect::kRect_Type == type || SkRRect::kEmpty_Type == type) {
+            fDeviceSpaceType = DeviceSpaceType::kRect;
+        } else {
+            fDeviceSpaceType = DeviceSpaceType::kRRect;
+        }
+        this->initCommon(saveCount, op, doAA);
+        return;
+    }
+    SkPath path;
+    path.addRRect(rrect);
+    path.setIsVolatile(true);
+    this->initAsPath(saveCount, path, m, op, doAA);
+}
+
+void SkClipStack::Element::initPath(int saveCount, const SkPath& path, const SkMatrix& m,
+                                    SkClipOp op, bool doAA) {
     if (!path.isInverseFillType()) {
         SkRect r;
         if (path.isRect(&r)) {
-            this->initRect(saveCount, r, op, doAA);
+            this->initRect(saveCount, r, m, op, doAA);
             return;
         }
         SkRect ovalRect;
         if (path.isOval(&ovalRect)) {
             SkRRect rrect;
             rrect.setOval(ovalRect);
-            this->initRRect(saveCount, rrect, op, doAA);
+            this->initRRect(saveCount, rrect, m, op, doAA);
             return;
         }
     }
-    fPath.set(path);
-    fPath.get()->setIsVolatile(true);
-    fType = kPath_Type;
+    this->initAsPath(saveCount, path, m, op, doAA);
+}
+
+void SkClipStack::Element::initAsPath(int saveCount, const SkPath& path, const SkMatrix& m,
+                                      SkClipOp op, bool doAA) {
+    path.transform(m, fDeviceSpacePath.init());
+    fDeviceSpacePath->setIsVolatile(true);
+    fDeviceSpaceType = DeviceSpaceType::kPath;
     this->initCommon(saveCount, op, doAA);
 }
 
-void SkClipStack::Element::asPath(SkPath* path) const {
-    switch (fType) {
-        case kEmpty_Type:
+void SkClipStack::Element::initShader(int saveCount, sk_sp<SkShader> shader) {
+    SkASSERT(shader);
+    fDeviceSpaceType = DeviceSpaceType::kShader;
+    fShader = std::move(shader);
+    this->initCommon(saveCount, SkClipOp::kIntersect, false);
+}
+
+void SkClipStack::Element::initReplaceRect(int saveCount, const SkRect& rect, bool doAA) {
+    fDeviceSpaceRRect.setRect(rect);
+    fDeviceSpaceType = DeviceSpaceType::kRect;
+    this->initCommon(saveCount, SkClipOp::kIntersect, doAA);
+    fIsReplace = true;
+}
+
+void SkClipStack::Element::asDeviceSpacePath(SkPath* path) const {
+    switch (fDeviceSpaceType) {
+        case DeviceSpaceType::kEmpty:
             path->reset();
-            path->setIsVolatile(true);
             break;
-        case kRect_Type:
+        case DeviceSpaceType::kRect:
             path->reset();
-            path->addRect(this->getRect());
-            path->setIsVolatile(true);
+            path->addRect(this->getDeviceSpaceRect());
             break;
-        case kRRect_Type:
+        case DeviceSpaceType::kRRect:
             path->reset();
-            path->addRRect(fRRect);
-            path->setIsVolatile(true);
+            path->addRRect(fDeviceSpaceRRect);
             break;
-        case kPath_Type:
-            *path = *fPath.get();
+        case DeviceSpaceType::kPath:
+            *path = *fDeviceSpacePath;
+            break;
+        case DeviceSpaceType::kShader:
+            path->reset();
+            path->addRect(SkRectPriv::MakeLargeS32());
             break;
     }
     path->setIsVolatile(true);
 }
 
 void SkClipStack::Element::setEmpty() {
-    fType = kEmpty_Type;
+    fDeviceSpaceType = DeviceSpaceType::kEmpty;
     fFiniteBound.setEmpty();
     fFiniteBoundType = kNormal_BoundsType;
     fIsIntersectionOfRects = false;
-    fRRect.setEmpty();
-    fPath.reset();
+    fDeviceSpaceRRect.setEmpty();
+    fDeviceSpacePath.reset();
+    fShader.reset();
     fGenID = kEmptyGenID;
     SkDEBUGCODE(this->checkEmpty();)
 }
@@ -154,36 +299,37 @@ void SkClipStack::Element::checkEmpty() const {
     SkASSERT(kNormal_BoundsType == fFiniteBoundType);
     SkASSERT(!fIsIntersectionOfRects);
     SkASSERT(kEmptyGenID == fGenID);
-    SkASSERT(fRRect.isEmpty());
-    SkASSERT(!fPath.isValid());
+    SkASSERT(fDeviceSpaceRRect.isEmpty());
+    SkASSERT(!fDeviceSpacePath.isValid());
+    SkASSERT(!fShader);
 }
 
 bool SkClipStack::Element::canBeIntersectedInPlace(int saveCount, SkClipOp op) const {
-    if (kEmpty_Type == fType &&
-        (kDifference_SkClipOp == op || kIntersect_SkClipOp == op)) {
+    if (DeviceSpaceType::kEmpty == fDeviceSpaceType &&
+        (SkClipOp::kDifference == op || SkClipOp::kIntersect == op)) {
         return true;
     }
     // Only clips within the same save/restore frame (as captured by
     // the save count) can be merged
     return  fSaveCount == saveCount &&
-            kIntersect_SkClipOp == op &&
-            (kIntersect_SkClipOp == fOp || kReplace_SkClipOp == fOp);
+            SkClipOp::kIntersect == op &&
+            (SkClipOp::kIntersect == fOp || this->isReplaceOp());
 }
 
 bool SkClipStack::Element::rectRectIntersectAllowed(const SkRect& newR, bool newAA) const {
-    SkASSERT(kRect_Type == fType);
+    SkASSERT(DeviceSpaceType::kRect == fDeviceSpaceType);
 
     if (fDoAA == newAA) {
         // if the AA setting is the same there is no issue
         return true;
     }
 
-    if (!SkRect::Intersects(this->getRect(), newR)) {
+    if (!SkRect::Intersects(this->getDeviceSpaceRect(), newR)) {
         // The calling code will correctly set the result to the empty clip
         return true;
     }
 
-    if (this->getRect().contains(newR)) {
+    if (this->getDeviceSpaceRect().contains(newR)) {
         // if the new rect carves out a portion of the old one there is no
         // issue
         return true;
@@ -240,68 +386,6 @@ void SkClipStack::Element::combineBoundsDiff(FillCombo combination, const SkRect
     }
 }
 
-void SkClipStack::Element::combineBoundsXOR(int combination, const SkRect& prevFinite) {
-
-    switch (combination) {
-        case kInvPrev_Cur_FillCombo:       // fall through
-        case kPrev_InvCur_FillCombo:
-            // With only one of the clips inverted the result will always
-            // extend to infinity. The only pixels that may be un-writeable
-            // lie within the union of the two finite bounds
-            fFiniteBound.join(prevFinite);
-            fFiniteBoundType = kInsideOut_BoundsType;
-            break;
-        case kInvPrev_InvCur_FillCombo:
-            // The only pixels that can survive are within the
-            // union of the two bounding boxes since the extensions
-            // to infinity of both clips cancel out
-            // fall through!
-        case kPrev_Cur_FillCombo:
-            // The most conservative bound for xor is the
-            // union of the two bounds. If the two clips exactly overlapped
-            // the xor could yield the empty set. Similarly the xor
-            // could reduce the size of the original clip's bound (e.g.,
-            // if the second clip exactly matched the bottom half of the
-            // first clip). We ignore these two cases.
-            fFiniteBound.join(prevFinite);
-            fFiniteBoundType = kNormal_BoundsType;
-            break;
-        default:
-            SkDEBUGFAIL("SkClipStack::Element::combineBoundsXOR Invalid fill combination");
-            break;
-    }
-}
-
-// a mirror of combineBoundsIntersection
-void SkClipStack::Element::combineBoundsUnion(int combination, const SkRect& prevFinite) {
-
-    switch (combination) {
-        case kInvPrev_InvCur_FillCombo:
-            if (!fFiniteBound.intersect(prevFinite)) {
-                fFiniteBound.setEmpty();
-                fGenID = kWideOpenGenID;
-            }
-            fFiniteBoundType = kInsideOut_BoundsType;
-            break;
-        case kInvPrev_Cur_FillCombo:
-            // The only pixels that won't be drawable are inside
-            // the prior clip's finite bound
-            fFiniteBound = prevFinite;
-            fFiniteBoundType = kInsideOut_BoundsType;
-            break;
-        case kPrev_InvCur_FillCombo:
-            // The only pixels that won't be drawable are inside
-            // this clip's finite bound
-            break;
-        case kPrev_Cur_FillCombo:
-            fFiniteBound.join(prevFinite);
-            break;
-        default:
-            SkDEBUGFAIL("SkClipStack::Element::combineBoundsUnion Invalid fill combination");
-            break;
-    }
-}
-
 // a mirror of combineBoundsUnion
 void SkClipStack::Element::combineBoundsIntersection(int combination, const SkRect& prevFinite) {
 
@@ -333,41 +417,6 @@ void SkClipStack::Element::combineBoundsIntersection(int combination, const SkRe
     }
 }
 
-// a mirror of combineBoundsDiff
-void SkClipStack::Element::combineBoundsRevDiff(int combination, const SkRect& prevFinite) {
-
-    switch (combination) {
-        case kInvPrev_InvCur_FillCombo:
-            // The only pixels that can survive are in the
-            // previous bound since the extensions to infinity in
-            // both clips cancel out
-            fFiniteBound = prevFinite;
-            fFiniteBoundType = kNormal_BoundsType;
-            break;
-        case kInvPrev_Cur_FillCombo:
-            if (!fFiniteBound.intersect(prevFinite)) {
-                this->setEmpty();
-            } else {
-                fFiniteBoundType = kNormal_BoundsType;
-            }
-            break;
-        case kPrev_InvCur_FillCombo:
-            fFiniteBound.join(prevFinite);
-            fFiniteBoundType = kInsideOut_BoundsType;
-            break;
-        case kPrev_Cur_FillCombo:
-            // Fall through - as with the kDifference_Op case, the
-            // most conservative result bound is the bound of the
-            // current clip. The prior clip could reduce the size of this
-            // bound (as in the kDifference_Op case) but we are ignoring
-            // those cases.
-            break;
-        default:
-            SkDEBUGFAIL("SkClipStack::Element::combineBoundsRevDiff Invalid fill combination");
-            break;
-    }
-}
-
 void SkClipStack::Element::updateBoundAndGenID(const Element* prior) {
     // We set this first here but we may overwrite it later if we determine that the clip is
     // either wide-open or empty.
@@ -376,41 +425,42 @@ void SkClipStack::Element::updateBoundAndGenID(const Element* prior) {
     // First, optimistically update the current Element's bound information
     // with the current clip's bound
     fIsIntersectionOfRects = false;
-    switch (fType) {
-        case kRect_Type:
-            fFiniteBound = this->getRect();
+    switch (fDeviceSpaceType) {
+        case DeviceSpaceType::kRect:
+            fFiniteBound = this->getDeviceSpaceRect();
             fFiniteBoundType = kNormal_BoundsType;
 
-            if (kReplace_SkClipOp == fOp ||
-                (kIntersect_SkClipOp == fOp && nullptr == prior) ||
-                (kIntersect_SkClipOp == fOp && prior->fIsIntersectionOfRects &&
-                    prior->rectRectIntersectAllowed(this->getRect(), fDoAA))) {
+            if (this->isReplaceOp() ||
+                (SkClipOp::kIntersect == fOp && nullptr == prior) ||
+                (SkClipOp::kIntersect == fOp && prior->fIsIntersectionOfRects &&
+                 prior->rectRectIntersectAllowed(this->getDeviceSpaceRect(), fDoAA))) {
                 fIsIntersectionOfRects = true;
             }
             break;
-        case kRRect_Type:
-            fFiniteBound = fRRect.getBounds();
+        case DeviceSpaceType::kRRect:
+            fFiniteBound = fDeviceSpaceRRect.getBounds();
             fFiniteBoundType = kNormal_BoundsType;
             break;
-        case kPath_Type:
-            fFiniteBound = fPath.get()->getBounds();
+        case DeviceSpaceType::kPath:
+            fFiniteBound = fDeviceSpacePath->getBounds();
 
-            if (fPath.get()->isInverseFillType()) {
+            if (fDeviceSpacePath->isInverseFillType()) {
                 fFiniteBoundType = kInsideOut_BoundsType;
             } else {
                 fFiniteBoundType = kNormal_BoundsType;
             }
             break;
-        case kEmpty_Type:
+        case DeviceSpaceType::kShader:
+            // A shader is infinite. We don't act as wide-open here (which is an empty bounds with
+            // the inside out type). This is because when the bounds is empty and inside-out, we
+            // know there's full coverage everywhere. With a shader, there's *unknown* coverage
+            // everywhere.
+            fFiniteBound = SkRectPriv::MakeLargeS32();
+            fFiniteBoundType = kNormal_BoundsType;
+            break;
+        case DeviceSpaceType::kEmpty:
             SkDEBUGFAIL("We shouldn't get here with an empty element.");
             break;
-    }
-
-    if (!fDoAA) {
-        fFiniteBound.set(SkScalarFloorToScalar(fFiniteBound.fLeft+0.45f),
-                         SkScalarRoundToScalar(fFiniteBound.fTop),
-                         SkScalarRoundToScalar(fFiniteBound.fRight),
-                         SkScalarRoundToScalar(fFiniteBound.fBottom));
     }
 
     // Now determine the previous Element's bound information taking into
@@ -441,32 +491,20 @@ void SkClipStack::Element::updateBoundAndGenID(const Element* prior) {
                 kPrev_Cur_FillCombo == combination);
 
     // Now integrate with clip with the prior clips
-    switch (fOp) {
-        case kDifference_SkClipOp:
-            this->combineBoundsDiff(combination, prevFinite);
-            break;
-        case kXOR_SkClipOp:
-            this->combineBoundsXOR(combination, prevFinite);
-            break;
-        case kUnion_SkClipOp:
-            this->combineBoundsUnion(combination, prevFinite);
-            break;
-        case kIntersect_SkClipOp:
-            this->combineBoundsIntersection(combination, prevFinite);
-            break;
-        case kReverseDifference_SkClipOp:
-            this->combineBoundsRevDiff(combination, prevFinite);
-            break;
-        case kReplace_SkClipOp:
-            // Replace just ignores everything prior
-            // The current clip's bound information is already filled in
-            // so nothing to do
-            break;
-        default:
-            SkDebugf("SkClipOp error\n");
-            SkASSERT(0);
-            break;
-    }
+    if (!this->isReplaceOp()) {
+        switch (fOp) {
+            case SkClipOp::kDifference:
+                this->combineBoundsDiff(combination, prevFinite);
+                break;
+            case SkClipOp::kIntersect:
+                this->combineBoundsIntersection(combination, prevFinite);
+                break;
+            default:
+                SkDebugf("SkClipOp error\n");
+                SkASSERT(0);
+                break;
+        }
+    } // else Replace just ignores everything prior and should already have filled in bounds.
 }
 
 // This constant determines how many Element's are allocated together as a block in
@@ -605,12 +643,13 @@ void SkClipStack::getBounds(SkRect* canvFiniteBound,
 }
 
 bool SkClipStack::internalQuickContains(const SkRect& rect) const {
-
     Iter iter(*this, Iter::kTop_IterStart);
     const Element* element = iter.prev();
     while (element != nullptr) {
-        if (kIntersect_SkClipOp != element->getOp() && kReplace_SkClipOp != element->getOp())
+        // TODO: Once expanding ops are removed, this condition is equiv. to op == kDifference.
+        if (SkClipOp::kIntersect != element->getOp() && !element->isReplaceOp()) {
             return false;
+        }
         if (element->isInverseFilled()) {
             // Part of 'rect' could be trimmed off by the inverse-filled clip element
             if (SkRect::Intersects(element->getBounds(), rect)) {
@@ -621,7 +660,7 @@ bool SkClipStack::internalQuickContains(const SkRect& rect) const {
                 return false;
             }
         }
-        if (kReplace_SkClipOp == element->getOp()) {
+        if (element->isReplaceOp()) {
             break;
         }
         element = iter.prev();
@@ -630,12 +669,13 @@ bool SkClipStack::internalQuickContains(const SkRect& rect) const {
 }
 
 bool SkClipStack::internalQuickContains(const SkRRect& rrect) const {
-
     Iter iter(*this, Iter::kTop_IterStart);
     const Element* element = iter.prev();
     while (element != nullptr) {
-        if (kIntersect_SkClipOp != element->getOp() && kReplace_SkClipOp != element->getOp())
+        // TODO: Once expanding ops are removed, this condition is equiv. to op == kDifference.
+        if (SkClipOp::kIntersect != element->getOp() && !element->isReplaceOp()) {
             return false;
+        }
         if (element->isInverseFilled()) {
             // Part of 'rrect' could be trimmed off by the inverse-filled clip element
             if (SkRect::Intersects(element->getBounds(), rrect.getBounds())) {
@@ -646,41 +686,12 @@ bool SkClipStack::internalQuickContains(const SkRRect& rrect) const {
                 return false;
             }
         }
-        if (kReplace_SkClipOp == element->getOp()) {
+        if (element->isReplaceOp()) {
             break;
         }
         element = iter.prev();
     }
     return true;
-}
-
-bool SkClipStack::asPath(SkPath *path) const {
-    bool isAA = false;
-
-    path->reset();
-    path->setFillType(SkPath::kInverseEvenOdd_FillType);
-
-    SkClipStack::Iter iter(*this, SkClipStack::Iter::kBottom_IterStart);
-    while (const SkClipStack::Element* element = iter.next()) {
-        SkPath operand;
-        if (element->getType() != SkClipStack::Element::kEmpty_Type) {
-            element->asPath(&operand);
-        }
-
-        SkClipOp elementOp = element->getOp();
-        if (elementOp == kReplace_SkClipOp) {
-            *path = operand;
-        } else {
-            Op(*path, operand, (SkPathOp)elementOp, path);
-        }
-
-        // if the prev and curr clips disagree about aa -vs- not, favor the aa request.
-        // perhaps we need an API change to avoid this sort of mixed-signals about
-        // clipping.
-        isAA = (isAA || element->isAA());
-    }
-
-    return isAA;
 }
 
 void SkClipStack::pushElement(const Element& element) {
@@ -689,21 +700,35 @@ void SkClipStack::pushElement(const Element& element) {
     Element* prior = (Element*) iter.prev();
 
     if (prior) {
-        if (prior->canBeIntersectedInPlace(fSaveCount, element.getOp())) {
-            switch (prior->fType) {
-                case Element::kEmpty_Type:
+        if (element.isReplaceOp()) {
+            this->restoreTo(fSaveCount - 1);
+            prior = (Element*) fDeque.back();
+        } else if (prior->canBeIntersectedInPlace(fSaveCount, element.getOp())) {
+            switch (prior->fDeviceSpaceType) {
+                case Element::DeviceSpaceType::kEmpty:
                     SkDEBUGCODE(prior->checkEmpty();)
                     return;
-                case Element::kRect_Type:
-                    if (Element::kRect_Type == element.getType()) {
-                        if (prior->rectRectIntersectAllowed(element.getRect(), element.isAA())) {
+                case Element::DeviceSpaceType::kShader:
+                    if (Element::DeviceSpaceType::kShader == element.getDeviceSpaceType()) {
+                        prior->fShader = SkShaders::Blend(SkBlendMode::kSrcIn,
+                                                          element.fShader, prior->fShader);
+                        Element* priorPrior = (Element*) iter.prev();
+                        prior->updateBoundAndGenID(priorPrior);
+                        return;
+                    }
+                    break;
+                case Element::DeviceSpaceType::kRect:
+                    if (Element::DeviceSpaceType::kRect == element.getDeviceSpaceType()) {
+                        if (prior->rectRectIntersectAllowed(element.getDeviceSpaceRect(),
+                                                            element.isAA())) {
                             SkRect isectRect;
-                            if (!isectRect.intersect(prior->getRect(), element.getRect())) {
+                            if (!isectRect.intersect(prior->getDeviceSpaceRect(),
+                                                     element.getDeviceSpaceRect())) {
                                 prior->setEmpty();
                                 return;
                             }
 
-                            prior->fRRect.setRect(isectRect);
+                            prior->fDeviceSpaceRRect.setRect(isectRect);
                             prior->fDoAA = element.isAA();
                             Element* priorPrior = (Element*) iter.prev();
                             prior->updateBoundAndGenID(priorPrior);
@@ -711,7 +736,7 @@ void SkClipStack::pushElement(const Element& element) {
                         }
                         break;
                     }
-                    // fallthrough
+                    [[fallthrough]];
                 default:
                     if (!SkRect::Intersects(prior->getBounds(), element.getBounds())) {
                         prior->setEmpty();
@@ -719,69 +744,42 @@ void SkClipStack::pushElement(const Element& element) {
                     }
                     break;
             }
-        } else if (kReplace_SkClipOp == element.getOp()) {
-            this->restoreTo(fSaveCount - 1);
-            prior = (Element*) fDeque.back();
         }
     }
     Element* newElement = new (fDeque.push_back()) Element(element);
     newElement->updateBoundAndGenID(prior);
 }
 
-void SkClipStack::clipRRect(const SkRRect& rrect, const SkMatrix& matrix, SkClipOp op,
-                            bool doAA) {
-    SkRRect transformedRRect;
-    if (rrect.transform(matrix, &transformedRRect)) {
-        Element element(fSaveCount, transformedRRect, op, doAA);
-        this->pushElement(element);
-        if (this->hasClipRestriction(op)) {
-            Element element(fSaveCount, fClipRestrictionRect, kIntersect_SkClipOp, false);
-            this->pushElement(element);
-        }
-        return;
-    }
-    SkPath path;
-    path.addRRect(rrect);
-    path.setIsVolatile(true);
-    this->clipPath(path, matrix, op, doAA);
+void SkClipStack::clipRRect(const SkRRect& rrect, const SkMatrix& matrix, SkClipOp op, bool doAA) {
+    Element element(fSaveCount, rrect, matrix, op, doAA);
+    this->pushElement(element);
 }
 
-void SkClipStack::clipRect(const SkRect& rect, const SkMatrix& matrix, SkClipOp op,
-                           bool doAA) {
-    if (matrix.rectStaysRect()) {
-        SkRect devRect;
-        matrix.mapRect(&devRect, rect);
-        if (this->hasClipRestriction(op)) {
-            if (!devRect.intersect(fClipRestrictionRect)) {
-                devRect.setEmpty();
-            }
-        }
-        Element element(fSaveCount, devRect, op, doAA);
-        this->pushElement(element);
-        return;
-    }
-    SkPath path;
-    path.addRect(rect);
-    path.setIsVolatile(true);
-    this->clipPath(path, matrix, op, doAA);
+void SkClipStack::clipRect(const SkRect& rect, const SkMatrix& matrix, SkClipOp op, bool doAA) {
+    Element element(fSaveCount, rect, matrix, op, doAA);
+    this->pushElement(element);
 }
 
 void SkClipStack::clipPath(const SkPath& path, const SkMatrix& matrix, SkClipOp op,
                            bool doAA) {
-    SkPath devPath;
-    path.transform(matrix, &devPath);
-    Element element(fSaveCount, devPath, op, doAA);
+    Element element(fSaveCount, path, matrix, op, doAA);
     this->pushElement(element);
-    if (this->hasClipRestriction(op)) {
-        Element element(fSaveCount, fClipRestrictionRect, kIntersect_SkClipOp, false);
-        this->pushElement(element);
-    }
+}
+
+void SkClipStack::clipShader(sk_sp<SkShader> shader) {
+    Element element(fSaveCount, std::move(shader));
+    this->pushElement(element);
+}
+
+void SkClipStack::replaceClip(const SkRect& rect, bool doAA) {
+    Element element(fSaveCount, rect, doAA);
+    this->pushElement(element);
 }
 
 void SkClipStack::clipEmpty() {
     Element* element = (Element*) fDeque.back();
 
-    if (element && element->canBeIntersectedInPlace(fSaveCount, kIntersect_SkClipOp)) {
+    if (element && element->canBeIntersectedInPlace(fSaveCount, SkClipOp::kIntersect)) {
         element->setEmpty();
     }
     new (fDeque.push_back()) Element(fSaveCount);
@@ -808,7 +806,6 @@ const SkClipStack::Element* SkClipStack::Iter::prev() {
 }
 
 const SkClipStack::Element* SkClipStack::Iter::skipToTopmost(SkClipOp op) {
-
     if (nullptr == fStack) {
         return nullptr;
     }
@@ -881,61 +878,80 @@ void SkClipStack::getConservativeBounds(int offsetX,
 }
 
 bool SkClipStack::isRRect(const SkRect& bounds, SkRRect* rrect, bool* aa) const {
-    // We limit to 5 elements. This means the back element will be bounds checked at most 4 times if
-    // it is an rrect.
-    int cnt = fDeque.count();
-    if (!cnt || cnt > 5) {
-        return false;
-    }
     const Element* back = static_cast<const Element*>(fDeque.back());
-    if (back->getType() != SkClipStack::Element::kRect_Type &&
-        back->getType() != SkClipStack::Element::kRRect_Type) {
+    if (!back) {
+        // TODO: return bounds?
         return false;
     }
-    if (back->getOp() == kReplace_SkClipOp) {
-        *rrect = back->asRRect();
+    // First check if the entire stack is known to be a rect by the top element.
+    if (back->fIsIntersectionOfRects && back->fFiniteBoundType == BoundsType::kNormal_BoundsType) {
+        rrect->setRect(back->fFiniteBound);
         *aa = back->isAA();
         return true;
     }
 
-    if (back->getOp() == kIntersect_SkClipOp) {
+    if (back->getDeviceSpaceType() != SkClipStack::Element::DeviceSpaceType::kRect &&
+        back->getDeviceSpaceType() != SkClipStack::Element::DeviceSpaceType::kRRect) {
+        return false;
+    }
+    if (back->isReplaceOp()) {
+        *rrect = back->asDeviceSpaceRRect();
+        *aa = back->isAA();
+        return true;
+    }
+
+    if (back->getOp() == SkClipOp::kIntersect) {
         SkRect backBounds;
-        if (!backBounds.intersect(bounds, back->asRRect().rect())) {
+        if (!backBounds.intersect(bounds, back->asDeviceSpaceRRect().rect())) {
+            return false;
+        }
+        // We limit to 17 elements. This means the back element will be bounds checked at most 16
+        // times if it is an rrect.
+        int cnt = fDeque.count();
+        if (cnt > 17) {
             return false;
         }
         if (cnt > 1) {
             SkDeque::Iter iter(fDeque, SkDeque::Iter::kBack_IterStart);
             SkAssertResult(static_cast<const Element*>(iter.prev()) == back);
             while (const Element* prior = (const Element*)iter.prev()) {
-                if ((prior->getOp() != kIntersect_SkClipOp &&
-                     prior->getOp() != kReplace_SkClipOp) ||
+                // TODO: Once expanding clip ops are removed, this is equiv. to op == kDifference
+                if ((prior->getOp() != SkClipOp::kIntersect && !prior->isReplaceOp()) ||
                     !prior->contains(backBounds)) {
                     return false;
                 }
-                if (prior->getOp() == kReplace_SkClipOp) {
+                if (prior->isReplaceOp()) {
                     break;
                 }
             }
         }
-        *rrect = back->asRRect();
+        *rrect = back->asDeviceSpaceRRect();
         *aa = back->isAA();
         return true;
     }
     return false;
 }
 
-int32_t SkClipStack::GetNextGenID() {
-    // TODO: handle overflow.
-    return sk_atomic_inc(&gGenID);
+uint32_t SkClipStack::GetNextGenID() {
+    // 0-2 are reserved for invalid, empty & wide-open
+    static const uint32_t kFirstUnreservedGenID = 3;
+    static std::atomic<uint32_t> nextID{kFirstUnreservedGenID};
+
+    uint32_t id;
+    do {
+        id = nextID.fetch_add(1, std::memory_order_relaxed);
+    } while (id < kFirstUnreservedGenID);
+    return id;
 }
 
-int32_t SkClipStack::getTopmostGenID() const {
+uint32_t SkClipStack::getTopmostGenID() const {
     if (fDeque.empty()) {
         return kWideOpenGenID;
     }
 
     const Element* back = static_cast<const Element*>(fDeque.back());
-    if (kInsideOut_BoundsType == back->fFiniteBoundType && back->fFiniteBound.isEmpty()) {
+    if (kInsideOut_BoundsType == back->fFiniteBoundType && back->fFiniteBound.isEmpty() &&
+        Element::DeviceSpaceType::kShader != back->fDeviceSpaceType) {
         return kWideOpenGenID;
     }
 
@@ -948,46 +964,37 @@ void SkClipStack::Element::dump() const {
         "empty",
         "rect",
         "rrect",
-        "path"
+        "path",
+        "shader"
     };
-    static_assert(0 == kEmpty_Type, "type_str");
-    static_assert(1 == kRect_Type, "type_str");
-    static_assert(2 == kRRect_Type, "type_str");
-    static_assert(3 == kPath_Type, "type_str");
-    static_assert(SK_ARRAY_COUNT(kTypeStrings) == kTypeCnt, "type_str");
+    static_assert(0 == static_cast<int>(DeviceSpaceType::kEmpty), "enum mismatch");
+    static_assert(1 == static_cast<int>(DeviceSpaceType::kRect), "enum mismatch");
+    static_assert(2 == static_cast<int>(DeviceSpaceType::kRRect), "enum mismatch");
+    static_assert(3 == static_cast<int>(DeviceSpaceType::kPath), "enum mismatch");
+    static_assert(4 == static_cast<int>(DeviceSpaceType::kShader), "enum mismatch");
+    static_assert(SK_ARRAY_COUNT(kTypeStrings) == kTypeCnt, "enum mismatch");
 
-    static const char* kOpStrings[] = {
-        "difference",
-        "intersect",
-        "union",
-        "xor",
-        "reverse-difference",
-        "replace",
-    };
-    static_assert(0 == static_cast<int>(kDifference_SkClipOp), "op_str");
-    static_assert(1 == static_cast<int>(kIntersect_SkClipOp), "op_str");
-    static_assert(2 == static_cast<int>(kUnion_SkClipOp), "op_str");
-    static_assert(3 == static_cast<int>(kXOR_SkClipOp), "op_str");
-    static_assert(4 == static_cast<int>(kReverseDifference_SkClipOp), "op_str");
-    static_assert(5 == static_cast<int>(kReplace_SkClipOp), "op_str");
-    static_assert(SK_ARRAY_COUNT(kOpStrings) == SkRegion::kOpCnt, "op_str");
-
-    SkDebugf("Type: %s, Op: %s, AA: %s, Save Count: %d\n", kTypeStrings[fType],
-             kOpStrings[static_cast<int>(fOp)], (fDoAA ? "yes" : "no"), fSaveCount);
-    switch (fType) {
-        case kEmpty_Type:
+    const char* opName = this->isReplaceOp() ? "replace" :
+            (fOp == SkClipOp::kDifference ? "difference" : "intersect");
+    SkDebugf("Type: %s, Op: %s, AA: %s, Save Count: %d\n", kTypeStrings[(int)fDeviceSpaceType],
+             opName, (fDoAA ? "yes" : "no"), fSaveCount);
+    switch (fDeviceSpaceType) {
+        case DeviceSpaceType::kEmpty:
             SkDebugf("\n");
             break;
-        case kRect_Type:
-            this->getRect().dump();
+        case DeviceSpaceType::kRect:
+            this->getDeviceSpaceRect().dump();
             SkDebugf("\n");
             break;
-        case kRRect_Type:
-            this->getRRect().dump();
+        case DeviceSpaceType::kRRect:
+            this->getDeviceSpaceRRect().dump();
             SkDebugf("\n");
             break;
-        case kPath_Type:
-            this->getPath().dump(nullptr, true, false);
+        case DeviceSpaceType::kPath:
+            this->getDeviceSpacePath().dump(nullptr, false);
+            break;
+        case DeviceSpaceType::kShader:
+            // SkShaders don't provide much introspection that's worth while.
             break;
     }
 }

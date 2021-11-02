@@ -5,12 +5,14 @@
  * found in the LICENSE file.
  */
 
-#include "effects/GrDisableColorXP.h"
-#include "GrPipeline.h"
-#include "GrProcessor.h"
-#include "glsl/GrGLSLFragmentShaderBuilder.h"
-#include "glsl/GrGLSLProgramDataManager.h"
-#include "glsl/GrGLSLXferProcessor.h"
+#include "src/gpu/effects/GrDisableColorXP.h"
+
+#include "src/gpu/GrPipeline.h"
+#include "src/gpu/GrProcessor.h"
+#include "src/gpu/GrShaderCaps.h"
+#include "src/gpu/GrXferProcessor.h"
+#include "src/gpu/glsl/GrGLSLFragmentShaderBuilder.h"
+#include "src/gpu/glsl/GrGLSLProgramDataManager.h"
 
 /**
  * This xfer processor disables color writing. Thus color and coverage and ignored and no blending
@@ -18,68 +20,48 @@
  */
 class DisableColorXP : public GrXferProcessor {
 public:
-    DisableColorXP() { this->initClassID<DisableColorXP>(); }
+    DisableColorXP() : INHERITED(kDisableColorXP_ClassID) {}
 
+private:
     const char* name() const override { return "Disable Color"; }
-
-    GrGLSLXferProcessor* createGLSLInstance() const override;
-
-private:
-
-    void onGetGLSLProcessorKey(const GrShaderCaps& caps, GrProcessorKeyBuilder* b) const override;
-
-    void onGetBlendInfo(GrXferProcessor::BlendInfo* blendInfo) const override;
-
-    bool onIsEqual(const GrXferProcessor& xpBase) const override {
-        return true;
+    bool onIsEqual(const GrXferProcessor& xpBase) const override { return true; }
+    void onAddToKey(const GrShaderCaps&, GrProcessorKeyBuilder*) const override {}
+    void onGetBlendInfo(GrXferProcessor::BlendInfo* blendInfo) const override {
+        blendInfo->fWriteColor = false;
     }
+    std::unique_ptr<ProgramImpl> makeProgramImpl() const override;
 
-    typedef GrXferProcessor INHERITED;
+    using INHERITED = GrXferProcessor;
 };
 
-///////////////////////////////////////////////////////////////////////////////
+std::unique_ptr<GrXferProcessor::ProgramImpl> DisableColorXP::makeProgramImpl() const {
+    class Impl : public ProgramImpl {
+    private:
+        void emitOutputsForBlendState(const EmitArgs& args) override {
+            if (args.fShaderCaps->mustWriteToFragColor()) {
+                // This emit code should be empty. However, on the nexus 6 there is a driver bug
+                // where if you do not give gl_FragColor a value, the gl context is lost and we end
+                // up drawing nothing. So this fix just sets the gl_FragColor arbitrarily to 0.
+                // https://bugs.chromium.org/p/chromium/issues/detail?id=445377
+                GrGLSLXPFragmentBuilder* fragBuilder = args.fXPFragBuilder;
+                fragBuilder->codeAppendf("%s = half4(0);", args.fOutputPrimary);
+            }
+        }
 
-class GLDisableColorXP : public GrGLSLXferProcessor {
-public:
-    GLDisableColorXP(const GrProcessor&) {}
+        void emitWriteSwizzle(GrGLSLXPFragmentBuilder*,
+                              const GrSwizzle&,
+                              const char*,
+                              const char*) const override {
+            // Don't write any swizzling. This makes sure the final shader does not output a color.
+            return;
+        }
+    };
 
-    ~GLDisableColorXP() override {}
-
-    static void GenKey(const GrProcessor&, const GrShaderCaps&, GrProcessorKeyBuilder*) {}
-
-private:
-    void emitOutputsForBlendState(const EmitArgs& args) override {
-        // This emit code should be empty. However, on the nexus 6 there is a driver bug where if
-        // you do not give gl_FragColor a value, the gl context is lost and we end up drawing
-        // nothing. So this fix just sets the gl_FragColor arbitrarily to 0.
-        GrGLSLXPFragmentBuilder* fragBuilder = args.fXPFragBuilder;
-        fragBuilder->codeAppendf("%s = vec4(0);", args.fOutputPrimary);
-    }
-
-    void onSetData(const GrGLSLProgramDataManager&, const GrXferProcessor&) override {}
-
-    typedef GrGLSLXferProcessor INHERITED;
-};
-
-///////////////////////////////////////////////////////////////////////////////
-
-void DisableColorXP::onGetGLSLProcessorKey(const GrShaderCaps& caps, GrProcessorKeyBuilder* b) const {
-    GLDisableColorXP::GenKey(*this, caps, b);
+    return std::make_unique<Impl>();
 }
 
-GrGLSLXferProcessor* DisableColorXP::createGLSLInstance() const { return new GLDisableColorXP(*this); }
-
-void DisableColorXP::onGetBlendInfo(GrXferProcessor::BlendInfo* blendInfo) const {
-    blendInfo->fWriteColor = false;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-sk_sp<const GrXferProcessor> GrDisableColorXPFactory::makeXferProcessor(
-        const GrProcessorAnalysisColor&,
-        GrProcessorAnalysisCoverage,
-        bool hasMixedSamples,
-        const GrCaps& caps) const {
-    return sk_sp<const GrXferProcessor>(new DisableColorXP);
+sk_sp<const GrXferProcessor> GrDisableColorXPFactory::MakeXferProcessor() {
+    return sk_make_sp<DisableColorXP>();
 }
 
 GR_DEFINE_XP_FACTORY_TEST(GrDisableColorXPFactory);

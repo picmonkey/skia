@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2006 The Android Open Source Project
  *
@@ -10,9 +9,21 @@
 #ifndef SkTDArray_DEFINED
 #define SkTDArray_DEFINED
 
-#include "SkTypes.h"
-#include "SkMalloc.h"
+#include "include/core/SkTypes.h"
+#include "include/private/SkMalloc.h"
+#include "include/private/SkTo.h"
 
+#include <algorithm>
+#include <initializer_list>
+#include <utility>
+
+/** SkTDArray<T> implements a std::vector-like array for raw data-only objects that do not require
+    construction or destruction. The constructor and destructor for T will not be called; T objects
+    will always be moved via raw memcpy. Newly created T objects will contain uninitialized memory.
+
+    In most cases, std::vector<T> can provide a similar level of performance for POD objects when
+    used with appropriate care. In new code, consider std::vector<T> instead.
+*/
 template <typename T> class SkTDArray {
 public:
     SkTDArray() : fArray(nullptr), fReserve(0), fCount(0) {}
@@ -20,13 +31,14 @@ public:
         SkASSERT(src || count == 0);
 
         fReserve = fCount = 0;
-        fArray = NULL;
+        fArray = nullptr;
         if (count) {
-            fArray = (T*)sk_malloc_throw(count * sizeof(T));
-            memcpy(fArray, src, sizeof(T) * count);
+            fArray = (T*)sk_malloc_throw(SkToSizeT(count) * sizeof(T));
+            memcpy(fArray, src, sizeof(T) * SkToSizeT(count));
             fReserve = fCount = count;
         }
     }
+    SkTDArray(const std::initializer_list<T>& list) : SkTDArray(list.begin(), list.size()) {}
     SkTDArray(const SkTDArray<T>& src) : fArray(nullptr), fReserve(0), fCount(0) {
         SkTDArray<T> tmp(src.fArray, src.fCount);
         this->swap(tmp);
@@ -44,7 +56,7 @@ public:
                 SkTDArray<T> tmp(src.fArray, src.fCount);
                 this->swap(tmp);
             } else {
-                sk_careful_memcpy(fArray, src.fArray, sizeof(T) * src.fCount);
+                sk_careful_memcpy(fArray, src.fArray, sizeof(T) * SkToSizeT(src.fCount));
                 fCount = src.fCount;
             }
         }
@@ -61,40 +73,27 @@ public:
     friend bool operator==(const SkTDArray<T>& a, const SkTDArray<T>& b) {
         return  a.fCount == b.fCount &&
                 (a.fCount == 0 ||
-                 !memcmp(a.fArray, b.fArray, a.fCount * sizeof(T)));
+                 !memcmp(a.fArray, b.fArray, SkToSizeT(a.fCount) * sizeof(T)));
     }
     friend bool operator!=(const SkTDArray<T>& a, const SkTDArray<T>& b) {
         return !(a == b);
     }
 
-    void swap(SkTDArray<T>& other) {
-        SkTSwap(fArray, other.fArray);
-        SkTSwap(fReserve, other.fReserve);
-        SkTSwap(fCount, other.fCount);
-    }
-
-    // The deleter that ought to be used for a std:: smart pointer that takes ownership from
-    // release().
-    struct Deleter {
-        void operator()(const void* p) { sk_free((void*)p); }
-    };
-
-    /** Return a ptr to the array of data, to be freed with sk_free. This also
-        resets the SkTDArray to be empty.
-     */
-    T* release() {
-        T* array = fArray;
-        fArray = NULL;
-        fReserve = fCount = 0;
-        return array;
+    void swap(SkTDArray<T>& that) {
+        using std::swap;
+        swap(fArray, that.fArray);
+        swap(fReserve, that.fReserve);
+        swap(fCount, that.fCount);
     }
 
     bool isEmpty() const { return fCount == 0; }
+    bool empty() const { return this->isEmpty(); }
 
     /**
      *  Return the number of elements in the array
      */
     int count() const { return fCount; }
+    size_t size() const { return fCount; }
 
     /**
      *  Return the total number of elements allocated.
@@ -108,10 +107,10 @@ public:
      */
     size_t bytes() const { return fCount * sizeof(T); }
 
-    T*  begin() { return fArray; }
+    T*        begin() { return fArray; }
     const T*  begin() const { return fArray; }
-    T*  end() { return fArray ? fArray + fCount : NULL; }
-    const T*  end() const { return fArray ? fArray + fCount : NULL; }
+    T*        end() { return fArray ? fArray + fCount : nullptr; }
+    const T*  end() const { return fArray ? fArray + fCount : nullptr; }
 
     T&  operator[](int index) {
         SkASSERT(index < fCount);
@@ -125,14 +124,14 @@ public:
     T&  getAt(int index)  {
         return (*this)[index];
     }
-    const T&  getAt(int index) const {
-        return (*this)[index];
-    }
+
+    const T& back() const { SkASSERT(fCount > 0); return fArray[fCount-1]; }
+          T& back()       { SkASSERT(fCount > 0); return fArray[fCount-1]; }
 
     void reset() {
         if (fArray) {
             sk_free(fArray);
-            fArray = NULL;
+            fArray = nullptr;
             fReserve = fCount = 0;
         } else {
             SkASSERT(fReserve == 0 && fCount == 0);
@@ -159,9 +158,14 @@ public:
     }
 
     void setReserve(int reserve) {
+        SkASSERT(reserve >= 0);
         if (reserve > fReserve) {
             this->resizeStorageToAtLeast(reserve);
         }
+    }
+    void reserve(size_t n) {
+        SkASSERT_RELEASE(SkTFitsIn<int>(n));
+        this->setReserve(SkToInt(n));
     }
 
     T* prepend() {
@@ -171,12 +175,12 @@ public:
     }
 
     T* append() {
-        return this->append(1, NULL);
+        return this->append(1, nullptr);
     }
-    T* append(int count, const T* src = NULL) {
+    T* append(int count, const T* src = nullptr) {
         int oldCount = fCount;
         if (count)  {
-            SkASSERT(src == NULL || fArray == NULL ||
+            SkASSERT(src == nullptr || fArray == nullptr ||
                     src + count <= fArray || fArray + oldCount <= src);
 
             this->adjustCount(count);
@@ -187,16 +191,10 @@ public:
         return fArray + oldCount;
     }
 
-    T* appendClear() {
-        T* result = this->append();
-        *result = 0;
-        return result;
-    }
-
     T* insert(int index) {
-        return this->insert(index, 1, NULL);
+        return this->insert(index, 1, nullptr);
     }
-    T* insert(int index, int count, const T* src = NULL) {
+    T* insert(int index, int count, const T* src = nullptr) {
         SkASSERT(count);
         SkASSERT(index <= fCount);
         size_t oldCount = fCount;
@@ -222,18 +220,6 @@ public:
         if (index != newCount) {
             memcpy(fArray + index, fArray + newCount, sizeof(T));
         }
-    }
-
-    template <typename S> int select(S&& selector) const {
-        const T* iter = fArray;
-        const T* stop = fArray + fCount;
-
-        for (; iter < stop; iter++) {
-            if (selector(*iter)) {
-                return SkToInt(iter - fArray);
-            }
-        }
-        return -1;
     }
 
     int find(const T& elem) const {
@@ -277,7 +263,7 @@ public:
         if (index >= fCount) {
             return 0;
         }
-        int count = SkMin32(max, fCount - index);
+        int count = std::min(max, fCount - index);
         memcpy(dst, fArray + index, sizeof(T) * count);
         return count;
     }
@@ -287,8 +273,8 @@ public:
     }
 
     // routines to treat the array like a stack
-    T*       push() { return this->append(); }
-    void     push(const T& elem) { *this->append() = elem; }
+    void push_back(const T& v) { *this->append() = v; }
+    T*      push() { return this->append(); }
     const T& top() const { return (*this)[fCount - 1]; }
     T&       top() { return (*this)[fCount - 1]; }
     void     pop(T* elem) { SkASSERT(fCount > 0); if (elem) *elem = (*this)[fCount - 1]; --fCount; }
@@ -334,39 +320,40 @@ public:
         this->reset();
     }
 
-    void visitAll(void visitor(T&)) {
-        T* stop = this->end();
-        for (T* curr = this->begin(); curr < stop; curr++) {
-            if (*curr) {
-                visitor(*curr);
-            }
-        }
-    }
-
 #ifdef SK_DEBUG
     void validate() const {
-        SkASSERT((fReserve == 0 && fArray == NULL) ||
-                 (fReserve > 0 && fArray != NULL));
+        SkASSERT((fReserve == 0 && fArray == nullptr) ||
+                 (fReserve > 0 && fArray != nullptr));
         SkASSERT(fCount <= fReserve);
     }
 #endif
 
     void shrinkToFit() {
-        fReserve = fCount;
-        fArray = (T*)sk_realloc_throw(fArray, fReserve * sizeof(T));
+        if (fReserve != fCount) {
+            SkASSERT(fReserve > fCount);
+            fReserve = fCount;
+            fArray = (T*)sk_realloc_throw(fArray, fReserve * sizeof(T));
+        }
     }
 
 private:
     T*      fArray;
-    int     fReserve;
-    int     fCount;
+    int     fReserve;   // size of the allocation in fArray (#elements)
+    int     fCount;     // logical number of elements (fCount <= fReserve)
 
     /**
      *  Adjusts the number of elements in the array.
      *  This is the same as calling setCount(count() + delta).
      */
     void adjustCount(int delta) {
-        this->setCount(fCount + delta);
+        SkASSERT(delta > 0);
+
+        // We take care to avoid overflow here.
+        // The sum of fCount and delta is at most 4294967294, which fits fine in uint32_t.
+        uint32_t count = (uint32_t)fCount + (uint32_t)delta;
+        SkASSERT_RELEASE( SkTFitsIn<int>(count) );
+
+        this->setCount(SkTo<int>(count));
     }
 
     /**
@@ -379,10 +366,20 @@ private:
      */
     void resizeStorageToAtLeast(int count) {
         SkASSERT(count > fReserve);
-        fReserve = count + 4;
-        fReserve += fReserve / 4;
-        fArray = (T*)sk_realloc_throw(fArray, fReserve * sizeof(T));
+
+        // We take care to avoid overflow here.
+        // The maximum value we can get for reserve here is 2684354563, which fits in uint32_t.
+        uint32_t reserve = (uint32_t)count + 4;
+        reserve += reserve / 4;
+        SkASSERT_RELEASE( SkTFitsIn<int>(reserve) );
+
+        fReserve = SkTo<int>(reserve);
+        fArray = (T*)sk_realloc_throw(fArray, (size_t)fReserve * sizeof(T));
     }
 };
+
+template <typename T> static inline void swap(SkTDArray<T>& a, SkTDArray<T>& b) {
+    a.swap(b);
+}
 
 #endif

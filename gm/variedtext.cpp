@@ -5,12 +5,23 @@
  * found in the LICENSE file.
  */
 
-#include "gm.h"
-#include "sk_tool_utils.h"
-#include "SkCanvas.h"
-#include "SkPath.h"
-#include "SkTypeface.h"
-#include "SkRandom.h"
+#include "gm/gm.h"
+#include "include/core/SkCanvas.h"
+#include "include/core/SkColor.h"
+#include "include/core/SkFont.h"
+#include "include/core/SkFontStyle.h"
+#include "include/core/SkFontTypes.h"
+#include "include/core/SkPaint.h"
+#include "include/core/SkPoint.h"
+#include "include/core/SkRect.h"
+#include "include/core/SkRefCnt.h"
+#include "include/core/SkScalar.h"
+#include "include/core/SkSize.h"
+#include "include/core/SkString.h"
+#include "include/core/SkTypeface.h"
+#include "include/core/SkTypes.h"
+#include "include/utils/SkRandom.h"
+#include "tools/ToolUtils.h"
 
 /**
  * Draws text with random parameters. The text draws each get their own clip rect. It is also
@@ -46,19 +57,17 @@ protected:
 
     void onOnceBeforeDraw() override {
         fPaint.setAntiAlias(true);
-        fPaint.setLCDRenderText(fLCD);
+        fFont.setEdging(fLCD ? SkFont::Edging::kSubpixelAntiAlias : SkFont::Edging::kAntiAlias);
 
         SkISize size = this->getISize();
         SkScalar w = SkIntToScalar(size.fWidth);
         SkScalar h = SkIntToScalar(size.fHeight);
 
         static_assert(4 == SK_ARRAY_COUNT(fTypefaces), "typeface_cnt");
-        fTypefaces[0] = sk_tool_utils::create_portable_typeface("sans-serif", SkFontStyle());
-        fTypefaces[1] = sk_tool_utils::create_portable_typeface("sans-serif",
-                            SkFontStyle::FromOldStyle(SkTypeface::kBold));
-        fTypefaces[2] = sk_tool_utils::create_portable_typeface("serif", SkFontStyle());
-        fTypefaces[3] = sk_tool_utils::create_portable_typeface("serif",
-                            SkFontStyle::FromOldStyle(SkTypeface::kBold));
+        fTypefaces[0] = ToolUtils::create_portable_typeface("sans-serif", SkFontStyle());
+        fTypefaces[1] = ToolUtils::create_portable_typeface("sans-serif", SkFontStyle::Bold());
+        fTypefaces[2] = ToolUtils::create_portable_typeface("serif", SkFontStyle());
+        fTypefaces[3] = ToolUtils::create_portable_typeface("serif", SkFontStyle::Bold());
 
         SkRandom random;
         for (int i = 0; i < kCnt; ++i) {
@@ -71,7 +80,7 @@ protected:
 
             fColors[i] = random.nextU();
             fColors[i] |= 0xFF000000;
-            fColors[i] = sk_tool_utils::color_to_565(fColors[i]);
+            fColors[i] = ToolUtils::color_to_565(fColors[i]);
 
             constexpr SkScalar kMinPtSize = 8.f;
             constexpr SkScalar kMaxPtSize = 32.f;
@@ -82,23 +91,21 @@ protected:
 
             SkRect r;
             fPaint.setColor(fColors[i]);
-            fPaint.setTypeface(fTypefaces[fTypefaceIndices[i]]);
-            fPaint.setTextSize(fPtSizes[i]);
+            fFont.setTypeface(fTypefaces[fTypefaceIndices[i]]);
+            fFont.setSize(fPtSizes[i]);
 
-            fPaint.measureText(fStrings[i].c_str(), fStrings[i].size(), &r);
-            // safeRect is set of x,y positions where we can draw the string without hitting
-            // the GM's border.
+            fFont.measureText(fStrings[i].c_str(), fStrings[i].size(), SkTextEncoding::kUTF8, &r);
+            // The set of x,y offsets which place the bounding box inside the GM's border.
             SkRect safeRect = SkRect::MakeLTRB(-r.fLeft, -r.fTop, w - r.fRight, h - r.fBottom);
             if (safeRect.isEmpty()) {
-                // If we don't fit then just don't worry about how we get cliped to the device
-                // border.
+                // If the bounds don't fit then allow any offset in the GM's border.
                 safeRect = SkRect::MakeWH(w, h);
             }
-            fPositions[i].fX = random.nextRangeScalar(safeRect.fLeft, safeRect.fRight);
-            fPositions[i].fY = random.nextRangeScalar(safeRect.fTop, safeRect.fBottom);
+            fOffsets[i].fX = random.nextRangeScalar(safeRect.fLeft, safeRect.fRight);
+            fOffsets[i].fY = random.nextRangeScalar(safeRect.fTop, safeRect.fBottom);
 
             fClipRects[i] = r;
-            fClipRects[i].offset(fPositions[i].fX, fPositions[i].fY);
+            fClipRects[i].offset(fOffsets[i].fX, fOffsets[i].fY);
             fClipRects[i].outset(2.f, 2.f);
 
             if (fEffectiveClip) {
@@ -110,13 +117,14 @@ protected:
     void onDraw(SkCanvas* canvas) override {
         for (int i = 0; i < kCnt; ++i) {
             fPaint.setColor(fColors[i]);
-            fPaint.setTextSize(fPtSizes[i]);
-            fPaint.setTypeface(fTypefaces[fTypefaceIndices[i]]);
+            fFont.setSize(fPtSizes[i]);
+            fFont.setTypeface(fTypefaces[fTypefaceIndices[i]]);
 
             canvas->save();
                 canvas->clipRect(fClipRects[i]);
-                canvas->translate(fPositions[i].fX, fPositions[i].fY);
-                canvas->drawString(fStrings[i], 0, 0, fPaint);
+                canvas->translate(fOffsets[i].fX, fOffsets[i].fY);
+                canvas->drawSimpleText(fStrings[i].c_str(), fStrings[i].size(), SkTextEncoding::kUTF8,
+                                       0, 0, fFont, fPaint);
             canvas->restore();
         }
 
@@ -135,24 +143,25 @@ protected:
     bool runAsBench() const override { return true; }
 
 private:
-    static constexpr int kCnt = 30;
-    static constexpr int kMinLength = 15;
-    static constexpr int kMaxLength = 40;
+    inline static constexpr int kCnt = 30;
+    inline static constexpr int kMinLength = 15;
+    inline static constexpr int kMaxLength = 40;
 
     bool        fEffectiveClip;
     bool        fLCD;
     sk_sp<SkTypeface> fTypefaces[4];
     SkPaint     fPaint;
+    SkFont      fFont;
 
     // precomputed for each text draw
     SkString        fStrings[kCnt];
     SkColor         fColors[kCnt];
     SkScalar        fPtSizes[kCnt];
     int             fTypefaceIndices[kCnt];
-    SkPoint         fPositions[kCnt];
+    SkPoint         fOffsets[kCnt];
     SkRect          fClipRects[kCnt];
 
-    typedef skiagm::GM INHERITED;
+    using INHERITED = skiagm::GM;
 };
 
 DEF_GM(return new VariedTextGM(false, false);)

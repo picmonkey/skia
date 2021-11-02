@@ -5,15 +5,19 @@
  * found in the LICENSE file.
  */
 
-#include "SkMultiPictureDocument.h"
-#include "SkMultiPictureDocumentPriv.h"
-#include "SkNWayCanvas.h"
-#include "SkPicture.h"
-#include "SkPictureRecorder.h"
-#include "SkStream.h"
-#include "SkTArray.h"
+#include "src/utils/SkMultiPictureDocument.h"
+
+#include "include/core/SkPicture.h"
+#include "include/core/SkPictureRecorder.h"
+#include "include/core/SkSerialProcs.h"
+#include "include/core/SkStream.h"
+#include "include/private/SkTArray.h"
+#include "include/private/SkTo.h"
+#include "include/utils/SkNWayCanvas.h"
+#include "src/utils/SkMultiPictureDocumentPriv.h"
 
 #include <limits.h>
+#include <functional>
 
 /*
   File format:
@@ -39,40 +43,37 @@ const uint32_t kVersion = 2;
 static SkSize join(const SkTArray<SkSize>& sizes) {
     SkSize joined = {0, 0};
     for (SkSize s : sizes) {
-        joined = SkSize{SkTMax(joined.width(), s.width()), SkTMax(joined.height(), s.height())};
+        joined = SkSize{std::max(joined.width(), s.width()), std::max(joined.height(), s.height())};
     }
     return joined;
 }
 
-static SkCanvas* trim(SkCanvas* canvas,
-                      SkScalar w, SkScalar h,
-                      const SkRect& trimBox) {
-    // Only trim if necessary.
-    if (trimBox != SkRect::MakeWH(w, h)) {
-        // All SkDocument implementations implement trimBox using a
-        // clip+translate.
-        canvas->clipRect(trimBox);
-        canvas->translate(trimBox.x(), trimBox.y());
-    }
-    return canvas;
-}
-
 struct MultiPictureDocument final : public SkDocument {
+    const SkSerialProcs fProcs;
     SkPictureRecorder fPictureRecorder;
     SkSize fCurrentPageSize;
     SkTArray<sk_sp<SkPicture>> fPages;
     SkTArray<SkSize> fSizes;
-    MultiPictureDocument(SkWStream* s, void (*d)(SkWStream*, bool))
-        : SkDocument(s, d) {}
+    std::function<void(const SkPicture*)> fOnEndPage;
+    MultiPictureDocument(SkWStream* s, const SkSerialProcs* procs,
+        std::function<void(const SkPicture*)> onEndPage)
+        : SkDocument(s)
+        , fProcs(procs ? *procs : SkSerialProcs())
+        , fOnEndPage(onEndPage)
+    {}
     ~MultiPictureDocument() override { this->close(); }
 
-    SkCanvas* onBeginPage(SkScalar w, SkScalar h, const SkRect& c) override {
+    SkCanvas* onBeginPage(SkScalar w, SkScalar h) override {
         fCurrentPageSize.set(w, h);
-        return trim(fPictureRecorder.beginRecording(w, h), w, h, c);
+        return fPictureRecorder.beginRecording(w, h);
     }
     void onEndPage() override {
         fSizes.push_back(fCurrentPageSize);
-        fPages.push_back(fPictureRecorder.finishRecordingAsPicture());
+        sk_sp<SkPicture> lastPage = fPictureRecorder.finishRecordingAsPicture();
+        fPages.push_back(lastPage);
+        if (fOnEndPage) {
+            fOnEndPage(lastPage.get());
+        }
     }
     void onClose(SkWStream* wStream) override {
         SkASSERT(wStream);
@@ -87,10 +88,11 @@ struct MultiPictureDocument final : public SkDocument {
         SkCanvas* c = fPictureRecorder.beginRecording(SkRect::MakeSize(bigsize));
         for (const sk_sp<SkPicture>& page : fPages) {
             c->drawPicture(page);
-            c->drawAnnotation(SkRect::MakeEmpty(), kEndPage, nullptr);
+            // Annotations must include some data.
+            c->drawAnnotation(SkRect::MakeEmpty(), kEndPage, SkData::MakeWithCString("X"));
         }
         sk_sp<SkPicture> p = fPictureRecorder.finishRecordingAsPicture();
-        p->serialize(wStream);
+        p->serialize(wStream, &fProcs);
         fPages.reset();
         fSizes.reset();
         return;
@@ -100,10 +102,11 @@ struct MultiPictureDocument final : public SkDocument {
         fSizes.reset();
     }
 };
-}
+}  // namespace
 
-sk_sp<SkDocument> SkMakeMultiPictureDocument(SkWStream* wStream) {
-    return sk_make_sp<MultiPictureDocument>(wStream, nullptr);
+sk_sp<SkDocument> SkMakeMultiPictureDocument(SkWStream* wStream, const SkSerialProcs* procs,
+    std::function<void(const SkPicture*)> onEndPage) {
+    return sk_make_sp<MultiPictureDocument>(wStream, procs, onEndPage);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -119,16 +122,16 @@ int SkMultiPictureDocumentReadPageCount(SkStreamSeekable* stream) {
         stream = nullptr;
         return 0;
     }
-    uint32_t versionNumber = stream->readU32();
-    if (versionNumber != kVersion) {
+    uint32_t versionNumber;
+    if (!stream->readU32(&versionNumber) || versionNumber != kVersion) {
         return 0;
     }
-    uint32_t pageCount = stream->readU32();
-    if (pageCount > INT_MAX) {
+    uint32_t pageCount;
+    if (!stream->readU32(&pageCount) || pageCount > INT_MAX) {
         return 0;
     }
     // leave stream position right here.
-    return (int)pageCount;
+    return SkTo<int>(pageCount);
 }
 
 bool SkMultiPictureDocumentReadPageSizes(SkStreamSeekable* stream,
@@ -184,24 +187,29 @@ struct PagerCanvas : public SkNWayCanvas {
 
 bool SkMultiPictureDocumentRead(SkStreamSeekable* stream,
                                 SkDocumentPage* dstArray,
-                                int dstArrayCount) {
+                                int dstArrayCount,
+                                const SkDeserialProcs* procs) {
     if (!SkMultiPictureDocumentReadPageSizes(stream, dstArray, dstArrayCount)) {
         return false;
     }
     SkSize joined = {0.0f, 0.0f};
     for (int i = 0; i < dstArrayCount; ++i) {
-        joined = SkSize{SkTMax(joined.width(), dstArray[i].fSize.width()),
-                        SkTMax(joined.height(), dstArray[i].fSize.height())};
+        joined = SkSize{std::max(joined.width(), dstArray[i].fSize.width()),
+                        std::max(joined.height(), dstArray[i].fSize.height())};
     }
 
-    auto picture = SkPicture::MakeFromStream(stream);
+    auto picture = SkPicture::MakeFromStream(stream, procs);
+    if (!picture) {
+        return false;
+    }
 
     PagerCanvas canvas(joined.toCeil(), dstArray, dstArrayCount);
     // Must call playback(), not drawPicture() to reach
     // PagerCanvas::onDrawAnnotation().
     picture->playback(&canvas);
     if (canvas.fIndex != dstArrayCount) {
-        SkDEBUGF(("Malformed SkMultiPictureDocument\n"));
+        SkDEBUGF("Malformed SkMultiPictureDocument: canvas.fIndex=%d dstArrayCount=%d\n",
+            canvas.fIndex, dstArrayCount);
     }
     return true;
 }

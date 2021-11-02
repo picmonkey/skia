@@ -5,9 +5,9 @@
  * found in the LICENSE file.
  */
 
-#include "GrDistanceFieldAdjustTable.h"
+#include "src/gpu/text/GrDistanceFieldAdjustTable.h"
 
-#include "SkScalerContext.h"
+#include "src/core/SkScalerContext.h"
 
 SkDEBUGCODE(static const int kExpectedDistanceAdjustTableSize = 8;)
 
@@ -63,7 +63,13 @@ SkScalar* build_distance_adjust_table(SkScalar paintGamma, SkScalar deviceGamma)
     SkScalar* table = new SkScalar[height];
 
     SkAutoTArray<uint8_t> data((int)size);
-    SkScalerContext::GetGammaLUTData(contrast, paintGamma, deviceGamma, data.get());
+    if (!SkScalerContext::GetGammaLUTData(contrast, paintGamma, deviceGamma, data.get())) {
+        // if no valid data is available simply do no adjustment
+        for (int row = 0; row < height; ++row) {
+            table[row] = 0;
+        }
+        return table;
+    }
 
     // find the inverse points where we cross 0.5
     // binsearch might be better, but we only need to do this once on creation
@@ -92,7 +98,12 @@ SkScalar* build_distance_adjust_table(SkScalar paintGamma, SkScalar deviceGamma)
     return table;
 }
 
-void GrDistanceFieldAdjustTable::buildDistanceAdjustTables() {
+const GrDistanceFieldAdjustTable* GrDistanceFieldAdjustTable::Get() {
+    static const GrDistanceFieldAdjustTable* dfat = new GrDistanceFieldAdjustTable;
+    return dfat;
+}
+
+GrDistanceFieldAdjustTable::GrDistanceFieldAdjustTable() {
     fTable = build_distance_adjust_table(SK_GAMMA_EXPONENT, SK_GAMMA_EXPONENT);
     fGammaCorrectTable = build_distance_adjust_table(SK_Scalar1, SK_Scalar1);
 }

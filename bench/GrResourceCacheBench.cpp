@@ -5,16 +5,15 @@
  * found in the LICENSE file.
  */
 
-#include "Benchmark.h"
+#include "bench/Benchmark.h"
 
-#if SK_SUPPORT_GPU
-
-#include "GrGpuResource.h"
-#include "GrGpuResourcePriv.h"
-#include "GrContext.h"
-#include "GrGpu.h"
-#include "GrResourceCache.h"
-#include "SkCanvas.h"
+#include "include/core/SkCanvas.h"
+#include "include/gpu/GrDirectContext.h"
+#include "src/gpu/GrDirectContextPriv.h"
+#include "src/gpu/GrGpu.h"
+#include "src/gpu/GrGpuResource.h"
+#include "src/gpu/GrGpuResourcePriv.h"
+#include "src/gpu/GrResourceCache.h"
 
 enum {
     CACHE_SIZE_COUNT = 4096,
@@ -37,7 +36,8 @@ public:
 
 private:
     size_t onGpuMemorySize() const override { return 100; }
-    typedef GrGpuResource INHERITED;
+    const char* getResourceType() const override { return "bench"; }
+    using INHERITED = GrGpuResource;
 };
 
 static void populate_cache(GrGpu* gpu, int resourceCount, int keyData32Count) {
@@ -69,20 +69,20 @@ protected:
     }
 
     void onDraw(int loops, SkCanvas* canvas) override {
-        sk_sp<GrContext> context(GrContext::CreateMockContext());
+        sk_sp<GrDirectContext> context(GrDirectContext::MakeMock(nullptr));
         if (nullptr == context) {
             return;
         }
         // Set the cache budget to be very large so no purging occurs.
         context->setResourceCacheLimits(CACHE_SIZE_COUNT, 1 << 30);
 
-        GrResourceCache* cache = context->getResourceCache();
+        GrResourceCache* cache = context->priv().getResourceCache();
 
         // Make sure the cache is empty.
-        cache->purgeAllUnlocked();
+        cache->purgeUnlockedResources();
         SkASSERT(0 == cache->getResourceCount() && 0 == cache->getResourceBytes());
 
-        GrGpu* gpu = context->getGpu();
+        GrGpu* gpu = context->priv().getGpu();
 
         for (int i = 0; i < loops; ++i) {
             populate_cache(gpu, CACHE_SIZE_COUNT, fKeyData32Count);
@@ -93,7 +93,7 @@ protected:
 private:
     SkString fFullName;
     int fKeyData32Count;
-    typedef Benchmark INHERITED;
+    using INHERITED = Benchmark;
 };
 
 class GrResourceCacheBenchFind : public Benchmark {
@@ -115,20 +115,20 @@ protected:
     }
 
     void onDelayedSetup() override {
-        fContext.reset(GrContext::CreateMockContext());
+        fContext = GrDirectContext::MakeMock(nullptr);
         if (!fContext) {
             return;
         }
         // Set the cache budget to be very large so no purging occurs.
         fContext->setResourceCacheLimits(CACHE_SIZE_COUNT, 1 << 30);
 
-        GrResourceCache* cache = fContext->getResourceCache();
+        GrResourceCache* cache = fContext->priv().getResourceCache();
 
         // Make sure the cache is empty.
-        cache->purgeAllUnlocked();
+        cache->purgeUnlockedResources();
         SkASSERT(0 == cache->getResourceCount() && 0 == cache->getResourceBytes());
 
-        GrGpu* gpu = fContext->getGpu();
+        GrGpu* gpu = fContext->priv().getGpu();
 
         populate_cache(gpu, CACHE_SIZE_COUNT, fKeyData32Count);
     }
@@ -137,7 +137,7 @@ protected:
         if (!fContext) {
             return;
         }
-        GrResourceCache* cache = fContext->getResourceCache();
+        GrResourceCache* cache = fContext->priv().getResourceCache();
         SkASSERT(CACHE_SIZE_COUNT == cache->getResourceCount());
         for (int i = 0; i < loops; ++i) {
             for (int k = 0; k < CACHE_SIZE_COUNT; ++k) {
@@ -150,10 +150,10 @@ protected:
     }
 
 private:
-    sk_sp<GrContext> fContext;
+    sk_sp<GrDirectContext> fContext;
     SkString fFullName;
     int fKeyData32Count;
-    typedef Benchmark INHERITED;
+    using INHERITED = Benchmark;
 };
 
 DEF_BENCH( return new GrResourceCacheBenchAdd(1); )
@@ -181,6 +181,4 @@ DEF_BENCH( return new GrResourceCacheBenchFind(25); )
 DEF_BENCH( return new GrResourceCacheBenchFind(54); )
 DEF_BENCH( return new GrResourceCacheBenchFind(55); )
 DEF_BENCH( return new GrResourceCacheBenchFind(56); )
-#endif
-
 #endif

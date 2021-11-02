@@ -5,15 +5,21 @@
  * found in the LICENSE file.
  */
 
-#include "SkBitmapDevice.h"
-#include "SkDevice.h"
-#include "SkSpecialImage.h"
+#include "include/core/SkBitmap.h"
+#include "include/core/SkImage.h"
+#include "include/core/SkImageInfo.h"
+#include "include/core/SkRect.h"
+#include "include/core/SkRefCnt.h"
+#include "include/core/SkTypes.h"
+#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/GrTypes.h"
+#include "src/core/SkDevice.h"
+#include "src/core/SkSpecialImage.h"
+#include "src/gpu/GrDirectContextPriv.h"
+#include "tests/Test.h"
+#include "tools/gpu/GrContextFactory.h"
 
-#if SK_SUPPORT_GPU
-#include "SkGpuDevice.h"
-#endif
-
-#include "Test.h"
+class SkColorSpace;
 
 class DeviceTestingAccess {
 public:
@@ -70,25 +76,24 @@ DEF_TEST(SpecialImage_BitmapDevice, reporter) {
 #endif
 
 
-#if SK_SUPPORT_GPU
-
 DEF_GPUTEST_FOR_RENDERING_CONTEXTS(SpecialImage_GPUDevice, reporter, ctxInfo) {
-    GrContext* context = ctxInfo.grContext();
+    auto dContext = ctxInfo.directContext();
 
     static const int kWidth = 100;
     static const int kHeight = 90;
 
     SkImageInfo ii = SkImageInfo::MakeN32Premul(2*kWidth, 2*kHeight);
 
-    sk_sp<SkBaseDevice> gpuDev(SkGpuDevice::Make(context, SkBudgeted::kNo, ii,
-                                                 0, kBottomLeft_GrSurfaceOrigin, nullptr,
-                                                 SkGpuDevice::kClear_InitContents));
+    auto device = dContext->priv().createDevice(SkBudgeted::kNo, ii, SkBackingFit::kExact,
+                                                1, GrMipmapped::kNo, GrProtected::kNo,
+                                                kBottomLeft_GrSurfaceOrigin, SkSurfaceProps(),
+                                                skgpu::BaseDevice::InitContents::kClear);
 
     SkBitmap bm;
     SkAssertResult(bm.tryAllocN32Pixels(kWidth, kHeight));
 
     // Create a gpu-backed special image from a raster-backed SkBitmap
-    sk_sp<SkSpecialImage> special = DeviceTestingAccess::MakeSpecial(gpuDev.get(), bm);
+    sk_sp<SkSpecialImage> special = DeviceTestingAccess::MakeSpecial(device.get(), bm);
     SkASSERT(special->isTextureBacked());
     SkASSERT(kWidth == special->width());
     SkASSERT(kHeight == special->height());
@@ -96,8 +101,8 @@ DEF_GPUTEST_FOR_RENDERING_CONTEXTS(SpecialImage_GPUDevice, reporter, ctxInfo) {
     SkASSERT(SkIRect::MakeWH(kWidth, kHeight) == special->subset());
 
     // Create a gpu-backed special image from a raster-backed SkImage
-    sk_sp<SkImage> image(SkImage::MakeFromBitmap(bm));
-    special = DeviceTestingAccess::MakeSpecial(gpuDev.get(), image.get());
+    sk_sp<SkImage> image(bm.asImage());
+    special = DeviceTestingAccess::MakeSpecial(device.get(), image.get());
     SkASSERT(special->isTextureBacked());
     SkASSERT(kWidth == special->width());
     SkASSERT(kHeight == special->height());
@@ -106,9 +111,8 @@ DEF_GPUTEST_FOR_RENDERING_CONTEXTS(SpecialImage_GPUDevice, reporter, ctxInfo) {
     SkASSERT(SkIRect::MakeWH(kWidth, kHeight) == special->subset());
 
     // Create a gpu-backed special image from a gpu-backed SkImage
-    SkColorSpace* legacyColorSpace = nullptr;
-    image = image->makeTextureImage(context, legacyColorSpace);
-    special = DeviceTestingAccess::MakeSpecial(gpuDev.get(), image.get());
+    image = image->makeTextureImage(dContext);
+    special = DeviceTestingAccess::MakeSpecial(device.get(), image.get());
     SkASSERT(special->isTextureBacked());
     SkASSERT(kWidth == special->width());
     SkASSERT(kHeight == special->height());
@@ -116,11 +120,9 @@ DEF_GPUTEST_FOR_RENDERING_CONTEXTS(SpecialImage_GPUDevice, reporter, ctxInfo) {
     SkASSERT(SkIRect::MakeWH(kWidth, kHeight) == special->subset());
 
     // Snap the device as a gpu-backed special image
-    special = DeviceTestingAccess::SnapSpecial(gpuDev.get());
+    special = DeviceTestingAccess::SnapSpecial(device.get());
     SkASSERT(special->isTextureBacked());
     SkASSERT(2*kWidth == special->width());
     SkASSERT(2*kHeight == special->height());
     SkASSERT(SkIRect::MakeWH(2*kWidth, 2*kHeight) == special->subset());
 }
-
-#endif

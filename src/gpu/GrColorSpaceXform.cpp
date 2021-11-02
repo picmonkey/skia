@@ -5,105 +5,25 @@
  * found in the LICENSE file.
  */
 
-#include "GrColorSpaceXform.h"
-#include "SkColorSpace.h"
-#include "SkColorSpace_Base.h"
-#include "SkMatrix44.h"
-#include "SkSpinlock.h"
+#include "src/gpu/GrColorSpaceXform.h"
 
-class GrColorSpaceXformCache {
-public:
-    using NewValueFn = std::function<sk_sp<GrColorSpaceXform>(void)>;
+#include "include/core/SkColorSpace.h"
+#include "src/core/SkColorSpacePriv.h"
+#include "src/gpu/GrColorInfo.h"
+#include "src/gpu/glsl/GrGLSLColorSpaceXformHelper.h"
+#include "src/gpu/glsl/GrGLSLFragmentShaderBuilder.h"
 
-    GrColorSpaceXformCache() : fSequence(0) {}
+sk_sp<GrColorSpaceXform> GrColorSpaceXform::Make(SkColorSpace* src, SkAlphaType srcAT,
+                                                 SkColorSpace* dst, SkAlphaType dstAT) {
+    SkColorSpaceXformSteps steps(src, srcAT, dst, dstAT);
+    return steps.flags.mask() == 0 ? nullptr  /* Noop transform */
+                                   : sk_make_sp<GrColorSpaceXform>(steps);
+}
 
-    sk_sp<GrColorSpaceXform> findOrAdd(uint64_t key, NewValueFn newValue) {
-        int oldest = 0;
-        for (int i = 0; i < kEntryCount; ++i) {
-            if (fEntries[i].fKey == key) {
-                fEntries[i].fLastUse = fSequence++;
-                return fEntries[i].fXform;
-            }
-            if (fEntries[i].fLastUse < fEntries[oldest].fLastUse) {
-                oldest = i;
-            }
-        }
-        fEntries[oldest].fKey = key;
-        fEntries[oldest].fXform = newValue();
-        fEntries[oldest].fLastUse = fSequence++;
-        return fEntries[oldest].fXform;
-    }
-
-private:
-    enum { kEntryCount = 32 };
-
-    struct Entry {
-        // The default Entry is "valid". Any 64-bit key that is the same 32-bit value repeated
-        // implies no xform is necessary, so nullptr should be returned. This particular case should
-        // never happen, but by initializing all entries with this data, we can avoid special cases
-        // for the array not yet being full.
-        Entry() : fKey(0), fXform(nullptr), fLastUse(0) {}
-
-        uint64_t fKey;
-        sk_sp<GrColorSpaceXform> fXform;
-        uint64_t fLastUse;
-    };
-
-    Entry fEntries[kEntryCount];
-    uint64_t fSequence;
-};
-
-GrColorSpaceXform::GrColorSpaceXform(const SkMatrix44& srcToDst)
-    : fSrcToDst(srcToDst) {}
-
-static SkSpinlock gColorSpaceXformCacheSpinlock;
-
-sk_sp<GrColorSpaceXform> GrColorSpaceXform::Make(const SkColorSpace* src, const SkColorSpace* dst) {
-    if (!src || !dst) {
-        // Invalid
-        return nullptr;
-    }
-
-    if (src == dst) {
-        // Quick equality check - no conversion needed in this case
-        return nullptr;
-    }
-
-    const SkMatrix44* toXYZD50   = as_CSB(src)->toXYZD50();
-    const SkMatrix44* fromXYZD50 = as_CSB(dst)->fromXYZD50();
-    if (!toXYZD50 || !fromXYZD50) {
-        // unsupported colour spaces -- cannot specify gamut as a matrix
-        return nullptr;
-    }
-
-    uint32_t srcHash = as_CSB(src)->toXYZD50Hash();
-    uint32_t dstHash = as_CSB(dst)->toXYZD50Hash();
-    if (srcHash == dstHash) {
-        // Identical gamut - no conversion needed in this case
-        SkASSERT(*toXYZD50 == *as_CSB(dst)->toXYZD50() && "Hash collision");
-        return nullptr;
-    }
-
-    auto deferredResult = [fromXYZD50, toXYZD50]() {
-        SkMatrix44 srcToDst(SkMatrix44::kUninitialized_Constructor);
-        srcToDst.setConcat(*fromXYZD50, *toXYZD50);
-        return sk_make_sp<GrColorSpaceXform>(srcToDst);
-    };
-
-    if (gColorSpaceXformCacheSpinlock.tryAcquire()) {
-        static GrColorSpaceXformCache* gCache;
-        if (nullptr == gCache) {
-            gCache = new GrColorSpaceXformCache();
-        }
-
-        uint64_t key = static_cast<uint64_t>(srcHash) << 32 | static_cast<uint64_t>(dstHash);
-        sk_sp<GrColorSpaceXform> xform = gCache->findOrAdd(key, deferredResult);
-        gColorSpaceXformCacheSpinlock.release();
-        return xform;
-    } else {
-        // Rather than wait for the spin lock, just bypass the cache
-        return deferredResult();
-    }
+sk_sp<GrColorSpaceXform> GrColorSpaceXform::Make(const GrColorInfo& srcInfo,
+                                                 const GrColorInfo& dstInfo) {
+    return Make(srcInfo.colorSpace(), srcInfo.alphaType(),
+                dstInfo.colorSpace(), dstInfo.alphaType());
 }
 
 bool GrColorSpaceXform::Equals(const GrColorSpaceXform* a, const GrColorSpaceXform* b) {
@@ -111,19 +31,127 @@ bool GrColorSpaceXform::Equals(const GrColorSpaceXform* a, const GrColorSpaceXfo
         return true;
     }
 
-    if (!a || !b) {
+    if (!a || !b || a->fSteps.flags.mask() != b->fSteps.flags.mask()) {
         return false;
     }
 
-    return a->fSrcToDst == b->fSrcToDst;
+    if (a->fSteps.flags.linearize &&
+        0 != memcmp(&a->fSteps.srcTF, &b->fSteps.srcTF, sizeof(a->fSteps.srcTF))) {
+        return false;
+    }
+
+    if (a->fSteps.flags.gamut_transform &&
+        0 != memcmp(&a->fSteps.src_to_dst_matrix, &b->fSteps.src_to_dst_matrix,
+                    sizeof(a->fSteps.src_to_dst_matrix))) {
+        return false;
+    }
+
+    if (a->fSteps.flags.encode &&
+        0 != memcmp(&a->fSteps.dstTFInv, &b->fSteps.dstTFInv, sizeof(a->fSteps.dstTFInv))) {
+        return false;
+    }
+
+    return true;
 }
 
-GrColor4f GrColorSpaceXform::apply(const GrColor4f& srcColor) {
-    GrColor4f result;
-    fSrcToDst.mapScalars(srcColor.fRGBA, result.fRGBA);
-    // We always operate on unpremul colors, so clamp to [0,1].
-    for (int i = 0; i < 4; ++i) {
-        result.fRGBA[i] = SkTPin(result.fRGBA[i], 0.0f, 1.0f);
-    }
+SkColor4f GrColorSpaceXform::apply(const SkColor4f& srcColor) {
+    SkColor4f result = srcColor;
+    fSteps.apply(result.vec());
     return result;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+GrColorSpaceXformEffect::GrColorSpaceXformEffect(std::unique_ptr<GrFragmentProcessor> child,
+                                                 sk_sp<GrColorSpaceXform> colorXform)
+        : INHERITED(kGrColorSpaceXformEffect_ClassID, OptFlags(child.get()))
+        , fColorXform(std::move(colorXform)) {
+    this->registerChild(std::move(child));
+}
+
+GrColorSpaceXformEffect::GrColorSpaceXformEffect(const GrColorSpaceXformEffect& that)
+        : INHERITED(that)
+        , fColorXform(that.fColorXform) {}
+
+std::unique_ptr<GrFragmentProcessor> GrColorSpaceXformEffect::clone() const {
+    return std::unique_ptr<GrFragmentProcessor>(new GrColorSpaceXformEffect(*this));
+}
+
+bool GrColorSpaceXformEffect::onIsEqual(const GrFragmentProcessor& s) const {
+    const GrColorSpaceXformEffect& other = s.cast<GrColorSpaceXformEffect>();
+    return GrColorSpaceXform::Equals(fColorXform.get(), other.fColorXform.get());
+}
+
+void GrColorSpaceXformEffect::onAddToKey(const GrShaderCaps&, GrProcessorKeyBuilder* b) const {
+    b->add32(GrColorSpaceXform::XformKey(fColorXform.get()));
+}
+
+std::unique_ptr<GrFragmentProcessor::ProgramImpl>
+GrColorSpaceXformEffect::onMakeProgramImpl() const {
+    class Impl : public ProgramImpl {
+    public:
+        void emitCode(EmitArgs& args) override {
+            const GrColorSpaceXformEffect& proc = args.fFp.cast<GrColorSpaceXformEffect>();
+            GrGLSLFPFragmentBuilder* fragBuilder = args.fFragBuilder;
+            GrGLSLUniformHandler* uniformHandler = args.fUniformHandler;
+
+            fColorSpaceHelper.emitCode(uniformHandler, proc.colorXform());
+
+            SkString childColor = this->invokeChild(0, args);
+
+            SkString xformedColor;
+            fragBuilder->appendColorGamutXform(
+                    &xformedColor, childColor.c_str(), &fColorSpaceHelper);
+            fragBuilder->codeAppendf("return %s;", xformedColor.c_str());
+        }
+
+    private:
+        void onSetData(const GrGLSLProgramDataManager& pdman,
+                       const GrFragmentProcessor& fp) override {
+            const GrColorSpaceXformEffect& proc = fp.cast<GrColorSpaceXformEffect>();
+            fColorSpaceHelper.setData(pdman, proc.colorXform());
+        }
+
+        GrGLSLColorSpaceXformHelper fColorSpaceHelper;
+    };
+
+    return std::make_unique<Impl>();
+}
+
+GrFragmentProcessor::OptimizationFlags GrColorSpaceXformEffect::OptFlags(
+        const GrFragmentProcessor* child) {
+    return ProcessorOptimizationFlags(child) & (kCompatibleWithCoverageAsAlpha_OptimizationFlag |
+                                                kPreservesOpaqueInput_OptimizationFlag |
+                                                kConstantOutputForConstantInput_OptimizationFlag);
+}
+
+SkPMColor4f GrColorSpaceXformEffect::constantOutputForConstantInput(
+        const SkPMColor4f& input) const {
+    const auto c0 = ConstantOutputForConstantInput(this->childProcessor(0), input);
+    return this->fColorXform->apply(c0.unpremul()).premul();
+}
+
+std::unique_ptr<GrFragmentProcessor> GrColorSpaceXformEffect::Make(
+        std::unique_ptr<GrFragmentProcessor> child,
+        SkColorSpace* src, SkAlphaType srcAT,
+        SkColorSpace* dst, SkAlphaType dstAT) {
+    return Make(std::move(child), GrColorSpaceXform::Make(src, srcAT, dst, dstAT));
+}
+
+std::unique_ptr<GrFragmentProcessor> GrColorSpaceXformEffect::Make(
+        std::unique_ptr<GrFragmentProcessor> child,
+        const GrColorInfo& srcInfo,
+        const GrColorInfo& dstInfo) {
+    return Make(std::move(child), GrColorSpaceXform::Make(srcInfo, dstInfo));
+}
+
+std::unique_ptr<GrFragmentProcessor> GrColorSpaceXformEffect::Make(
+        std::unique_ptr<GrFragmentProcessor> child,
+        sk_sp<GrColorSpaceXform> colorXform) {
+    if (!colorXform) {
+        return child;
+    }
+
+    return std::unique_ptr<GrFragmentProcessor>(new GrColorSpaceXformEffect(std::move(child),
+                                                                            std::move(colorXform)));
 }

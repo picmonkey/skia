@@ -5,17 +5,37 @@
  * found in the LICENSE file.
  */
 
-#include "sk_tool_utils.h"
-#include "SampleCode.h"
-#include "SkView.h"
-#include "SkCanvas.h"
-#include "SkGeometry.h"
-#include "SkPathMeasure.h"
-#include "SkRandom.h"
-#include "SkRRect.h"
-#include "SkColorPriv.h"
-#include "SkStrokerPriv.h"
-#include "SkSurface.h"
+#include "include/core/SkBlendMode.h"
+#include "include/core/SkCanvas.h"
+#include "include/core/SkColor.h"
+#include "include/core/SkFont.h"
+#include "include/core/SkImageInfo.h"
+#include "include/core/SkMatrix.h"
+#include "include/core/SkPaint.h"
+#include "include/core/SkPath.h"
+#include "include/core/SkPathMeasure.h"
+#include "include/core/SkPoint.h"
+#include "include/core/SkRRect.h"
+#include "include/core/SkRect.h"
+#include "include/core/SkRefCnt.h"
+#include "include/core/SkScalar.h"
+#include "include/core/SkShader.h"
+#include "include/core/SkString.h"
+#include "include/core/SkSurface.h"
+#include "include/core/SkTypes.h"
+#include "include/private/SkTArray.h"
+#include "include/private/SkTemplates.h"
+#include "include/utils/SkTextUtils.h"
+#include "samplecode/Sample.h"
+#include "src/core/SkGeometry.h"
+#include "src/core/SkPathPriv.h"
+#include "src/core/SkPointPriv.h"
+#include "src/core/SkStroke.h"
+#include "tools/ToolUtils.h"
+
+#include <cfloat>
+
+class SkEvent;
 
 static bool hittest(const SkPoint& target, SkScalar x, SkScalar y) {
     const SkScalar TOL = 7;
@@ -23,18 +43,14 @@ static bool hittest(const SkPoint& target, SkScalar x, SkScalar y) {
 }
 
 static int getOnCurvePoints(const SkPath& path, SkPoint storage[]) {
-    SkPath::RawIter iter(path);
-    SkPoint pts[4];
-    SkPath::Verb verb;
-
     int count = 0;
-    while ((verb = iter.next(pts)) != SkPath::kDone_Verb) {
+    for (auto [verb, pts, w] : SkPathPriv::Iterate(path)) {
         switch (verb) {
-            case SkPath::kMove_Verb:
-            case SkPath::kLine_Verb:
-            case SkPath::kQuad_Verb:
-            case SkPath::kConic_Verb:
-            case SkPath::kCubic_Verb:
+            case SkPathVerb::kMove:
+            case SkPathVerb::kLine:
+            case SkPathVerb::kQuad:
+            case SkPathVerb::kConic:
+            case SkPathVerb::kCubic:
                 storage[count++] = pts[0];
                 break;
             default:
@@ -45,25 +61,21 @@ static int getOnCurvePoints(const SkPath& path, SkPoint storage[]) {
 }
 
 static void getContourCounts(const SkPath& path, SkTArray<int>* contourCounts) {
-    SkPath::RawIter iter(path);
-    SkPoint pts[4];
-    SkPath::Verb verb;
-
     int count = 0;
-    while ((verb = iter.next(pts)) != SkPath::kDone_Verb) {
+    for (auto [verb, pts, w] : SkPathPriv::Iterate(path)) {
         switch (verb) {
-            case SkPath::kMove_Verb:
-            case SkPath::kLine_Verb:
+            case SkPathVerb::kMove:
+            case SkPathVerb::kLine:
                 count += 1;
                 break;
-            case SkPath::kQuad_Verb:
-            case SkPath::kConic_Verb:
+            case SkPathVerb::kQuad:
+            case SkPathVerb::kConic:
                 count += 2;
                 break;
-            case SkPath::kCubic_Verb:
+            case SkPathVerb::kCubic:
                 count += 3;
                 break;
-            case SkPath::kClose_Verb:
+            case SkPathVerb::kClose:
                 contourCounts->push_back(count);
                 count = 0;
                 break;
@@ -93,7 +105,7 @@ struct CircleTypeButton : public StrokeTypeButton {
     bool fFill;
 };
 
-class QuadStrokerView : public SampleView {
+class QuadStrokerView : public Sample {
     enum {
         SKELETON_COLOR = 0xFF0000FF,
         WIREFRAME_COLOR = 0x80FF0000
@@ -190,19 +202,16 @@ public:
     }
 
 protected:
-    bool onQuery(SkEvent* evt) override {
-        if (SampleCode::TitleQ(*evt)) {
-            SampleCode::TitleR(evt, "QuadStroker");
-            return true;
-        }
-        SkUnichar uni;
-        if (fTextButton.fEnabled && SampleCode::CharQ(*evt, &uni)) {
+    SkString name() override { return SkString("QuadStroker"); }
+
+    bool onChar(SkUnichar uni) override {
+        if (fTextButton.fEnabled) {
             switch (uni) {
                 case ' ':
                     fText = "";
                     break;
                 case '-':
-                    fTextSize = SkTMax(1.0f, fTextSize - 1);
+                    fTextSize = std::max(1.0f, fTextSize - 1);
                     break;
                 case '+':
                 case '=':
@@ -211,10 +220,9 @@ protected:
                 default:
                     fText.appendUnichar(uni);
             }
-            this->inval(nullptr);
             return true;
         }
-        return this->INHERITED::onQuery(evt);
+        return false;
     }
 
     void onSizeChange() override {
@@ -244,7 +252,7 @@ protected:
         SkCanvas* canvas = fMaxSurface->getCanvas();
         canvas->save();
         canvas->concat(fMatrix);
-        fMinSurface->draw(canvas, 0, 0, nullptr);
+        fMinSurface->draw(canvas, 0, 0);
         canvas->restore();
 
         SkPaint paint;
@@ -261,10 +269,10 @@ protected:
 
    void setWHZ(int width, int height, int zoom) {
         fZoom = zoom;
-        fBounds.set(0, 0, SkIntToScalar(width * zoom), SkIntToScalar(height * zoom));
+        fBounds.setIWH(width * zoom, height * zoom);
         fMatrix.setScale(SkIntToScalar(zoom), SkIntToScalar(zoom));
         fInverse.setScale(SK_Scalar1 / zoom, SK_Scalar1 / zoom);
-        fShader = sk_tool_utils::create_checkerboard_shader(0xFFCCCCCC, 0xFFFFFFFF, zoom);
+        fShader = ToolUtils::create_checkerboard_shader(0xFFCCCCCC, 0xFFFFFFFF, zoom);
 
         SkImageInfo info = SkImageInfo::MakeN32Premul(width, height);
         fMinSurface = SkSurface::MakeRaster(info);
@@ -308,12 +316,13 @@ protected:
         SkPaint paint, labelP;
         paint.setColor(color);
         labelP.setColor(color & 0xff5f9f5f);
+        SkFont font;
         SkPoint pos, tan;
         int index = 0;
         for (SkScalar dist = 0; dist <= total; dist += delta) {
             if (meas.getPosTan(dist, &pos, &tan)) {
                 tan.scale(radius);
-                tan.rotateCCW();
+                SkPointPriv::RotateCCW(&tan);
                 canvas->drawLine(pos.x() + tan.x(), pos.y() + tan.y(),
                                  pos.x() - tan.x(), pos.y() - tan.y(), paint);
                 if (0 == index % 10) {
@@ -322,7 +331,7 @@ protected:
                     SkRect dot = SkRect::MakeXYWH(pos.x() - 2, pos.y() - 2, 4, 4);
                     canvas->drawRect(dot, labelP);
                     canvas->drawString(label,
-                        pos.x() - tan.x() * 1.25f, pos.y() - tan.y() * 1.25f, labelP);
+                        pos.x() - tan.x() * 1.25f, pos.y() - tan.y() * 1.25f, font, labelP);
                 }
             }
             ++index;
@@ -340,14 +349,14 @@ protected:
         for (SkScalar dist = 0; dist <= total; dist += delta) {
             ++ribs;
         }
-        SkPath::RawIter iter(path);
-        SkPoint pts[4];
-        if (SkPath::kMove_Verb != iter.next(pts)) {
+        const uint8_t* verbs = SkPathPriv::VerbData(path);
+        if (path.countVerbs() < 2 || SkPath::kMove_Verb != verbs[0]) {
             SkASSERT(0);
             return;
         }
-        SkPath::Verb verb = iter.next(pts);
+        auto verb = static_cast<SkPath::Verb>(verbs[1]);
         SkASSERT(SkPath::kLine_Verb <= verb && verb <= SkPath::kCubic_Verb);
+        const SkPoint* pts = SkPathPriv::PointData(path);
         SkPoint pos, tan;
         for (int index = 0; index < ribs; ++index) {
             SkScalar t = (SkScalar) index / ribs;
@@ -363,7 +372,7 @@ protected:
                     tan = SkEvalQuadTangentAt(pts, t);
                     break;
                 case SkPath::kConic_Verb: {
-                    SkConic conic(pts, iter.conicWeight());
+                    SkConic conic(pts, SkPathPriv::ConicWeightData(path)[0]);
                     pos = conic.evalAt(t);
                     tan = conic.evalTangentAt(t);
                     } break;
@@ -375,14 +384,14 @@ protected:
                     return;
             }
             tan.setLength(radius);
-            tan.rotateCCW();
+            SkPointPriv::RotateCCW(&tan);
             canvas->drawLine(pos.x() + tan.x(), pos.y() + tan.y(),
                                 pos.x() - tan.x(), pos.y() - tan.y(), paint);
             if (0 == index % 10) {
                 SkString label;
                 label.appendS32(index);
                 canvas->drawString(label,
-                    pos.x() + tan.x() * 1.25f, pos.y() + tan.y() * 1.25f, paint);
+                    pos.x() + tan.x() * 1.25f, pos.y() + tan.y() * 1.25f, SkFont(), paint);
             }
         }
     }
@@ -405,7 +414,7 @@ protected:
         if (drawText) {
             fMinSurface->getCanvas()->drawPath(path, paint);
             this->copyMinToMax();
-            fMaxSurface->draw(canvas, 0, 0, nullptr);
+            fMaxSurface->draw(canvas, 0, 0);
         }
         paint.setAntiAlias(true);
         paint.setStyle(SkPaint::kStroke_Style);
@@ -462,7 +471,7 @@ protected:
         paint.setStyle(SkPaint::kStroke_Style);
         paint.setStrokeWidth(width);
         SkPath path;
-        SkScalar maxSide = SkTMax(rect.width(), rect.height()) / 2;
+        SkScalar maxSide = std::max(rect.width(), rect.height()) / 2;
         SkPoint center = { rect.fLeft + maxSide, rect.fTop + maxSide };
         path.addCircle(center.fX, center.fY, maxSide);
         canvas->drawPath(path, paint);
@@ -472,7 +481,7 @@ protected:
         paint.setColor(0x3f0f1f3f);
         canvas->drawPath(path, paint);
         path.reset();
-        path.setFillType(SkPath::kEvenOdd_FillType);
+        path.setFillType(SkPathFillType::kEvenOdd);
         path.addCircle(center.fX, center.fY, maxSide + width / 2);
         SkRect outside = SkRect::MakeXYWH(center.fX - maxSide - width, center.fY - maxSide - width,
                 (maxSide + width) * 2, (maxSide + width) * 2);
@@ -486,12 +495,13 @@ protected:
         paint.setStyle(SkPaint::kStroke_Style);
         paint.setColor(button.fEnabled ? 0xFF3F0000 : 0x6F3F0000);
         canvas->drawRect(button.fBounds, paint);
-        paint.setTextSize(25.0f);
         paint.setColor(button.fEnabled ? 0xFF3F0000 : 0x6F3F0000);
-        paint.setTextAlign(SkPaint::kCenter_Align);
         paint.setStyle(SkPaint::kFill_Style);
-        canvas->drawText(&button.fLabel, 1, button.fBounds.centerX(), button.fBounds.fBottom - 5,
-                paint);
+        SkFont font;
+        font.setSize(25.0f);
+        SkTextUtils::Draw(canvas, &button.fLabel, 1, SkTextEncoding::kUTF8,
+                button.fBounds.centerX(), button.fBounds.fBottom - 5,
+                font, paint, SkTextUtils::kCenter_Align);
     }
 
     void draw_control(SkCanvas* canvas, const SkRect& bounds, SkScalar value,
@@ -507,11 +517,11 @@ protected:
         SkString label;
         label.printf("%0.3g", value);
         paint.setColor(0xFF000000);
-        paint.setTextSize(11.0f);
         paint.setStyle(SkPaint::kFill_Style);
-        canvas->drawString(label, bounds.fLeft + 5, yPos - 5, paint);
-        paint.setTextSize(13.0f);
-        canvas->drawString(name, bounds.fLeft, bounds.bottom() + 11, paint);
+        SkFont font(nullptr, 11.0f);
+        canvas->drawString(label, bounds.fLeft + 5, yPos - 5, font, paint);
+        font.setSize(13.0f);
+        canvas->drawString(name, bounds.fLeft, bounds.bottom() + 11, font, paint);
     }
 
     void setForGeometry() {
@@ -556,8 +566,8 @@ protected:
         before.setLength(fRadius);
         after.setLength(fRadius);
         SkVector beforeCCW, afterCCW;
-        before.rotateCCW(&beforeCCW);
-        after.rotateCCW(&afterCCW);
+        SkPointPriv::RotateCCW(before, &beforeCCW);
+        SkPointPriv::RotateCCW(after, &afterCCW);
         beforeCCW += pts[0];
         afterCCW += pts[2];
         *center = beforeCCW;
@@ -566,8 +576,8 @@ protected:
             return true;
         }
         SkVector beforeCW, afterCW;
-        before.rotateCW(&beforeCW);
-        after.rotateCW(&afterCW);
+        SkPointPriv::RotateCW(before, &beforeCW);
+        SkPointPriv::RotateCW(after, &afterCW);
         beforeCW += pts[0];
         afterCW += pts[2];
         *center = beforeCW;
@@ -618,7 +628,7 @@ protected:
         if (fRRectButton.fEnabled) {
             SkScalar rad = 32;
             SkRect r;
-            r.set(&fPts[13], 2);
+            r.setBounds(&fPts[13], 2);
             path.reset();
             SkRRect rr;
             rr.setRectXY(r, rad, rad);
@@ -629,9 +639,9 @@ protected:
             path.reset();
             SkRRect rr2;
             rr.inset(width/2, width/2, &rr2);
-            path.addRRect(rr2, SkPath::kCCW_Direction);
+            path.addRRect(rr2, SkPathDirection::kCCW);
             rr.inset(-width/2, -width/2, &rr2);
-            path.addRRect(rr2, SkPath::kCW_Direction);
+            path.addRRect(rr2, SkPathDirection::kCW);
             SkPaint paint;
             paint.setAntiAlias(true);
             paint.setColor(0x40FF8844);
@@ -641,15 +651,15 @@ protected:
         if (fCircleButton.fEnabled) {
             path.reset();
             SkRect r;
-            r.set(&fPts[15], 2);
+            r.setBounds(&fPts[15], 2);
             path.addOval(r);
             setForGeometry();
             if (fCircleButton.fFill) {
                 if (fArcButton.fEnabled) {
                     SkPoint center;
                     if (arcCenter(&center)) {
-                        r.set(center.fX - fRadius, center.fY - fRadius, center.fX + fRadius,
-                                center.fY + fRadius);
+                        r.setLTRB(center.fX - fRadius, center.fY - fRadius,
+                                  center.fX + fRadius, center.fY + fRadius);
                     }
                 }
                 draw_fill(canvas, r, width);
@@ -660,10 +670,10 @@ protected:
 
         if (fTextButton.fEnabled) {
             path.reset();
-            SkPaint paint;
-            paint.setAntiAlias(true);
-            paint.setTextSize(fTextSize);
-            paint.getTextPath(fText.c_str(), fText.size(), 0, fTextSize, &path);
+            SkFont font;
+            font.setSize(fTextSize);
+            SkTextUtils::GetPath(fText.c_str(), fText.size(), SkTextEncoding::kUTF8,
+                                 0, fTextSize, font, &path);
             setForText();
             draw_stroke(canvas, path, width * fWidthScale / fTextSize, fTextSize, true);
         }
@@ -696,95 +706,92 @@ protected:
         draw_button(canvas, fRRectButton);
         draw_button(canvas, fCircleButton);
         draw_button(canvas, fTextButton);
-        this->inval(nullptr);
     }
 
     class MyClick : public Click {
     public:
         int fIndex;
-        MyClick(SkView* target, int index) : Click(target), fIndex(index) {}
+        MyClick(int index) : fIndex(index) {}
     };
 
-    virtual SkView::Click* onFindClickHandler(SkScalar x, SkScalar y,
-                                              unsigned modi) override {
+    Sample::Click* onFindClickHandler(SkScalar x, SkScalar y, skui::ModifierKey modi) override {
         for (size_t i = 0; i < SK_ARRAY_COUNT(fPts); ++i) {
             if (hittest(fPts[i], x, y)) {
-                return new MyClick(this, (int)i);
+                return new MyClick((int)i);
             }
         }
         const SkRect& rectPt = SkRect::MakeXYWH(x, y, 1, 1);
         if (fWeightControl.contains(rectPt)) {
-            return new MyClick(this, (int) SK_ARRAY_COUNT(fPts) + 1);
+            return new MyClick((int) SK_ARRAY_COUNT(fPts) + 1);
         }
         if (fRadiusControl.contains(rectPt)) {
-            return new MyClick(this, (int) SK_ARRAY_COUNT(fPts) + 2);
+            return new MyClick((int) SK_ARRAY_COUNT(fPts) + 2);
         }
 #ifdef SK_DEBUG
         if (fErrorControl.contains(rectPt)) {
-            return new MyClick(this, (int) SK_ARRAY_COUNT(fPts) + 3);
+            return new MyClick((int) SK_ARRAY_COUNT(fPts) + 3);
         }
 #endif
         if (fWidthControl.contains(rectPt)) {
-            return new MyClick(this, (int) SK_ARRAY_COUNT(fPts) + 4);
+            return new MyClick((int) SK_ARRAY_COUNT(fPts) + 4);
         }
         if (fCubicButton.fBounds.contains(rectPt)) {
             fCubicButton.fEnabled ^= true;
-            return new MyClick(this, (int) SK_ARRAY_COUNT(fPts) + 5);
+            return new MyClick((int) SK_ARRAY_COUNT(fPts) + 5);
         }
         if (fConicButton.fBounds.contains(rectPt)) {
             fConicButton.fEnabled ^= true;
-            return new MyClick(this, (int) SK_ARRAY_COUNT(fPts) + 6);
+            return new MyClick((int) SK_ARRAY_COUNT(fPts) + 6);
         }
         if (fQuadButton.fBounds.contains(rectPt)) {
             fQuadButton.fEnabled ^= true;
-            return new MyClick(this, (int) SK_ARRAY_COUNT(fPts) + 7);
+            return new MyClick((int) SK_ARRAY_COUNT(fPts) + 7);
         }
         if (fArcButton.fBounds.contains(rectPt)) {
             fArcButton.fEnabled ^= true;
-            return new MyClick(this, (int) SK_ARRAY_COUNT(fPts) + 8);
+            return new MyClick((int) SK_ARRAY_COUNT(fPts) + 8);
         }
         if (fRRectButton.fBounds.contains(rectPt)) {
             fRRectButton.fEnabled ^= true;
-            return new MyClick(this, (int) SK_ARRAY_COUNT(fPts) + 9);
+            return new MyClick((int) SK_ARRAY_COUNT(fPts) + 9);
         }
         if (fCircleButton.fBounds.contains(rectPt)) {
             bool wasEnabled = fCircleButton.fEnabled;
             fCircleButton.fEnabled = !fCircleButton.fFill;
             fCircleButton.fFill = wasEnabled && !fCircleButton.fFill;
-            return new MyClick(this, (int) SK_ARRAY_COUNT(fPts) + 10);
+            return new MyClick((int) SK_ARRAY_COUNT(fPts) + 10);
         }
         if (fTextButton.fBounds.contains(rectPt)) {
             fTextButton.fEnabled ^= true;
-            return new MyClick(this, (int) SK_ARRAY_COUNT(fPts) + 11);
+            return new MyClick((int) SK_ARRAY_COUNT(fPts) + 11);
         }
-        return this->INHERITED::onFindClickHandler(x, y, modi);
+        return nullptr;
     }
 
-    static SkScalar MapScreenYtoValue(int y, const SkRect& control, SkScalar min,
+    static SkScalar MapScreenYtoValue(SkScalar y, const SkRect& control, SkScalar min,
             SkScalar max) {
-        return (SkIntToScalar(y) - control.fTop) / control.height() * (max - min) + min;
+        return (y - control.fTop) / control.height() * (max - min) + min;
     }
 
     bool onClick(Click* click) override {
         int index = ((MyClick*)click)->fIndex;
         if (index < (int) SK_ARRAY_COUNT(fPts)) {
-            fPts[index].offset(SkIntToScalar(click->fICurr.fX - click->fIPrev.fX),
-                               SkIntToScalar(click->fICurr.fY - click->fIPrev.fY));
-            this->inval(nullptr);
+            fPts[index].offset(click->fCurr.fX - click->fPrev.fX,
+                               click->fCurr.fY - click->fPrev.fY);
         } else if (index == (int) SK_ARRAY_COUNT(fPts) + 1) {
-            fWeight = MapScreenYtoValue(click->fICurr.fY, fWeightControl, 0, 5);
+            fWeight = MapScreenYtoValue(click->fCurr.fY, fWeightControl, 0, 5);
         } else if (index == (int) SK_ARRAY_COUNT(fPts) + 2) {
-            fRadius = MapScreenYtoValue(click->fICurr.fY, fRadiusControl, 0, 500);
+            fRadius = MapScreenYtoValue(click->fCurr.fY, fRadiusControl, 0, 500);
         }
 #ifdef SK_DEBUG
         else if (index == (int) SK_ARRAY_COUNT(fPts) + 3) {
-            gDebugStrokerError = SkTMax(FLT_EPSILON, MapScreenYtoValue(click->fICurr.fY,
+            gDebugStrokerError = std::max(FLT_EPSILON, MapScreenYtoValue(click->fCurr.fY,
                     fErrorControl, kStrokerErrorMin, kStrokerErrorMax));
             gDebugStrokerErrorSet = true;
         }
 #endif
         else if (index == (int) SK_ARRAY_COUNT(fPts) + 4) {
-            fWidth = SkTMax(FLT_EPSILON, MapScreenYtoValue(click->fICurr.fY, fWidthControl,
+            fWidth = std::max(FLT_EPSILON, MapScreenYtoValue(click->fCurr.fY, fWidthControl,
                     kWidthMin, kWidthMax));
             fAnimate = fWidth <= kWidthMin;
         }
@@ -792,10 +799,9 @@ protected:
     }
 
 private:
-    typedef SkView INHERITED;
+    using INHERITED = Sample;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static SkView* F2() { return new QuadStrokerView; }
-static SkViewRegister gR2(F2);
+DEF_SAMPLE( return new QuadStrokerView(); )

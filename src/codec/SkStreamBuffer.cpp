@@ -5,13 +5,13 @@
  * found in the LICENSE file.
  */
 
-#include "SkStreamBuffer.h"
+#include "src/codec/SkStreamBuffer.h"
 
-SkStreamBuffer::SkStreamBuffer(SkStream* stream)
-    : fStream(stream)
+SkStreamBuffer::SkStreamBuffer(std::unique_ptr<SkStream> stream)
+    : fStream(std::move(stream))
     , fPosition(0)
     , fBytesBuffered(0)
-    , fHasLengthAndPosition(stream->hasLength() && stream->hasPosition())
+    , fHasLengthAndPosition(fStream->hasLength() && fStream->hasPosition())
     , fTrulyBuffered(0)
 {}
 
@@ -45,7 +45,7 @@ bool SkStreamBuffer::buffer(size_t totalBytesToBuffer) {
 
     if (fHasLengthAndPosition) {
         const size_t remaining = fStream->getLength() - fStream->getPosition() + fTrulyBuffered;
-        fBytesBuffered = SkTMin(remaining, totalBytesToBuffer);
+        fBytesBuffered = std::min(remaining, totalBytesToBuffer);
     } else {
         const size_t extraBytes = totalBytesToBuffer - fBytesBuffered;
         const size_t bytesBuffered = fStream->read(fBuffer + fBytesBuffered, extraBytes);
@@ -72,7 +72,8 @@ sk_sp<SkData> SkStreamBuffer::getDataAtPosition(size_t position, size_t length) 
         return sk_ref_sp<SkData>(*data);
     }
 
-    SkASSERT(position + length <= fStream->getLength());
+    SkASSERT(length <= fStream->getLength() &&
+             position <= fStream->getLength() - length);
 
     const size_t oldPosition = fStream->getPosition();
     if (!fStream->seek(position)) {

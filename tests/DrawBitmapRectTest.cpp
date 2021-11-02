@@ -5,19 +5,22 @@
  * found in the LICENSE file.
  */
 
-#include "SkBitmap.h"
-#include "SkCanvas.h"
-#include "SkData.h"
-#include "SkDiscardableMemoryPool.h"
-#include "SkImageGenerator.h"
-#include "SkMatrixUtils.h"
-#include "SkPaint.h"
-#include "SkPath.h"
-#include "SkPixelRef.h"
-#include "SkRandom.h"
-#include "SkShader.h"
-#include "SkSurface.h"
-#include "Test.h"
+#include "include/core/SkBitmap.h"
+#include "include/core/SkCanvas.h"
+#include "include/core/SkColor.h"
+#include "include/core/SkImage.h"
+#include "include/core/SkMatrix.h"
+#include "include/core/SkPaint.h"
+#include "include/core/SkPath.h"
+#include "include/core/SkRect.h"
+#include "include/core/SkScalar.h"
+#include "include/core/SkShader.h"
+#include "include/core/SkSize.h"
+#include "include/core/SkTileMode.h"
+#include "include/core/SkTypes.h"
+#include "include/utils/SkRandom.h"
+#include "src/core/SkMatrixUtils.h"
+#include "tests/Test.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -52,12 +55,14 @@ static void test_treatAsSprite(skiatest::Reporter* reporter) {
     SkPaint aaPaint;
     aaPaint.setAntiAlias(true);
 
+    const SkSamplingOptions sampling;
+
     // assert: translate-only no-aa can always be treated as sprite
     for (int i = 0; i < 1000; ++i) {
         rand_matrix(&mat, rand, SkMatrix::kTranslate_Mask);
         for (int j = 0; j < 1000; ++j) {
             rand_size(&size, rand);
-            REPORTER_ASSERT(reporter, SkTreatAsSprite(mat, size, noaaPaint));
+            REPORTER_ASSERT(reporter, SkTreatAsSprite(mat, size, sampling, noaaPaint));
         }
     }
 
@@ -66,8 +71,8 @@ static void test_treatAsSprite(skiatest::Reporter* reporter) {
         rand_matrix(&mat, rand, SkMatrix::kAffine_Mask | SkMatrix::kPerspective_Mask);
         for (int j = 0; j < 1000; ++j) {
             rand_size(&size, rand);
-            REPORTER_ASSERT(reporter, !SkTreatAsSprite(mat, size, noaaPaint));
-            REPORTER_ASSERT(reporter, !SkTreatAsSprite(mat, size, aaPaint));
+            REPORTER_ASSERT(reporter, !SkTreatAsSprite(mat, size, sampling, noaaPaint));
+            REPORTER_ASSERT(reporter, !SkTreatAsSprite(mat, size, sampling, aaPaint));
         }
     }
 
@@ -75,57 +80,37 @@ static void test_treatAsSprite(skiatest::Reporter* reporter) {
 
     const SkScalar tooMuchSubpixel = 100.1f;
     mat.setTranslate(tooMuchSubpixel, 0);
-    REPORTER_ASSERT(reporter, !SkTreatAsSprite(mat, size, aaPaint));
+    REPORTER_ASSERT(reporter, !SkTreatAsSprite(mat, size, sampling, aaPaint));
     mat.setTranslate(0, tooMuchSubpixel);
-    REPORTER_ASSERT(reporter, !SkTreatAsSprite(mat, size, aaPaint));
+    REPORTER_ASSERT(reporter, !SkTreatAsSprite(mat, size, sampling, aaPaint));
 
     const SkScalar tinySubPixel = 100.02f;
     mat.setTranslate(tinySubPixel, 0);
-    REPORTER_ASSERT(reporter, SkTreatAsSprite(mat, size, aaPaint));
+    REPORTER_ASSERT(reporter, SkTreatAsSprite(mat, size, sampling, aaPaint));
     mat.setTranslate(0, tinySubPixel);
-    REPORTER_ASSERT(reporter, SkTreatAsSprite(mat, size, aaPaint));
+    REPORTER_ASSERT(reporter, SkTreatAsSprite(mat, size, sampling, aaPaint));
 
     const SkScalar twoThirds = SK_Scalar1 * 2 / 3;
     const SkScalar bigScale = (size.width() + twoThirds) / size.width();
     mat.setScale(bigScale, bigScale);
-    REPORTER_ASSERT(reporter, !SkTreatAsSprite(mat, size, noaaPaint));
-    REPORTER_ASSERT(reporter, !SkTreatAsSprite(mat, size, aaPaint));
+    REPORTER_ASSERT(reporter, !SkTreatAsSprite(mat, size, sampling, noaaPaint));
+    REPORTER_ASSERT(reporter, !SkTreatAsSprite(mat, size, sampling, aaPaint));
 
     const SkScalar oneThird = SK_Scalar1 / 3;
     const SkScalar smallScale = (size.width() + oneThird) / size.width();
     mat.setScale(smallScale, smallScale);
-    REPORTER_ASSERT(reporter, SkTreatAsSprite(mat, size, noaaPaint));
-    REPORTER_ASSERT(reporter, !SkTreatAsSprite(mat, size, aaPaint));
+    REPORTER_ASSERT(reporter, SkTreatAsSprite(mat, size, sampling, noaaPaint));
+    REPORTER_ASSERT(reporter, !SkTreatAsSprite(mat, size, sampling, aaPaint));
 
     const SkScalar oneFortyth = SK_Scalar1 / 40;
     const SkScalar tinyScale = (size.width() + oneFortyth) / size.width();
     mat.setScale(tinyScale, tinyScale);
-    REPORTER_ASSERT(reporter, SkTreatAsSprite(mat, size, noaaPaint));
-    REPORTER_ASSERT(reporter, SkTreatAsSprite(mat, size, aaPaint));
-}
-
-static void assert_ifDrawnTo(skiatest::Reporter* reporter,
-                             const SkBitmap& bm, bool shouldBeDrawn) {
-    for (int y = 0; y < bm.height(); ++y) {
-        for (int x = 0; x < bm.width(); ++x) {
-            if (shouldBeDrawn) {
-                if (SK_ColorTRANSPARENT == *bm.getAddr32(x, y)) {
-                    REPORTER_ASSERT(reporter, false);
-                    return;
-                }
-            } else {
-                // should not be drawn
-                if (SK_ColorTRANSPARENT != *bm.getAddr32(x, y)) {
-                    REPORTER_ASSERT(reporter, false);
-                    return;
-                }
-            }
-        }
-    }
+    REPORTER_ASSERT(reporter, SkTreatAsSprite(mat, size, sampling, noaaPaint));
+    REPORTER_ASSERT(reporter, SkTreatAsSprite(mat, size, sampling, aaPaint));
 }
 
 static void test_wacky_bitmapshader(skiatest::Reporter* reporter,
-                                    int width, int height, bool shouldBeDrawn) {
+                                    int width, int height) {
     SkBitmap dev;
     dev.allocN32Pixels(0x56F, 0x4f6);
     dev.eraseColor(SK_ColorTRANSPARENT);  // necessary, so we know if we draw to it
@@ -144,9 +129,11 @@ static void test_wacky_bitmapshader(skiatest::Reporter* reporter,
 
     SkBitmap bm;
     if (bm.tryAllocN32Pixels(width, height)) {
-        // allow this to fail silently, to test the code downstream
+        bm.eraseColor(SK_ColorRED);
+    } else {
+        SkASSERT(false);
+        return;
     }
-    bm.eraseColor(SK_ColorRED);
 
     matrix.setAll(0.0078740157f,
                   0,
@@ -156,14 +143,24 @@ static void test_wacky_bitmapshader(skiatest::Reporter* reporter,
                   SkIntToScalar(239),
                   0, 0, SK_Scalar1);
     SkPaint paint;
-    paint.setShader(SkShader::MakeBitmapShader(bm, SkShader::kRepeat_TileMode,
-                                               SkShader::kRepeat_TileMode, &matrix));
+    paint.setShader(bm.makeShader(SkTileMode::kRepeat, SkTileMode::kRepeat,
+                                  SkSamplingOptions(), matrix));
 
     SkRect r = SkRect::MakeXYWH(681, 239, 695, 253);
     c.drawRect(r, paint);
 
-    assert_ifDrawnTo(reporter, dev, shouldBeDrawn);
+    for (int y = 0; y < dev.height(); ++y) {
+        for (int x = 0; x < dev.width(); ++x) {
+            if (SK_ColorTRANSPARENT == *dev.getAddr32(x, y)) {
+                REPORTER_ASSERT(reporter, false);
+                return;
+            }
+        }
+    }
 }
+
+// ATTENTION  We should always draw each of these sizes safely now.  ATTENTION
+// ATTENTION  I'm leaving this next /*comment*/ for posterity.       ATTENTION
 
 /*
  *  Original bug was asserting that the matrix-proc had generated a (Y) value
@@ -179,7 +176,7 @@ static void test_wacky_bitmapshader(skiatest::Reporter* reporter,
  *     sign-extension bleed when packing the two values (X,Y) into our 32bit
  *     slot.
  *
- *  This tests exercises the original setup, plus 3 more to ensure that we can,
+ *  This tests exercises the original setup, plus 2 more to ensure that we can,
  *  in fact, handle bitmaps at 64K-1 (assuming we don't exceed the total
  *  memory allocation limit).
  */
@@ -187,18 +184,15 @@ static void test_giantrepeat_crbug118018(skiatest::Reporter* reporter) {
     static const struct {
         int fWidth;
         int fHeight;
-        bool fExpectedToDraw;
     } gTests[] = {
-        { 0x1b294, 0x7f,  false },   // crbug 118018 (width exceeds 64K)
-        { 0xFFFF, 0x7f,    true },   // should draw, test max width
-        { 0x7f, 0xFFFF,    true },   // should draw, test max height
-        { 0xFFFF, 0xFFFF, false },   // allocation fails (too much RAM)
+        { 0x1b294, 0x7f},   // crbug 118018 (width exceeds 64K)... should draw safely now.
+        { 0xFFFF, 0x7f },   // should draw, test max width
+        { 0x7f, 0xFFFF },   // should draw, test max height
     };
 
     for (size_t i = 0; i < SK_ARRAY_COUNT(gTests); ++i) {
         test_wacky_bitmapshader(reporter,
-                                gTests[i].fWidth, gTests[i].fHeight,
-                                gTests[i].fExpectedToDraw);
+                                gTests[i].fWidth, gTests[i].fHeight);
     }
 }
 
@@ -254,10 +248,11 @@ DEF_TEST(DrawBitmapRect, reporter) {
 
     SkCanvas canvas(dst);
 
-    SkIRect srcR = { gWidth, 0, gWidth + 16, 16 };
-    SkRect  dstR = { 0, 0, SkIntToScalar(16), SkIntToScalar(16) };
+    SkRect srcR = { gWidth, 0, gWidth + 16, 16 };
+    SkRect dstR = { 0, 0, 16, 16 };
 
-    canvas.drawBitmapRect(src, srcR, dstR, nullptr);
+    canvas.drawImageRect(src.asImage(), srcR, dstR, SkSamplingOptions(), nullptr,
+                         SkCanvas::kStrict_SrcRectConstraint);
 
     // ensure that we draw nothing if srcR does not intersect the bitmap
     REPORTER_ASSERT(reporter, check_for_all_zeros(dst));

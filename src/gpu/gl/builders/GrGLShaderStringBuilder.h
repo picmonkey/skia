@@ -8,23 +8,24 @@
 #ifndef GrGLShaderStringBuilder_DEFINED
 #define GrGLShaderStringBuilder_DEFINED
 
-#include "GrAllocator.h"
-#include "GrGpu.h"
-#include "gl/GrGLContext.h"
-#include "SkSLGLSLCodeGenerator.h"
-#include "SkTypes.h"
+#include "include/core/SkTypes.h"
+#include "include/gpu/GrContextOptions.h"
+#include "src/gpu/GrGpu.h"
+#include "src/gpu/gl/GrGLContext.h"
+#include "src/sksl/codegen/SkSLGLSLCodeGenerator.h"
+
+std::unique_ptr<SkSL::Program> GrSkSLtoGLSL(const GrGLGpu* gpu,
+                                            SkSL::ProgramKind programKind,
+                                            const SkSL::String& sksl,
+                                            const SkSL::Program::Settings& settings,
+                                            SkSL::String* glsl,
+                                            GrContextOptions::ShaderErrorHandler* errorHandler);
 
 GrGLuint GrGLCompileAndAttachShader(const GrGLContext& glCtx,
                                     GrGLuint programId,
                                     GrGLenum type,
-                                    const char** skslStrings,
-                                    int* lengths,
-                                    int count,
-                                    GrGpu::Stats*,
-                                    const SkSL::Program::Settings& settings,
-                                    SkSL::Program::Inputs* inputs);
-
-void GrGLPrintShader(const GrGLContext&, GrGLenum type, const char** skslStrings, int* lengths,
-                     int count, const SkSL::Program::Settings&);
+                                    const SkSL::String& glsl,
+                                    GrThreadSafePipelineBuilder::Stats*,
+                                    GrContextOptions::ShaderErrorHandler* errorHandler);
 
 #endif

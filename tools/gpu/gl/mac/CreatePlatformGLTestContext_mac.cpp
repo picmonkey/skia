@@ -5,15 +5,21 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
-#include "SkTypes.h"
+#include "include/core/SkTypes.h"
 
-#include "gl/GLTestContext.h"
+#include "tools/gpu/gl/GLTestContext.h"
 #include "AvailabilityMacros.h"
 
 #include <OpenGL/OpenGL.h>
 #include <dlfcn.h>
 
 namespace {
+
+std::function<void()> context_restorer() {
+    auto context = CGLGetCurrentContext();
+    return [context] { CGLSetCurrentContext(context); };
+}
+
 class MacGLTestContext : public sk_gpu_test::GLTestContext {
 public:
     MacGLTestContext(MacGLTestContext* shareContext);
@@ -22,8 +28,9 @@ public:
 private:
     void destroyGLContext();
 
+    void onPlatformMakeNotCurrent() const override;
     void onPlatformMakeCurrent() const override;
-    void onPlatformSwapBuffers() const override;
+    std::function<void()> onPlatformGetAutoContextRestore() const override;
     GrGLFuncPtr onPlatformGetProcAddress(const char*) const override;
 
     CGLContextObj fContext;
@@ -33,18 +40,41 @@ private:
 MacGLTestContext::MacGLTestContext(MacGLTestContext* shareContext)
     : fContext(nullptr)
     , fGLLibrary(RTLD_DEFAULT) {
+    // We first try to request a Radeon eGPU if one is available.
+    // This will be a Radeon HD7000 and up, which includes all eGPU configs.
+    // If that fails, we try again with only the base parameters.
     CGLPixelFormatAttribute attributes[] = {
+        // base parameters
 #if MAC_OS_X_VERSION_10_7
-        kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute) kCGLOGLPVersion_3_2_Core,
+        kCGLPFAOpenGLProfile,
+        (CGLPixelFormatAttribute) kCGLOGLPVersion_3_2_Core,
 #endif
         kCGLPFADoubleBuffer,
-        (CGLPixelFormatAttribute)0
+
+#if MAC_OS_X_VERSION_10_8
+        // eGPU parameters
+        kCGLPFAAllowOfflineRenderers,  // Enables e-GPU.
+        kCGLPFANoRecovery,  // Disallows software rendering.
+        kCGLPFARendererID, (CGLPixelFormatAttribute)kCGLRendererATIRadeonX4000ID, // Select Radeon
+#endif
+        (CGLPixelFormatAttribute)NULL
     };
+#if MAC_OS_X_VERSION_10_8
+    static const int kFirstEGPUParameter = 3;
+    SkASSERT(kCGLPFAAllowOfflineRenderers == attributes[kFirstEGPUParameter]);
+#endif
+
     CGLPixelFormatObj pixFormat;
     GLint npix;
-
     CGLChoosePixelFormat(attributes, &pixFormat, &npix);
 
+#if MAC_OS_X_VERSION_10_8
+    if (nullptr == pixFormat) {
+        // Move the NULL-termination up to remove the eGPU parameters and try again
+        attributes[kFirstEGPUParameter] = (CGLPixelFormatAttribute)NULL;
+        CGLChoosePixelFormat(attributes, &pixFormat, &npix);
+    }
+#endif
     if (nullptr == pixFormat) {
         SkDebugf("CGLChoosePixelFormat failed.");
         return;
@@ -58,10 +88,11 @@ MacGLTestContext::MacGLTestContext(MacGLTestContext* shareContext)
         return;
     }
 
+    SkScopeExit restorer(context_restorer());
     CGLSetCurrentContext(fContext);
 
-    sk_sp<const GrGLInterface> gl(GrGLCreateNativeInterface());
-    if (nullptr == gl.get()) {
+    auto gl = GrGLMakeNativeInterface();
+    if (!gl) {
         SkDebugf("Context could not create GL interface.\n");
         this->destroyGLContext();
         return;
@@ -76,7 +107,7 @@ MacGLTestContext::MacGLTestContext(MacGLTestContext* shareContext)
         "/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib",
         RTLD_LAZY);
 
-    this->init(gl.release());
+    this->init(std::move(gl));
 }
 
 MacGLTestContext::~MacGLTestContext() {
@@ -86,24 +117,36 @@ MacGLTestContext::~MacGLTestContext() {
 
 void MacGLTestContext::destroyGLContext() {
     if (fContext) {
+        if (CGLGetCurrentContext() == fContext) {
+            // This will ensure that the context is immediately deleted.
+            CGLSetCurrentContext(nullptr);
+        }
         CGLReleaseContext(fContext);
         fContext = nullptr;
     }
-    if (RTLD_DEFAULT != fGLLibrary) {
+    if (nullptr != fGLLibrary) {
         dlclose(fGLLibrary);
     }
+}
+
+void MacGLTestContext::onPlatformMakeNotCurrent() const {
+    CGLSetCurrentContext(nullptr);
 }
 
 void MacGLTestContext::onPlatformMakeCurrent() const {
     CGLSetCurrentContext(fContext);
 }
 
-void MacGLTestContext::onPlatformSwapBuffers() const {
-    CGLFlushDrawable(fContext);
+std::function<void()> MacGLTestContext::onPlatformGetAutoContextRestore() const {
+    if (CGLGetCurrentContext() == fContext) {
+        return nullptr;
+    }
+    return context_restorer();
 }
 
 GrGLFuncPtr MacGLTestContext::onPlatformGetProcAddress(const char* procName) const {
-    return reinterpret_cast<GrGLFuncPtr>(dlsym(fGLLibrary, procName));
+    void* handle = (nullptr == fGLLibrary) ? RTLD_DEFAULT : fGLLibrary;
+    return reinterpret_cast<GrGLFuncPtr>(dlsym(handle, procName));
 }
 
 }  // anonymous namespace

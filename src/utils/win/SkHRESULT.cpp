@@ -5,16 +5,16 @@
  * found in the LICENSE file.
  */
 
-#include "SkTypes.h"
-#if defined(SK_BUILD_FOR_WIN32)
+#include "include/core/SkTypes.h"
+#if defined(SK_BUILD_FOR_WIN)
 
-#include "SkHRESULT.h"
+#include "src/utils/win/SkHRESULT.h"
 
 void SkTraceHR(const char* file, unsigned long line, HRESULT hr, const char* msg) {
     if (msg) {
         SkDebugf("%s\n", msg);
     }
-    SkDebugf("%s(%lu) : error 0x%x: ", file, line, hr);
+    SkDebugf("%s(%lu) : error 0x%lx: ", file, line, hr);
 
     LPSTR errorText = nullptr;
     FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER |
@@ -37,4 +37,4 @@ void SkTraceHR(const char* file, unsigned long line, HRESULT hr, const char* msg
     }
 }
 
-#endif//defined(SK_BUILD_FOR_WIN32)
+#endif//defined(SK_BUILD_FOR_WIN)

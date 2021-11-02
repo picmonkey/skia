@@ -5,18 +5,22 @@
  * found in the LICENSE file.
  */
 
-#include "SampleCode.h"
-#include "SkCanvas.h"
-#include "SkDOM.h"
-#include "SkOSFile.h"
-#include "SkOSPath.h"
-#include "SkStream.h"
-#include "SkSVGDOM.h"
-#include "SkView.h"
+#include "include/core/SkTypes.h"
+
+#if defined(SK_ENABLE_SVG)
+
+#include "include/core/SkCanvas.h"
+#include "include/core/SkStream.h"
+#include "modules/svg/include/SkSVGDOM.h"
+#include "modules/svg/include/SkSVGNode.h"
+#include "samplecode/Sample.h"
+#include "src/core/SkOSFile.h"
+#include "src/utils/SkOSPath.h"
+#include "src/xml/SkDOM.h"
 
 namespace {
 
-class SVGFileView : public SampleView {
+class SVGFileView : public Sample {
 public:
     SVGFileView(const SkString& path)
         : fPath(path), fLabel(SkStringPrintf("[%s]", SkOSPath::Basename(path.c_str()).c_str())) {}
@@ -26,17 +30,11 @@ protected:
     void onOnceBeforeDraw() override {
         SkFILEStream svgStream(fPath.c_str());
         if (!svgStream.isValid()) {
-            SkDebugf("file not found: \"path\"\n", fPath.c_str());
+            SkDebugf("file not found: \"%s\"\n", fPath.c_str());
             return;
         }
 
-        SkDOM xmlDom;
-        if (!xmlDom.build(svgStream)) {
-            SkDebugf("XML parsing failed: \"path\"\n", fPath.c_str());
-            return;
-        }
-
-        fDom = SkSVGDOM::MakeFromDOM(xmlDom);
+        fDom = SkSVGDOM::MakeFromStream(svgStream);
         if (fDom) {
             fDom->setContainerSize(SkSize::Make(this->width(), this->height()));
         }
@@ -56,25 +54,20 @@ protected:
         this->INHERITED::onSizeChange();
     }
 
-    bool onQuery(SkEvent* evt) override {
-        if (SampleCode::TitleQ(*evt)) {
-            SampleCode::TitleR(evt, fLabel.c_str());
-            return true;
-        }
+    SkString name() override { return fLabel; }
 
-        return this->INHERITED::onQuery(evt);
-    }
 private:
     sk_sp<SkSVGDOM> fDom;
     SkString        fPath;
     SkString        fLabel;
 
-    typedef SampleView INHERITED;
+    using INHERITED = Sample;
 };
 
 } // anonymous namespace
 
-SampleView* CreateSampleSVGFileView(const SkString& filename);
-SampleView* CreateSampleSVGFileView(const SkString& filename) {
+Sample* CreateSampleSVGFileView(const SkString& filename);
+Sample* CreateSampleSVGFileView(const SkString& filename) {
     return new SVGFileView(filename);
 }
+#endif  // defined(SK_ENABLE_SVG)

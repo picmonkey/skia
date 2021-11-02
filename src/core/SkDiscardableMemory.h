@@ -8,14 +8,14 @@
 #ifndef SkDiscardableMemory_DEFINED
 #define SkDiscardableMemory_DEFINED
 
-#include "SkRefCnt.h"
-#include "SkTypes.h"
+#include "include/core/SkRefCnt.h"
+#include "include/core/SkTypes.h"
 
 /**
  *  Interface for discardable memory. Implementation is provided by the
  *  embedder.
  */
-class SK_API SkDiscardableMemory {
+class SK_SPI SkDiscardableMemory {
 public:
     /**
      *  Factory method that creates, initializes and locks an SkDiscardableMemory
@@ -31,7 +31,7 @@ public:
     public:
         virtual SkDiscardableMemory* create(size_t bytes) = 0;
     private:
-        typedef SkRefCnt INHERITED;
+        using INHERITED = SkRefCnt;
     };
 
     /** Must not be called while locked.
@@ -47,7 +47,7 @@ public:
      *
      * Nested calls to lock are not allowed.
      */
-    virtual bool lock() = 0;
+    virtual bool SK_WARN_UNUSED_RESULT lock() = 0;
 
     /**
      * Returns the current pointer for the discardable memory. This call is ONLY
@@ -60,6 +60,11 @@ public:
      * after every successful lock call.
      */
     virtual void unlock() = 0;
+
+protected:
+    SkDiscardableMemory() = default;
+    SkDiscardableMemory(const SkDiscardableMemory&) = delete;
+    SkDiscardableMemory& operator=(const SkDiscardableMemory&) = delete;
 };
 
 #endif

@@ -8,17 +8,35 @@
 #ifndef SkAndroidCodec_DEFINED
 #define SkAndroidCodec_DEFINED
 
-#include "SkCodec.h"
-#include "SkEncodedImageFormat.h"
-#include "SkStream.h"
-#include "SkTypes.h"
+#include "include/codec/SkCodec.h"
+#include "include/core/SkEncodedImageFormat.h"
+#include "include/core/SkStream.h"
+#include "include/core/SkTypes.h"
 
 /**
  *  Abstract interface defining image codec functionality that is necessary for
  *  Android.
  */
-class SkAndroidCodec : SkNoncopyable {
+class SK_API SkAndroidCodec : SkNoncopyable {
 public:
+    /**
+     * Deprecated.
+     *
+     * Now that SkAndroidCodec supports multiframe images, there are multiple
+     * ways to handle compositing an oriented frame on top of an oriented frame
+     * with different tradeoffs. SkAndroidCodec now ignores the orientation and
+     * forces the client to handle it.
+     */
+    enum class ExifOrientationBehavior {
+        kIgnore,
+        kRespect,
+    };
+
+    /**
+     *  Pass ownership of an SkCodec to a newly-created SkAndroidCodec.
+     */
+    static std::unique_ptr<SkAndroidCodec> MakeFromCodec(std::unique_ptr<SkCodec>);
+
     /**
      *  If this stream represents an encoded image that we know how to decode,
      *  return an SkAndroidCodec that can decode it. Otherwise return NULL.
@@ -29,7 +47,8 @@ public:
      *  If NULL is returned, the stream is deleted immediately. Otherwise, the
      *  SkCodec takes ownership of it, and will delete it when done with it.
      */
-    static SkAndroidCodec* NewFromStream(SkStream*, SkPngChunkReader* = NULL);
+    static std::unique_ptr<SkAndroidCodec> MakeFromStream(std::unique_ptr<SkStream>,
+                                                          SkPngChunkReader* = nullptr);
 
     /**
      *  If this data represents an encoded image that we know how to decode,
@@ -38,15 +57,20 @@ public:
      *  The SkPngChunkReader handles unknown chunks in PNGs.
      *  See SkCodec.h for more details.
      */
-    static SkAndroidCodec* NewFromData(sk_sp<SkData>, SkPngChunkReader* = NULL);
-    static SkAndroidCodec* NewFromData(SkData* data, SkPngChunkReader* reader) {
-        return NewFromData(sk_ref_sp(data), reader);
-    }
+    static std::unique_ptr<SkAndroidCodec> MakeFromData(sk_sp<SkData>, SkPngChunkReader* = nullptr);
 
-    virtual ~SkAndroidCodec() {}
+    virtual ~SkAndroidCodec();
 
-
+    // TODO: fInfo is now just a cache of SkCodec's SkImageInfo. No need to
+    // cache and return a reference here, once Android call-sites are updated.
     const SkImageInfo& getInfo() const { return fInfo; }
+
+    /**
+     * Return the ICC profile of the encoded data.
+     */
+    const skcms_ICCProfile* getICCProfile() const {
+        return fCodec->getEncodedInfo().profile();
+    }
 
     /**
      *  Format of the encoded data.
@@ -57,7 +81,7 @@ public:
      *  @param requestedColorType Color type requested by the client
      *
      *  |requestedColorType| may be overriden.  We will default to kF16
-     *  for high precision images and kIndex8 for GIF and WBMP.
+     *  for high precision images.
      *
      *  In the general case, if it is possible to decode to
      *  |requestedColorType|, this returns |requestedColorType|.
@@ -87,6 +111,17 @@ public:
      */
     sk_sp<SkColorSpace> computeOutputColorSpace(SkColorType outputColorType,
                                                 sk_sp<SkColorSpace> prefColorSpace = nullptr);
+
+    /**
+     *  Compute the appropriate sample size to get to |size|.
+     *
+     *  @param size As an input parameter, the desired output size of
+     *      the decode. As an output parameter, the smallest sampled size
+     *      larger than the input.
+     *  @return the sample size to set AndroidOptions::fSampleSize to decode
+     *      to the output |size|.
+     */
+    int computeSampleSize(SkISize* size) const;
 
     /**
      *  Returns the dimensions of the scaled output image, for an input
@@ -150,49 +185,11 @@ public:
     //        called SkAndroidCodec.  On the other hand, it's may be a bit confusing to call
     //        these Options when SkCodec has a slightly different set of Options.  Maybe these
     //        should be DecodeOptions or SamplingOptions?
-    struct AndroidOptions {
+    struct AndroidOptions : public SkCodec::Options {
         AndroidOptions()
-            : fZeroInitialized(SkCodec::kNo_ZeroInitialized)
-            , fSubset(nullptr)
-            , fColorPtr(nullptr)
-            , fColorCount(nullptr)
+            : SkCodec::Options()
             , fSampleSize(1)
         {}
-
-        /**
-         *  Indicates is destination pixel memory is zero initialized.
-         *
-         *  The default is SkCodec::kNo_ZeroInitialized.
-         */
-        SkCodec::ZeroInitialized fZeroInitialized;
-
-        /**
-         *  If not NULL, represents a subset of the original image to decode.
-         *
-         *  Must be within the bounds returned by getInfo().
-         *
-         *  If the EncodedFormat is SkEncodedImageFormat::kWEBP, the top and left
-         *  values must be even.
-         *
-         *  The default is NULL, meaning a decode of the entire image.
-         */
-        SkIRect* fSubset;
-
-        /**
-         *  If the client has requested a decode to kIndex8_SkColorType
-         *  (specified in the SkImageInfo), then the caller must provide
-         *  storage for up to 256 SkPMColor values in fColorPtr.  On success,
-         *  the codec must copy N colors into that storage, (where N is the
-         *  logical number of table entries) and set fColorCount to N.
-         *
-         *  If the client does not request kIndex8_SkColorType, then the last
-         *  two parameters may be NULL. If fColorCount is not null, it will be
-         *  set to 0.
-         *
-         *  The default is NULL for both pointers.
-         */
-        SkPMColor* fColorPtr;
-        int*       fColorCount;
 
         /**
          *  The client may provide an integer downscale factor for the decode.
@@ -224,14 +221,6 @@ public:
      *         to scale or subset. If the codec cannot perform this
      *         scaling or subsetting, it will return an error code.
      *
-     *  If info is kIndex8_SkColorType, then the caller must provide storage for up to 256
-     *  SkPMColor values in options->fColorPtr. On success the codec must copy N colors into
-     *  that storage, (where N is the logical number of table entries) and set
-     *  options->fColorCount to N.
-     *
-     *  If info is not kIndex8_SkColorType, options->fColorPtr and options->fColorCount may
-     *  be nullptr.
-     *
      *  The AndroidOptions object is also used to specify any requested scaling or subsetting
      *  using options->fSampleSize and options->fSubset. If NULL, the defaults (as specified above
      *  for AndroidOptions) are used.
@@ -247,10 +236,7 @@ public:
 
     /**
      *  Simplified version of getAndroidPixels() where we supply the default AndroidOptions as
-     *  specified above for AndroidOptions.
-     *
-     *  This will return an error if the info is kIndex_8_SkColorType and also will not perform
-     *  any scaling or subsetting.
+     *  specified above for AndroidOptions. It will not perform any scaling or subsetting.
      */
     SkCodec::Result getAndroidPixels(const SkImageInfo& info, void* pixels, size_t rowBytes);
 
@@ -258,11 +244,10 @@ public:
         return this->getAndroidPixels(info, pixels, rowBytes);
     }
 
-protected:
-
-    SkAndroidCodec(SkCodec*);
-
     SkCodec* codec() const { return fCodec.get(); }
+
+protected:
+    SkAndroidCodec(SkCodec*);
 
     virtual SkISize onGetSampledDimensions(int sampleSize) const = 0;
 
@@ -272,11 +257,7 @@ protected:
             size_t rowBytes, const AndroidOptions& options) = 0;
 
 private:
-
-    // This will always be a reference to the info that is contained by the
-    // embedded SkCodec.
-    const SkImageInfo& fInfo;
-
-    std::unique_ptr<SkCodec> fCodec;
+    const SkImageInfo               fInfo;
+    std::unique_ptr<SkCodec>        fCodec;
 };
 #endif // SkAndroidCodec_DEFINED

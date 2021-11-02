@@ -5,16 +5,70 @@
  * found in the LICENSE file.
  */
 
+#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/GrTypes.h"
+#include "include/private/SkMacros.h"
+#include "src/core/SkSafeMath.h"
+#include "src/core/SkTraceEvent.h"
+#include "src/gpu/GrBufferAllocPool.h"
 
-#include "GrBufferAllocPool.h"
-#include "GrBuffer.h"
-#include "GrCaps.h"
-#include "GrContext.h"
-#include "GrGpu.h"
-#include "GrResourceProvider.h"
-#include "GrTypes.h"
+#include <memory>
+#include "src/gpu/GrCaps.h"
+#include "src/gpu/GrCpuBuffer.h"
+#include "src/gpu/GrDirectContextPriv.h"
+#include "src/gpu/GrGpu.h"
+#include "src/gpu/GrGpuBuffer.h"
+#include "src/gpu/GrResourceProvider.h"
 
-#include "SkTraceEvent.h"
+sk_sp<GrBufferAllocPool::CpuBufferCache> GrBufferAllocPool::CpuBufferCache::Make(
+        int maxBuffersToCache) {
+    return sk_sp<CpuBufferCache>(new CpuBufferCache(maxBuffersToCache));
+}
+
+GrBufferAllocPool::CpuBufferCache::CpuBufferCache(int maxBuffersToCache)
+        : fMaxBuffersToCache(maxBuffersToCache) {
+    if (fMaxBuffersToCache) {
+        fBuffers = std::make_unique<Buffer[]>(fMaxBuffersToCache);
+    }
+}
+
+sk_sp<GrCpuBuffer> GrBufferAllocPool::CpuBufferCache::makeBuffer(size_t size,
+                                                                 bool mustBeInitialized) {
+    SkASSERT(size > 0);
+    Buffer* result = nullptr;
+    if (size == kDefaultBufferSize) {
+        int i = 0;
+        for (; i < fMaxBuffersToCache && fBuffers[i].fBuffer; ++i) {
+            SkASSERT(fBuffers[i].fBuffer->size() == kDefaultBufferSize);
+            if (fBuffers[i].fBuffer->unique()) {
+                result = &fBuffers[i];
+            }
+        }
+        if (!result && i < fMaxBuffersToCache) {
+            fBuffers[i].fBuffer = GrCpuBuffer::Make(size);
+            result = &fBuffers[i];
+        }
+    }
+    Buffer tempResult;
+    if (!result) {
+        tempResult.fBuffer = GrCpuBuffer::Make(size);
+        result = &tempResult;
+    }
+    if (mustBeInitialized && !result->fCleared) {
+        result->fCleared = true;
+        memset(result->fBuffer->data(), 0, result->fBuffer->size());
+    }
+    return result->fBuffer;
+}
+
+void GrBufferAllocPool::CpuBufferCache::releaseAll() {
+    for (int i = 0; i < fMaxBuffersToCache && fBuffers[i].fBuffer; ++i) {
+        fBuffers[i].fBuffer.reset();
+        fBuffers[i].fCleared = false;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////
 
 #ifdef SK_DEBUG
     #define VALIDATE validate
@@ -22,42 +76,26 @@
     static void VALIDATE(bool = false) {}
 #endif
 
-static const size_t MIN_VERTEX_BUFFER_SIZE = 1 << 15;
-static const size_t MIN_INDEX_BUFFER_SIZE = 1 << 12;
+#define UNMAP_BUFFER(block)                                                          \
+    do {                                                                             \
+        TRACE_EVENT_INSTANT1("skia.gpu", "GrBufferAllocPool Unmapping Buffer",       \
+                             TRACE_EVENT_SCOPE_THREAD, "percent_unwritten",          \
+                             (float)((block).fBytesFree) / (block).fBuffer->size()); \
+        SkASSERT(!block.fBuffer->isCpuBuffer());                                     \
+        static_cast<GrGpuBuffer*>(block.fBuffer.get())->unmap();                     \
+    } while (false)
 
-// page size
-#define GrBufferAllocPool_MIN_BLOCK_SIZE ((size_t)1 << 15)
-
-#define UNMAP_BUFFER(block)                                                               \
-do {                                                                                      \
-    TRACE_EVENT_INSTANT1(TRACE_DISABLED_BY_DEFAULT("skia.gpu"),                           \
-                         "GrBufferAllocPool Unmapping Buffer",                            \
-                         TRACE_EVENT_SCOPE_THREAD,                                        \
-                         "percent_unwritten",                                             \
-                         (float)((block).fBytesFree) / (block).fBuffer->gpuMemorySize()); \
-    (block).fBuffer->unmap();                                                             \
-} while (false)
-
-GrBufferAllocPool::GrBufferAllocPool(GrGpu* gpu,
-                                     GrBufferType bufferType,
-                                     size_t blockSize)
-    : fBlocks(8) {
-
-    fGpu = SkRef(gpu);
-    fCpuData = nullptr;
-    fBufferType = bufferType;
-    fBufferPtr = nullptr;
-    fMinBlockSize = SkTMax(GrBufferAllocPool_MIN_BLOCK_SIZE, blockSize);
-
-    fBytesInUse = 0;
-
-    fBufferMapThreshold = gpu->caps()->bufferMapThreshold();
-}
+GrBufferAllocPool::GrBufferAllocPool(GrGpu* gpu, GrGpuBufferType bufferType,
+                                     sk_sp<CpuBufferCache> cpuBufferCache)
+        : fBlocks(8)
+        , fCpuBufferCache(std::move(cpuBufferCache))
+        , fGpu(gpu)
+        , fBufferType(bufferType) {}
 
 void GrBufferAllocPool::deleteBlocks() {
     if (fBlocks.count()) {
-        GrBuffer* buffer = fBlocks.back().fBuffer;
-        if (buffer->isMapped()) {
+        GrBuffer* buffer = fBlocks.back().fBuffer.get();
+        if (!buffer->isCpuBuffer() && static_cast<GrGpuBuffer*>(buffer)->isMapped()) {
             UNMAP_BUFFER(fBlocks.back());
         }
     }
@@ -70,15 +108,13 @@ void GrBufferAllocPool::deleteBlocks() {
 GrBufferAllocPool::~GrBufferAllocPool() {
     VALIDATE();
     this->deleteBlocks();
-    sk_free(fCpuData);
-    fGpu->unref();
 }
 
 void GrBufferAllocPool::reset() {
     VALIDATE();
     fBytesInUse = 0;
     this->deleteBlocks();
-    this->resetCpuData(0);      // delete all the cpu-side memory
+    this->resetCpuData(0);
     VALIDATE();
 }
 
@@ -87,11 +123,14 @@ void GrBufferAllocPool::unmap() {
 
     if (fBufferPtr) {
         BufferBlock& block = fBlocks.back();
-        if (block.fBuffer->isMapped()) {
-            UNMAP_BUFFER(block);
-        } else {
-            size_t flushSize = block.fBuffer->gpuMemorySize() - block.fBytesFree;
-            this->flushCpuData(fBlocks.back(), flushSize);
+        GrBuffer* buffer = block.fBuffer.get();
+        if (!buffer->isCpuBuffer()) {
+            if (static_cast<GrGpuBuffer*>(buffer)->isMapped()) {
+                UNMAP_BUFFER(block);
+            } else {
+                size_t flushSize = block.fBuffer->size() - block.fBytesFree;
+                this->flushCpuData(fBlocks.back(), flushSize);
+            }
         }
         fBufferPtr = nullptr;
     }
@@ -103,24 +142,25 @@ void GrBufferAllocPool::validate(bool unusedBlockAllowed) const {
     bool wasDestroyed = false;
     if (fBufferPtr) {
         SkASSERT(!fBlocks.empty());
-        if (fBlocks.back().fBuffer->isMapped()) {
-            GrBuffer* buf = fBlocks.back().fBuffer;
-            SkASSERT(buf->mapPtr() == fBufferPtr);
-        } else {
-            SkASSERT(fCpuData == fBufferPtr);
+        const GrBuffer* buffer = fBlocks.back().fBuffer.get();
+        if (!buffer->isCpuBuffer() && !static_cast<const GrGpuBuffer*>(buffer)->isMapped()) {
+            SkASSERT(fCpuStagingBuffer && fCpuStagingBuffer->data() == fBufferPtr);
         }
-    } else {
-        SkASSERT(fBlocks.empty() || !fBlocks.back().fBuffer->isMapped());
+    } else if (!fBlocks.empty()) {
+        const GrBuffer* buffer = fBlocks.back().fBuffer.get();
+        SkASSERT(buffer->isCpuBuffer() || !static_cast<const GrGpuBuffer*>(buffer)->isMapped());
     }
     size_t bytesInUse = 0;
     for (int i = 0; i < fBlocks.count() - 1; ++i) {
-        SkASSERT(!fBlocks[i].fBuffer->isMapped());
+        const GrBuffer* buffer = fBlocks[i].fBuffer.get();
+        SkASSERT(buffer->isCpuBuffer() || !static_cast<const GrGpuBuffer*>(buffer)->isMapped());
     }
     for (int i = 0; !wasDestroyed && i < fBlocks.count(); ++i) {
-        if (fBlocks[i].fBuffer->wasDestroyed()) {
+        GrBuffer* buffer = fBlocks[i].fBuffer.get();
+        if (!buffer->isCpuBuffer() && static_cast<GrGpuBuffer*>(buffer)->wasDestroyed()) {
             wasDestroyed = true;
         } else {
-            size_t bytes = fBlocks[i].fBuffer->gpuMemorySize() - fBlocks[i].fBytesFree;
+            size_t bytes = fBlocks[i].fBuffer->size() - fBlocks[i].fBytesFree;
             bytesInUse += bytes;
             SkASSERT(bytes || unusedBlockAllowed);
         }
@@ -138,9 +178,17 @@ void GrBufferAllocPool::validate(bool unusedBlockAllowed) const {
 }
 #endif
 
+static inline size_t align_up_pad(size_t x, size_t alignment) {
+    return (alignment - x % alignment) % alignment;
+}
+
+static inline size_t align_down(size_t x, uint32_t alignment) {
+    return (x / alignment) * alignment;
+}
+
 void* GrBufferAllocPool::makeSpace(size_t size,
                                    size_t alignment,
-                                   const GrBuffer** buffer,
+                                   sk_sp<const GrBuffer>* buffer,
                                    size_t* offset) {
     VALIDATE();
 
@@ -149,15 +197,20 @@ void* GrBufferAllocPool::makeSpace(size_t size,
 
     if (fBufferPtr) {
         BufferBlock& back = fBlocks.back();
-        size_t usedBytes = back.fBuffer->gpuMemorySize() - back.fBytesFree;
-        size_t pad = GrSizeAlignUpPad(usedBytes, alignment);
-        if ((size + pad) <= back.fBytesFree) {
+        size_t usedBytes = back.fBuffer->size() - back.fBytesFree;
+        size_t pad = align_up_pad(usedBytes, alignment);
+        SkSafeMath safeMath;
+        size_t alignedSize = safeMath.add(pad, size);
+        if (!safeMath.ok()) {
+            return nullptr;
+        }
+        if (alignedSize <= back.fBytesFree) {
             memset((void*)(reinterpret_cast<intptr_t>(fBufferPtr) + usedBytes), 0, pad);
             usedBytes += pad;
             *offset = usedBytes;
             *buffer = back.fBuffer;
-            back.fBytesFree -= size + pad;
-            fBytesInUse += size + pad;
+            back.fBytesFree -= alignedSize;
+            fBytesInUse += alignedSize;
             VALIDATE();
             return (void*)(reinterpret_cast<intptr_t>(fBufferPtr) + usedBytes);
         }
@@ -185,6 +238,49 @@ void* GrBufferAllocPool::makeSpace(size_t size,
     return fBufferPtr;
 }
 
+void* GrBufferAllocPool::makeSpaceAtLeast(size_t minSize,
+                                          size_t fallbackSize,
+                                          size_t alignment,
+                                          sk_sp<const GrBuffer>* buffer,
+                                          size_t* offset,
+                                          size_t* actualSize) {
+    VALIDATE();
+
+    SkASSERT(buffer);
+    SkASSERT(offset);
+    SkASSERT(actualSize);
+
+    size_t usedBytes = (fBlocks.empty()) ? 0 : fBlocks.back().fBuffer->size() -
+                                               fBlocks.back().fBytesFree;
+    size_t pad = align_up_pad(usedBytes, alignment);
+    if (fBlocks.empty() || (minSize + pad) > fBlocks.back().fBytesFree) {
+        // We either don't have a block yet or the current block doesn't have enough free space.
+        // Create a new one.
+        if (!this->createBlock(fallbackSize)) {
+            return nullptr;
+        }
+        usedBytes = 0;
+        pad = 0;
+    }
+    SkASSERT(fBufferPtr);
+
+    // Consume padding first, to make subsequent alignment math easier
+    memset(static_cast<char*>(fBufferPtr) + usedBytes, 0, pad);
+    usedBytes += pad;
+    fBlocks.back().fBytesFree -= pad;
+    fBytesInUse += pad;
+
+    // Give caller all remaining space in this block (but aligned correctly)
+    size_t size = align_down(fBlocks.back().fBytesFree, alignment);
+    *offset = usedBytes;
+    *buffer = fBlocks.back().fBuffer;
+    *actualSize = size;
+    fBlocks.back().fBytesFree -= size;
+    fBytesInUse += size;
+    VALIDATE();
+    return static_cast<char*>(fBufferPtr) + usedBytes;
+}
+
 void GrBufferAllocPool::putBack(size_t bytes) {
     VALIDATE();
 
@@ -192,13 +288,14 @@ void GrBufferAllocPool::putBack(size_t bytes) {
         // caller shouldn't try to put back more than they've taken
         SkASSERT(!fBlocks.empty());
         BufferBlock& block = fBlocks.back();
-        size_t bytesUsed = block.fBuffer->gpuMemorySize() - block.fBytesFree;
+        size_t bytesUsed = block.fBuffer->size() - block.fBytesFree;
         if (bytes >= bytesUsed) {
             bytes -= bytesUsed;
             fBytesInUse -= bytesUsed;
             // if we locked a vb to satisfy the make space and we're releasing
             // beyond it, then unmap it.
-            if (block.fBuffer->isMapped()) {
+            GrBuffer* buffer = block.fBuffer.get();
+            if (!buffer->isCpuBuffer() && static_cast<GrGpuBuffer*>(buffer)->isMapped()) {
                 UNMAP_BUFFER(block);
             }
             this->destroyBlock();
@@ -214,9 +311,7 @@ void GrBufferAllocPool::putBack(size_t bytes) {
 }
 
 bool GrBufferAllocPool::createBlock(size_t requestSize) {
-
-    size_t size = SkTMax(requestSize, fMinBlockSize);
-    SkASSERT(size >= GrBufferAllocPool_MIN_BLOCK_SIZE);
+    size_t size = std::max(requestSize, kDefaultBufferSize);
 
     VALIDATE();
 
@@ -228,34 +323,38 @@ bool GrBufferAllocPool::createBlock(size_t requestSize) {
         return false;
     }
 
-    block.fBytesFree = block.fBuffer->gpuMemorySize();
+    block.fBytesFree = block.fBuffer->size();
     if (fBufferPtr) {
         SkASSERT(fBlocks.count() > 1);
         BufferBlock& prev = fBlocks.fromBack(1);
-        if (prev.fBuffer->isMapped()) {
-            UNMAP_BUFFER(prev);
-        } else {
-            this->flushCpuData(prev, prev.fBuffer->gpuMemorySize() - prev.fBytesFree);
+        GrBuffer* buffer = prev.fBuffer.get();
+        if (!buffer->isCpuBuffer()) {
+            if (static_cast<GrGpuBuffer*>(buffer)->isMapped()) {
+                UNMAP_BUFFER(prev);
+            } else {
+                this->flushCpuData(prev, prev.fBuffer->size() - prev.fBytesFree);
+            }
         }
         fBufferPtr = nullptr;
     }
 
     SkASSERT(!fBufferPtr);
 
-    // If the buffer is CPU-backed we map it because it is free to do so and saves a copy.
+    // If the buffer is CPU-backed we "map" it because it is free to do so and saves a copy.
     // Otherwise when buffer mapping is supported we map if the buffer size is greater than the
     // threshold.
-    bool attemptMap = block.fBuffer->isCPUBacked();
-    if (!attemptMap && GrCaps::kNone_MapFlags != fGpu->caps()->mapBufferFlags()) {
-        attemptMap = size > fBufferMapThreshold;
+    if (block.fBuffer->isCpuBuffer()) {
+        fBufferPtr = static_cast<GrCpuBuffer*>(block.fBuffer.get())->data();
+        SkASSERT(fBufferPtr);
+    } else {
+        if (GrCaps::kNone_MapFlags != fGpu->caps()->mapBufferFlags() &&
+            size > fGpu->caps()->bufferMapThreshold()) {
+            fBufferPtr = static_cast<GrGpuBuffer*>(block.fBuffer.get())->map();
+        }
     }
-
-    if (attemptMap) {
-        fBufferPtr = block.fBuffer->map();
-    }
-
     if (!fBufferPtr) {
-        fBufferPtr = this->resetCpuData(block.fBytesFree);
+        this->resetCpuData(block.fBytesFree);
+        fBufferPtr = fCpuStagingBuffer->data();
     }
 
     VALIDATE(true);
@@ -265,40 +364,37 @@ bool GrBufferAllocPool::createBlock(size_t requestSize) {
 
 void GrBufferAllocPool::destroyBlock() {
     SkASSERT(!fBlocks.empty());
-
-    BufferBlock& block = fBlocks.back();
-
-    SkASSERT(!block.fBuffer->isMapped());
-    block.fBuffer->unref();
+    SkASSERT(fBlocks.back().fBuffer->isCpuBuffer() ||
+             !static_cast<GrGpuBuffer*>(fBlocks.back().fBuffer.get())->isMapped());
     fBlocks.pop_back();
     fBufferPtr = nullptr;
 }
 
-void* GrBufferAllocPool::resetCpuData(size_t newSize) {
-    sk_free(fCpuData);
-    if (newSize) {
-        if (fGpu->caps()->mustClearUploadedBufferData()) {
-            fCpuData = sk_calloc_throw(newSize);
-        } else {
-            fCpuData = sk_malloc_throw(newSize);
-        }
-    } else {
-        fCpuData = nullptr;
+void GrBufferAllocPool::resetCpuData(size_t newSize) {
+    SkASSERT(newSize >= kDefaultBufferSize || !newSize);
+    if (!newSize) {
+        fCpuStagingBuffer.reset();
+        return;
     }
-    return fCpuData;
+    if (fCpuStagingBuffer && newSize <= fCpuStagingBuffer->size()) {
+        return;
+    }
+    bool mustInitialize = fGpu->caps()->mustClearUploadedBufferData();
+    fCpuStagingBuffer = fCpuBufferCache ? fCpuBufferCache->makeBuffer(newSize, mustInitialize)
+                                        : GrCpuBuffer::Make(newSize);
 }
 
-
 void GrBufferAllocPool::flushCpuData(const BufferBlock& block, size_t flushSize) {
-    GrBuffer* buffer = block.fBuffer;
-    SkASSERT(buffer);
+    SkASSERT(block.fBuffer.get());
+    SkASSERT(!block.fBuffer.get()->isCpuBuffer());
+    GrGpuBuffer* buffer = static_cast<GrGpuBuffer*>(block.fBuffer.get());
     SkASSERT(!buffer->isMapped());
-    SkASSERT(fCpuData == fBufferPtr);
-    SkASSERT(flushSize <= buffer->gpuMemorySize());
+    SkASSERT(fCpuStagingBuffer && fCpuStagingBuffer->data() == fBufferPtr);
+    SkASSERT(flushSize <= buffer->size());
     VALIDATE(true);
 
     if (GrCaps::kNone_MapFlags != fGpu->caps()->mapBufferFlags() &&
-        flushSize > fBufferMapThreshold) {
+        flushSize > fGpu->caps()->bufferMapThreshold()) {
         void* data = buffer->map();
         if (data) {
             memcpy(data, fBufferPtr, flushSize);
@@ -310,32 +406,34 @@ void GrBufferAllocPool::flushCpuData(const BufferBlock& block, size_t flushSize)
     VALIDATE(true);
 }
 
-GrBuffer* GrBufferAllocPool::getBuffer(size_t size) {
-
-    GrResourceProvider* rp = fGpu->getContext()->resourceProvider();
-
-    // Shouldn't have to use this flag (https://bug.skia.org/4156)
-    static const uint32_t kFlags = GrResourceProvider::kNoPendingIO_Flag;
-    return rp->createBuffer(size, fBufferType, kDynamic_GrAccessPattern, kFlags);
+sk_sp<GrBuffer> GrBufferAllocPool::getBuffer(size_t size) {
+    const GrCaps& caps = *fGpu->caps();
+    auto resourceProvider = fGpu->getContext()->priv().resourceProvider();
+    if (caps.preferClientSideDynamicBuffers() ||
+        (fBufferType == GrGpuBufferType::kDrawIndirect && caps.useClientSideIndirectBuffers())) {
+        // Create a CPU buffer.
+        bool mustInitialize = caps.mustClearUploadedBufferData();
+        return fCpuBufferCache ? fCpuBufferCache->makeBuffer(size, mustInitialize)
+                               : GrCpuBuffer::Make(size);
+    }
+    return resourceProvider->createBuffer(size, fBufferType, kDynamic_GrAccessPattern);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GrVertexBufferAllocPool::GrVertexBufferAllocPool(GrGpu* gpu)
-    : GrBufferAllocPool(gpu, kVertex_GrBufferType, MIN_VERTEX_BUFFER_SIZE) {
-}
+GrVertexBufferAllocPool::GrVertexBufferAllocPool(GrGpu* gpu, sk_sp<CpuBufferCache> cpuBufferCache)
+        : GrBufferAllocPool(gpu, GrGpuBufferType::kVertex, std::move(cpuBufferCache)) {}
 
 void* GrVertexBufferAllocPool::makeSpace(size_t vertexSize,
                                          int vertexCount,
-                                         const GrBuffer** buffer,
+                                         sk_sp<const GrBuffer>* buffer,
                                          int* startVertex) {
-
     SkASSERT(vertexCount >= 0);
     SkASSERT(buffer);
     SkASSERT(startVertex);
 
     size_t offset SK_INIT_TO_AVOID_WARNING;
-    void* ptr = INHERITED::makeSpace(vertexSize * vertexCount,
+    void* ptr = INHERITED::makeSpace(SkSafeMath::Mul(vertexSize, vertexCount),
                                      vertexSize,
                                      buffer,
                                      &offset);
@@ -345,27 +443,80 @@ void* GrVertexBufferAllocPool::makeSpace(size_t vertexSize,
     return ptr;
 }
 
-////////////////////////////////////////////////////////////////////////////////
+void* GrVertexBufferAllocPool::makeSpaceAtLeast(size_t vertexSize, int minVertexCount,
+                                                int fallbackVertexCount,
+                                                sk_sp<const GrBuffer>* buffer, int* startVertex,
+                                                int* actualVertexCount) {
+    SkASSERT(minVertexCount >= 0);
+    SkASSERT(fallbackVertexCount >= minVertexCount);
+    SkASSERT(buffer);
+    SkASSERT(startVertex);
+    SkASSERT(actualVertexCount);
 
-GrIndexBufferAllocPool::GrIndexBufferAllocPool(GrGpu* gpu)
-    : GrBufferAllocPool(gpu, kIndex_GrBufferType, MIN_INDEX_BUFFER_SIZE) {
+    size_t offset SK_INIT_TO_AVOID_WARNING;
+    size_t actualSize SK_INIT_TO_AVOID_WARNING;
+    void* ptr = INHERITED::makeSpaceAtLeast(SkSafeMath::Mul(vertexSize, minVertexCount),
+                                            SkSafeMath::Mul(vertexSize, fallbackVertexCount),
+                                            vertexSize,
+                                            buffer,
+                                            &offset,
+                                            &actualSize);
+
+    SkASSERT(0 == offset % vertexSize);
+    *startVertex = static_cast<int>(offset / vertexSize);
+
+    SkASSERT(0 == actualSize % vertexSize);
+    SkASSERT(actualSize >= vertexSize * minVertexCount);
+    *actualVertexCount = static_cast<int>(actualSize / vertexSize);
+
+    return ptr;
 }
 
-void* GrIndexBufferAllocPool::makeSpace(int indexCount,
-                                        const GrBuffer** buffer,
-                                        int* startIndex) {
+////////////////////////////////////////////////////////////////////////////////
 
+GrIndexBufferAllocPool::GrIndexBufferAllocPool(GrGpu* gpu, sk_sp<CpuBufferCache> cpuBufferCache)
+        : GrBufferAllocPool(gpu, GrGpuBufferType::kIndex, std::move(cpuBufferCache)) {}
+
+void* GrIndexBufferAllocPool::makeSpace(int indexCount, sk_sp<const GrBuffer>* buffer,
+                                        int* startIndex) {
     SkASSERT(indexCount >= 0);
     SkASSERT(buffer);
     SkASSERT(startIndex);
 
     size_t offset SK_INIT_TO_AVOID_WARNING;
-    void* ptr = INHERITED::makeSpace(indexCount * sizeof(uint16_t),
+    void* ptr = INHERITED::makeSpace(SkSafeMath::Mul(indexCount, sizeof(uint16_t)),
                                      sizeof(uint16_t),
                                      buffer,
                                      &offset);
 
     SkASSERT(0 == offset % sizeof(uint16_t));
     *startIndex = static_cast<int>(offset / sizeof(uint16_t));
+    return ptr;
+}
+
+void* GrIndexBufferAllocPool::makeSpaceAtLeast(int minIndexCount, int fallbackIndexCount,
+                                               sk_sp<const GrBuffer>* buffer, int* startIndex,
+                                               int* actualIndexCount) {
+    SkASSERT(minIndexCount >= 0);
+    SkASSERT(fallbackIndexCount >= minIndexCount);
+    SkASSERT(buffer);
+    SkASSERT(startIndex);
+    SkASSERT(actualIndexCount);
+
+    size_t offset SK_INIT_TO_AVOID_WARNING;
+    size_t actualSize SK_INIT_TO_AVOID_WARNING;
+    void* ptr = INHERITED::makeSpaceAtLeast(SkSafeMath::Mul(minIndexCount, sizeof(uint16_t)),
+                                            SkSafeMath::Mul(fallbackIndexCount, sizeof(uint16_t)),
+                                            sizeof(uint16_t),
+                                            buffer,
+                                            &offset,
+                                            &actualSize);
+
+    SkASSERT(0 == offset % sizeof(uint16_t));
+    *startIndex = static_cast<int>(offset / sizeof(uint16_t));
+
+    SkASSERT(0 == actualSize % sizeof(uint16_t));
+    SkASSERT(actualSize >= minIndexCount * sizeof(uint16_t));
+    *actualIndexCount = static_cast<int>(actualSize / sizeof(uint16_t));
     return ptr;
 }

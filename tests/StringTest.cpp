@@ -5,32 +5,14 @@
  * found in the LICENSE file.
  */
 
-#include <stdarg.h>
+#include "tests/Test.h"
+
+#include "include/core/SkString.h"
+#include "src/core/SkStringUtils.h"
+
+#include <math.h>
 #include <stdio.h>
-#include "SkString.h"
-#include "Test.h"
-
-// Windows vsnprintf doesn't 0-terminate safely), but is so far
-// encapsulated in SkString that we can't test it directly.
-
-#ifdef SK_BUILD_FOR_WIN
-    #define VSNPRINTF(buffer, size, format, args)   \
-        vsnprintf_s(buffer, size, _TRUNCATE, format, args)
-#else
-    #define VSNPRINTF   vsnprintf
-#endif
-
-#define ARGS_TO_BUFFER(format, buffer, size)        \
-    do {                                            \
-        va_list args;                               \
-        va_start(args, format);                     \
-        VSNPRINTF(buffer, size, format, args);      \
-        va_end(args);                               \
-    } while (0)
-
-static void printfAnalog(char* buffer, int size, const char format[], ...) {
-    ARGS_TO_BUFFER(format, buffer, size);
-}
+#include <thread>
 
 DEF_TEST(String, reporter) {
     SkString    a;
@@ -159,10 +141,14 @@ DEF_TEST(String, reporter) {
         SkScalar    fValue;
         const char* fString;
     } gRec[] = {
-        { 0,            "0" },
-        { SK_Scalar1,   "1" },
-        { -SK_Scalar1,  "-1" },
-        { SK_Scalar1/2, "0.5" },
+        { 0,             "0" },
+        { SK_Scalar1,    "1" },
+        { -SK_Scalar1,   "-1" },
+        { SK_Scalar1/2,  "0.5" },
+        { INFINITY,      "inf" },
+        { -INFINITY,     "-inf" },
+        { NAN,           "nan" },
+        { -NAN,          "nan" },
   #if defined(SK_BUILD_FOR_WIN) && (_MSC_VER < 1900)
         { 3.4028234e38f,   "3.4028235e+038" },
         { -3.4028234e38f, "-3.4028235e+038" },
@@ -174,44 +160,42 @@ DEF_TEST(String, reporter) {
     for (size_t i = 0; i < SK_ARRAY_COUNT(gRec); i++) {
         a.reset();
         a.appendScalar(gRec[i].fValue);
-        REPORTER_ASSERT(reporter, a.size() <= SkStrAppendScalar_MaxSize);
+        REPORTER_ASSERT(reporter, a.size() <= kSkStrAppendScalar_MaxSize);
         if (!a.equals(gRec[i].fString)) {
             ERRORF(reporter, "received <%s> expected <%s>\n", a.c_str(), gRec[i].fString);
         }
     }
 
     REPORTER_ASSERT(reporter, SkStringPrintf("%i", 0).equals("0"));
+}
 
-    char buffer [40];
-    memset(buffer, 'a', 40);
-    REPORTER_ASSERT(reporter, buffer[18] == 'a');
-    REPORTER_ASSERT(reporter, buffer[19] == 'a');
-    REPORTER_ASSERT(reporter, buffer[20] == 'a');
-    printfAnalog(buffer, 20, "%30d", 0);
-    REPORTER_ASSERT(reporter, buffer[18] == ' ');
-    REPORTER_ASSERT(reporter, buffer[19] == 0);
-    REPORTER_ASSERT(reporter, buffer[20] == 'a');
+static void assert_2000_spaces(skiatest::Reporter* reporter, const SkString& str) {
+    REPORTER_ASSERT(reporter, str.size() == 2000);
+    for (size_t i = 0; i < str.size(); ++i) {
+        REPORTER_ASSERT(reporter, str[i] == ' ');
+    }
+}
 
-    REPORTER_ASSERT(reporter, SkStringPrintf("%i", 0).equals("0"));
-
+DEF_TEST(String_overflow, reporter) {
     // 2000 is larger than the static buffer size inside SkString.cpp
-    a = SkStringPrintf("%2000s", " ");
-    REPORTER_ASSERT(reporter, a.size() == 2000);
-    for (size_t i = 0; i < a.size(); ++i) {
-        if (a[i] != ' ') {
-            ERRORF(reporter, "SkStringPrintf fail: a[%d] = '%c'", i, a[i]);
-            break;
-        }
-    }
-    a.reset();
+    SkString a = SkStringPrintf("%2000s", " ");
+    assert_2000_spaces(reporter, a);
+
+    a = "X";
     a.printf("%2000s", " ");
-    REPORTER_ASSERT(reporter, a.size() == 2000);
-    for (size_t i = 0; i < a.size(); ++i) {
-        if (a[i] != ' ') {
-            ERRORF(reporter, "SkStringPrintf fail: a[%d] = '%c'", i, a[i]);
-            break;
-        }
-    }
+    assert_2000_spaces(reporter, a);
+
+    a = "X";
+    a.appendf("%1999s", " ");
+    REPORTER_ASSERT(reporter, a[0] == 'X');
+    a[0] = ' ';
+    assert_2000_spaces(reporter, a);
+
+    a = "X";
+    a.prependf("%1999s", " ");
+    REPORTER_ASSERT(reporter, a[1999] == 'X');
+    a[1999] = ' ';
+    assert_2000_spaces(reporter, a);
 }
 
 DEF_TEST(String_SkStrSplit, r) {
@@ -286,4 +270,189 @@ DEF_TEST(String_SkStrSplit_All, r) {
     REPORTER_ASSERT(r, results[1].equals("a"));
     REPORTER_ASSERT(r, results[2].equals("b"));
     REPORTER_ASSERT(r, results[3].equals(""));
+}
+
+// https://bugs.chromium.org/p/skia/issues/detail?id=7107
+DEF_TEST(String_Threaded, r) {
+    SkString str("foo");
+
+    std::thread threads[5];
+    for (auto& thread : threads) {
+        thread = std::thread([&] {
+            SkString copy = str;  // NOLINT(performance-unnecessary-copy-initialization)
+            (void)copy.equals("test");
+        });
+    }
+    for (auto& thread : threads) {
+        thread.join();
+    }
+}
+
+// Ensure that the string allocate doesn't internally overflow any calculations, and accidentally
+// let us create a string with a requested length longer than we can manage.
+DEF_TEST(String_huge, r) {
+    // start testing slightly below max 32
+    size_t size = UINT32_MAX - 16;
+    // See where we crash, and manually check that its at the right point.
+    //
+    //  To test, change the false to true
+    while (false) {
+        // On a 64bit build, this should crash when size == 1 << 32, since we can't store
+        // that length in the string's header (which has a u32 slot for the length).
+        //
+        // On a 32bit build, this should crash the first time around, since we can't allocate
+        // anywhere near this amount.
+        //
+        SkString str(size);
+        size += 1;
+    }
+}
+
+DEF_TEST(String_fromUTF16, r) {
+    // test data produced with `iconv`.
+    const uint16_t test1[] = {
+        0xD835, 0xDCD0, 0xD835, 0xDCD1, 0xD835, 0xDCD2, 0xD835, 0xDCD3, 0xD835, 0xDCD4, 0x0020,
+        0xD835, 0xDCD5, 0xD835, 0xDCD6, 0xD835, 0xDCD7, 0xD835, 0xDCD8, 0xD835, 0xDCD9
+    };
+    REPORTER_ASSERT(r, SkStringFromUTF16(test1, SK_ARRAY_COUNT(test1)).equals("𝓐𝓑𝓒𝓓𝓔 𝓕𝓖𝓗𝓘𝓙"));
+
+    const uint16_t test2[] = {
+        0x0041, 0x0042, 0x0043, 0x0044, 0x0045, 0x0020, 0x0046, 0x0047, 0x0048, 0x0049, 0x004A,
+    };
+    REPORTER_ASSERT(r, SkStringFromUTF16(test2, SK_ARRAY_COUNT(test2)).equals("ABCDE FGHIJ"));
+
+    const uint16_t test3[] = {
+        0x03B1, 0x03B2, 0x03B3, 0x03B4, 0x03B5, 0x0020, 0x03B6, 0x03B7, 0x03B8, 0x03B9, 0x03BA,
+    };
+    REPORTER_ASSERT(r, SkStringFromUTF16(test3, SK_ARRAY_COUNT(test3)).equals("αβγδε ζηθικ"));
+}
+
+static void test_va_list_print(skiatest::Reporter* r, const char format[], ...) {
+    va_list args;
+    va_start(args, format);
+
+    SkString str("123");
+    str.printVAList(format, args);
+    REPORTER_ASSERT(r, str.equals("hello world"));
+
+    va_end(args);
+}
+
+static void test_va_list_append(skiatest::Reporter* r, const char format[], ...) {
+    va_list args;
+    va_start(args, format);
+
+    SkString str("123");
+    str.appendVAList(format, args);
+    REPORTER_ASSERT(r, str.equals("123hello world"));
+
+    va_end(args);
+}
+
+static void test_va_list_prepend(skiatest::Reporter* r, const char format[], ...) {
+    va_list args;
+    va_start(args, format);
+
+    SkString str("123");
+    str.prependVAList(format, args);
+    REPORTER_ASSERT(r, str.equals("hello world123"));
+
+    va_end(args);
+}
+
+DEF_TEST(String_VAList, r) {
+    test_va_list_print(r, "%s %c%c%c%c%c", "hello", 'w', 'o', 'r', 'l', 'd');
+    test_va_list_append(r, "%s %c%c%c%c%c", "hello", 'w', 'o', 'r', 'l', 'd');
+    test_va_list_prepend(r, "%s %c%c%c%c%c", "hello", 'w', 'o', 'r', 'l', 'd');
+}
+
+static void test_va_list_overflow_print(skiatest::Reporter* r, const char format[], ...) {
+    va_list args;
+    va_start(args, format);
+
+    SkString str("X");
+    str.printVAList(format, args);
+    assert_2000_spaces(r, str);
+
+    va_end(args);
+}
+
+static void test_va_list_overflow_append(skiatest::Reporter* r, const char format[], ...) {
+    va_list args;
+    va_start(args, format);
+
+    SkString str("X");
+    str.appendVAList(format, args);
+    REPORTER_ASSERT(r, str[0] == 'X');
+    str[0] = ' ';
+    assert_2000_spaces(r, str);
+
+    va_end(args);
+}
+
+static void test_va_list_overflow_prepend(skiatest::Reporter* r, const char format[], ...) {
+    va_list args;
+    va_start(args, format);
+
+    SkString str("X");
+    str.prependVAList(format, args);
+    REPORTER_ASSERT(r, str[1999] == 'X');
+    str[1999] = ' ';
+    assert_2000_spaces(r, str);
+
+    va_end(args);
+}
+
+DEF_TEST(String_VAList_overflow, r) {
+    test_va_list_overflow_print(r, "%2000s", " ");
+    test_va_list_overflow_append(r, "%1999s", " ");
+    test_va_list_overflow_prepend(r, "%1999s", " ");
+}
+
+DEF_TEST(String_resize_to_nothing, r) {
+    SkString s("hello world!");
+    REPORTER_ASSERT(r, s.equals("hello world!"));
+    s.resize(0);
+    REPORTER_ASSERT(r, s.equals(""));
+}
+
+DEF_TEST(String_resize_shrink, r) {
+    SkString s("hello world!");
+    REPORTER_ASSERT(r, s.equals("hello world!"));
+    s.resize(5);
+    REPORTER_ASSERT(r, s.equals("hello"));
+}
+
+DEF_TEST(String_resize_grow, r) {
+    SkString s("hello world!");
+    REPORTER_ASSERT(r, s.equals("hello world!"));
+    s.resize(25);
+    REPORTER_ASSERT(r, 0 == strcmp(s.c_str(), "hello world!"));  // no promises about data past \0
+    REPORTER_ASSERT(r, s.size() == 25);
+}
+
+DEF_TEST(String_resize_after_assignment, r) {
+    SkString s("hello world!");
+    SkString t;
+    t = s;
+    REPORTER_ASSERT(r, s.equals("hello world!"));
+    s.resize(25);
+    REPORTER_ASSERT(r, 0 == strcmp(s.c_str(), "hello world!"));
+    REPORTER_ASSERT(r, s.size() == 25);
+    s.resize(5);
+    REPORTER_ASSERT(r, s.equals("hello"));
+}
+
+static void resize_helper_function(skiatest::Reporter* r, SkString s) {
+    REPORTER_ASSERT(r, s.equals("hello world!"));
+    s.resize(5);
+    REPORTER_ASSERT(r, s.equals("hello"));
+    s.resize(25);
+    REPORTER_ASSERT(r, 0 == strcmp(s.c_str(), "hello"));
+    REPORTER_ASSERT(r, s.size() == 25);
+}
+
+DEF_TEST(String_resize_after_copy_construction, r) {
+    SkString s("hello world!");
+    resize_helper_function(r, s);
 }

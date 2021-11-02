@@ -9,124 +9,113 @@
 #define GrDrawOp_DEFINED
 
 #include <functional>
-#include "GrOp.h"
-#include "GrPipeline.h"
+#include "src/core/SkIPoint16.h"
+#include "src/gpu/GrDeferredUpload.h"
+#include "src/gpu/GrPipeline.h"
+#include "src/gpu/ops/GrOp.h"
 
 class GrAppliedClip;
+namespace skgpu { namespace v1 { class SurfaceDrawContext; }}
+class GrShape;
 
 /**
- * GrDrawOps are flushed in two phases (preDraw, and draw). In preDraw uploads to GrGpuResources
- * and draws are determined and scheduled. They are issued in the draw phase. GrDrawOpUploadToken is
- * used to sequence the uploads relative to each other and to draws.
- **/
-
-class GrDrawOpUploadToken {
-public:
-    static GrDrawOpUploadToken AlreadyFlushedToken() { return GrDrawOpUploadToken(0); }
-
-    GrDrawOpUploadToken(const GrDrawOpUploadToken& that) : fSequenceNumber(that.fSequenceNumber) {}
-    GrDrawOpUploadToken& operator =(const GrDrawOpUploadToken& that) {
-        fSequenceNumber = that.fSequenceNumber;
-        return *this;
-    }
-    bool operator==(const GrDrawOpUploadToken& that) const {
-        return fSequenceNumber == that.fSequenceNumber;
-    }
-    bool operator!=(const GrDrawOpUploadToken& that) const { return !(*this == that); }
-
-private:
-    GrDrawOpUploadToken();
-    explicit GrDrawOpUploadToken(uint64_t sequenceNumber) : fSequenceNumber(sequenceNumber) {}
-    friend class GrOpFlushState;
-    uint64_t fSequenceNumber;
-};
-
-/**
- * Base class for GrOps that draw. These ops have a GrPipeline installed by GrOpList.
+ * Base class for GrOps that draw. These ops can draw into an op list's GrRenderTarget.
  */
 class GrDrawOp : public GrOp {
 public:
-    /** Method that performs an upload on behalf of a DeferredUploadFn. */
-    using WritePixelsFn = std::function<bool(GrSurface* texture,
-                                             int left, int top, int width, int height,
-                                             GrPixelConfig config, const void* buffer,
-                                             size_t rowBytes)>;
-    /** See comments before GrDrawOp::Target definition on how deferred uploaders work. */
-    using DeferredUploadFn = std::function<void(WritePixelsFn&)>;
-
-    class Target;
-
     GrDrawOp(uint32_t classID) : INHERITED(classID) {}
 
     /**
-     * This information is required to determine how to compute a GrAppliedClip from a GrClip for
-     * this op.
+     * Called before setting up the GrAppliedClip and before finalize. This information is required
+     * to determine how to compute a GrAppliedClip from a GrClip for this op.
+     */
+    virtual bool usesMSAA() const {
+        return this->fixedFunctionFlags() & FixedFunctionFlags::kUsesHWAA;
+    }
+
+    /**
+     * Specifies the effect of clipToShape().
+     */
+    enum class ClipResult {
+        // No clip was applied.
+        kFail,
+        // The clip was applied to the op's actual geometry. The clip stack is free to disable the
+        // scissor test.
+        kClippedGeometrically,
+        // The clip was applied via shader coverage. The clip stack will still use a scissor test
+        // in order to reduce overdraw of transparent pixels.
+        kClippedInShader,
+        // The op can be thrown out entirely.
+        kClippedOut
+    };
+
+    /**
+     * This is called while the clip is being computed, before finalize(), and before any attempts
+     * to combine with other ops. If the op knows how to clip its own geometry then it will
+     * generally be much faster than a generalized clip method.
+     */
+    virtual ClipResult clipToShape(skgpu::v1::SurfaceDrawContext*,
+                                   SkClipOp,
+                                   const SkMatrix& /* clipMatrix */,
+                                   const GrShape&,
+                                   GrAA) {
+        return ClipResult::kFail;
+    }
+
+    /**
+     * This is called after the GrAppliedClip has been computed and just prior to recording the op
+     * or combining it with a previously recorded op. The op should convert any proxies or resources
+     * it owns to "pending io" status so that resource allocation can be more optimal. Additionally,
+     * at this time the op must report whether a copy of the destination (or destination texture
+     * itself) needs to be provided to the GrXferProcessor when this op executes.
+     */
+    virtual GrProcessorSet::Analysis finalize(const GrCaps&, const GrAppliedClip*, GrClampType) = 0;
+
+    /**
+     * Called after finalize, at which point every op should know whether it will need stencil.
+     */
+    virtual bool usesStencil() const {
+        return this->fixedFunctionFlags() & FixedFunctionFlags::kUsesStencil;
+    }
+
+#ifdef SK_DEBUG
+    bool fAddDrawOpCalled = false;
+
+    void validate() const override {
+        SkASSERT(fAddDrawOpCalled);
+    }
+#endif
+
+#if GR_TEST_UTILS
+    // This is really only intended for TextureOp and FillRectOp to override
+    virtual int numQuads() const { return -1; }
+#endif
+
+protected:
+    /**
+     * DEPRECATED: This is a legacy implementation for usesMSAA() and usesStencil(). Newer ops
+     * should override those methods directly.
      */
     enum class FixedFunctionFlags : uint32_t {
         kNone = 0x0,
-        /** Indices that the op will enable MSAA or mixed samples rendering. */
+        /** Indices that the op will enable MSAA. */
         kUsesHWAA = 0x1,
         /** Indices that the op reads and/or writes the stencil buffer */
         kUsesStencil = 0x2,
     };
     GR_DECL_BITFIELD_CLASS_OPS_FRIENDS(FixedFunctionFlags);
-    virtual FixedFunctionFlags fixedFunctionFlags() const = 0;
-
-    /**
-     * This is called after the GrAppliedClip has been computed and just prior to recording the op
-     * or combining it with a previously recorded op. It is used to determine whether a copy of the
-     * destination (or destination texture itself) needs to be provided to the xp when this op
-     * executes. This is guaranteed to be called before an op is recorded. However, this is also
-     * called on ops that are not recorded because they combine with a previously recorded op.
-     */
-    virtual bool xpRequiresDstTexture(const GrCaps&, const GrAppliedClip*) = 0;
-
-protected:
-    static SkString DumpPipelineInfo(const GrPipeline& pipeline) {
-        SkString string;
-        string.appendf("RT: %d\n", pipeline.getRenderTarget()->uniqueID().asUInt());
-        string.append("ColorStages:\n");
-        for (int i = 0; i < pipeline.numColorFragmentProcessors(); i++) {
-            string.appendf("\t\t%s\n\t\t%s\n",
-                           pipeline.getColorFragmentProcessor(i).name(),
-                           pipeline.getColorFragmentProcessor(i).dumpInfo().c_str());
-        }
-        string.append("CoverageStages:\n");
-        for (int i = 0; i < pipeline.numCoverageFragmentProcessors(); i++) {
-            string.appendf("\t\t%s\n\t\t%s\n",
-                           pipeline.getCoverageFragmentProcessor(i).name(),
-                           pipeline.getCoverageFragmentProcessor(i).dumpInfo().c_str());
-        }
-        string.appendf("XP: %s\n", pipeline.getXferProcessor().name());
-
-        bool scissorEnabled = pipeline.getScissorState().enabled();
-        string.appendf("Scissor: ");
-        if (scissorEnabled) {
-            string.appendf("[L: %d, T: %d, R: %d, B: %d]\n",
-                           pipeline.getScissorState().rect().fLeft,
-                           pipeline.getScissorState().rect().fTop,
-                           pipeline.getScissorState().rect().fRight,
-                           pipeline.getScissorState().rect().fBottom);
-        } else {
-            string.appendf("<disabled>\n");
-        }
-        return string;
+    virtual FixedFunctionFlags fixedFunctionFlags() const {
+        // Override usesMSAA() and usesStencil() instead.
+        SK_ABORT("fixedFunctionFlags() not implemented.");
     }
 
-    struct QueuedUpload {
-        QueuedUpload(DeferredUploadFn&& upload, GrDrawOpUploadToken token)
-            : fUpload(std::move(upload))
-            , fUploadBeforeToken(token) {}
-        DeferredUploadFn fUpload;
-        GrDrawOpUploadToken fUploadBeforeToken;
-    };
-
-    SkTArray<QueuedUpload> fInlineUploads;
-
 private:
-    typedef GrOp INHERITED;
+    friend class GrSimpleMeshDrawOpHelper;  // For FixedFunctionFlags.
+    friend class GrSimpleMeshDrawOpHelperWithStencil;  // For FixedFunctionFlags.
+
+    using INHERITED = GrOp;
 };
 
-GR_MAKE_BITFIELD_CLASS_OPS(GrDrawOp::FixedFunctionFlags);
+GR_MAKE_BITFIELD_CLASS_OPS(GrDrawOp::FixedFunctionFlags)
 
 #endif

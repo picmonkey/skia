@@ -5,13 +5,16 @@
  * found in the LICENSE file.
  */
 
+#include "src/pdf/SkDeflate.h"
 
-#include "SkData.h"
-#include "SkDeflate.h"
-#include "SkMakeUnique.h"
-#include "SkMalloc.h"
+#include "include/core/SkData.h"
+#include "include/private/SkMalloc.h"
+#include "include/private/SkTo.h"
+#include "src/core/SkTraceEvent.h"
 
 #include "zlib.h"
+
+#include <algorithm>
 
 namespace {
 
@@ -64,7 +67,7 @@ struct SkDeflateWStream::Impl {
 SkDeflateWStream::SkDeflateWStream(SkWStream* out,
                                    int compressionLevel,
                                    bool gzip)
-    : fImpl(skstd::make_unique<SkDeflateWStream::Impl>()) {
+    : fImpl(std::make_unique<SkDeflateWStream::Impl>()) {
     fImpl->fOut = out;
     fImpl->fInBufferIndex = 0;
     if (!fImpl->fOut) {
@@ -84,6 +87,7 @@ SkDeflateWStream::SkDeflateWStream(SkWStream* out,
 SkDeflateWStream::~SkDeflateWStream() { this->finalize(); }
 
 void SkDeflateWStream::finalize() {
+    TRACE_EVENT0("skia", TRACE_FUNC);
     if (!fImpl->fOut) {
         return;
     }
@@ -94,13 +98,14 @@ void SkDeflateWStream::finalize() {
 }
 
 bool SkDeflateWStream::write(const void* void_buffer, size_t len) {
+    TRACE_EVENT0("skia", TRACE_FUNC);
     if (!fImpl->fOut) {
         return false;
     }
     const char* buffer = (const char*)void_buffer;
     while (len > 0) {
         size_t tocopy =
-                SkTMin(len, sizeof(fImpl->fInBuffer) - fImpl->fInBufferIndex);
+                std::min(len, sizeof(fImpl->fInBuffer) - fImpl->fInBufferIndex);
         memcpy(fImpl->fInBuffer + fImpl->fInBufferIndex, buffer, tocopy);
         len -= tocopy;
         buffer += tocopy;

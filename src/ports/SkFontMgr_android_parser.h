@@ -8,11 +8,12 @@
 #ifndef SkFontMgr_android_parser_DEFINED
 #define SkFontMgr_android_parser_DEFINED
 
-#include "SkFontMgr.h"
-#include "SkString.h"
-#include "SkTArray.h"
-#include "SkTDArray.h"
-#include "SkTypes.h"
+#include "include/core/SkFontMgr.h"
+#include "include/core/SkString.h"
+#include "include/core/SkTypes.h"
+#include "include/private/SkTArray.h"
+#include "include/private/SkTDArray.h"
+#include "include/private/SkTHash.h"
 
 #include <climits>
 #include <limits>
@@ -93,10 +94,12 @@ struct FontFamily {
 
     SkTArray<SkString, true> fNames;
     SkTArray<FontFileInfo, true> fFonts;
-    SkLanguage fLanguage;
+    SkTArray<SkLanguage, true> fLanguages;
+    SkTHashMap<SkString, std::unique_ptr<FontFamily>> fallbackFamilies;
     FontVariant fVariant;
     int fOrder; // internal to the parser, not useful to users.
     bool fIsFallbackFont;
+    SkString fFallbackFor;
     const SkString fBasePath;
 };
 
@@ -112,7 +115,7 @@ void GetCustomFontFamilies(SkTDArray<FontFamily*>& fontFamilies,
                            const char* fallbackFontsXml,
                            const char* langFallbackFontsDir = nullptr);
 
-} // SkFontMgr_Android_Parser namespace
+}  // namespace SkFontMgr_Android_Parser
 
 
 /** Parses a null terminated string into an integer type, checking for overflow.

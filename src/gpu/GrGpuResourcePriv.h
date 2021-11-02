@@ -8,7 +8,7 @@
 #ifndef GrGpuResourcePriv_DEFINED
 #define GrGpuResourcePriv_DEFINED
 
-#include "GrGpuResource.h"
+#include "src/gpu/GrGpuResource.h"
 
 /**
  * This class allows code internal to Skia privileged access to manage the cache keys and budget
@@ -41,12 +41,13 @@ public:
     void makeUnbudgeted() { fResource->makeUnbudgeted(); }
 
     /**
-     * Does the resource count against the resource budget?
+     * Get the resource's budgeted-type which indicates whether it counts against the resource cache
+     * budget and if not whether it is allowed to be cached.
      */
-    SkBudgeted isBudgeted() const {
-        bool ret = SkBudgeted::kYes == fResource->fBudgeted;
-        SkASSERT(ret || !fResource->getUniqueKey().isValid() || fResource->fRefsWrappedObjects);
-        return SkBudgeted(ret);
+    GrBudgetedType budgetedType() const {
+        SkASSERT(GrBudgetedType::kBudgeted == fResource->fBudgetedType ||
+                 !fResource->getUniqueKey().isValid() || fResource->fRefsWrappedObjects);
+        return fResource->fBudgetedType;
     }
 
     /**
@@ -67,10 +68,16 @@ public:
      */
     void removeScratchKey() const { fResource->removeScratchKey();  }
 
+    bool isPurgeable() const { return fResource->isPurgeable(); }
+
+    bool hasRefOrCommandBufferUsage() const {
+        return fResource->hasRef() || !fResource->hasNoCommandBufferUsages();
+    }
+
 protected:
     ResourcePriv(GrGpuResource* resource) : fResource(resource) {   }
     ResourcePriv(const ResourcePriv& that) : fResource(that.fResource) {}
-    ResourcePriv& operator=(const CacheAccess&); // unimpl
+    ResourcePriv& operator=(const CacheAccess&) = delete;
 
     // No taking addresses of this type.
     const ResourcePriv* operator&() const;
@@ -83,7 +90,7 @@ protected:
 
 inline GrGpuResource::ResourcePriv GrGpuResource::resourcePriv() { return ResourcePriv(this); }
 
-inline const GrGpuResource::ResourcePriv GrGpuResource::resourcePriv() const {
+inline const GrGpuResource::ResourcePriv GrGpuResource::resourcePriv() const {  // NOLINT(readability-const-return-type)
     return ResourcePriv(const_cast<GrGpuResource*>(this));
 }
 

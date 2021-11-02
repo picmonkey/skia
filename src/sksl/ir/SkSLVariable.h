@@ -8,54 +8,115 @@
 #ifndef SKSL_VARIABLE
 #define SKSL_VARIABLE
 
-#include "SkSLModifiers.h"
-#include "SkSLPosition.h"
-#include "SkSLSymbol.h"
-#include "SkSLType.h"
+#include "include/private/SkSLModifiers.h"
+#include "include/private/SkSLSymbol.h"
+#include "src/sksl/ir/SkSLExpression.h"
+#include "src/sksl/ir/SkSLType.h"
+#include "src/sksl/ir/SkSLVariableReference.h"
 
 namespace SkSL {
+
+class Expression;
+class VarDeclaration;
+
+namespace dsl {
+class DSLCore;
+class DSLFunction;
+} // namespace dsl
+
+enum class VariableStorage : int8_t {
+    kGlobal,
+    kInterfaceBlock,
+    kLocal,
+    kParameter
+};
 
 /**
  * Represents a variable, whether local, global, or a function parameter. This represents the
  * variable itself (the storage location), which is shared between all VariableReferences which
  * read or write that storage location.
  */
-struct Variable : public Symbol {
-    enum Storage {
-        kGlobal_Storage,
-        kLocal_Storage,
-        kParameter_Storage
-    };
+class Variable final : public Symbol {
+public:
+    using Storage = VariableStorage;
 
-    Variable(Position position, Modifiers modifiers, String name, const Type& type,
-             Storage storage)
-    : INHERITED(position, kVariable_Kind, std::move(name))
+    inline static constexpr Kind kSymbolKind = Kind::kVariable;
+
+    Variable(int line, const Modifiers* modifiers, skstd::string_view name, const Type* type,
+             bool builtin, Storage storage)
+    : INHERITED(line, kSymbolKind, name, type)
     , fModifiers(modifiers)
-    , fType(type)
     , fStorage(storage)
-    , fReadCount(0)
-    , fWriteCount(0) {}
+    , fBuiltin(builtin) {}
 
-    virtual String description() const override {
-        return fModifiers.description() + fType.fName + " " + fName;
+    ~Variable() override;
+
+    static std::unique_ptr<Variable> Convert(const Context& context, int line,
+            const Modifiers& modifiers, const Type* baseType, skstd::string_view name, bool isArray,
+            std::unique_ptr<Expression> arraySize, Variable::Storage storage);
+
+    static std::unique_ptr<Variable> Make(const Context& context, int line,
+            const Modifiers& modifiers, const Type* baseType, skstd::string_view name, bool isArray,
+            std::unique_ptr<Expression> arraySize, Variable::Storage storage);
+
+    /**
+     * Creates a local scratch variable and the associated VarDeclaration statement.
+     * Useful when doing IR rewrites, e.g. inlining a function call.
+     */
+    struct ScratchVariable {
+        const Variable* fVarSymbol;
+        std::unique_ptr<Statement> fVarDecl;
+    };
+    static ScratchVariable MakeScratchVariable(const Context& context,
+                                               skstd::string_view baseName,
+                                               const Type* type,
+                                               const Modifiers& modifiers,
+                                               SymbolTable* symbolTable,
+                                               std::unique_ptr<Expression> initialValue);
+    const Modifiers& modifiers() const {
+        return *fModifiers;
     }
 
-    bool dead() const {
-        return !fWriteCount || (!fReadCount && !(fModifiers.fFlags & Modifiers::kOut_Flag));
+    void setModifiers(const Modifiers* modifiers) {
+        fModifiers = modifiers;
     }
 
-    mutable Modifiers fModifiers;
-    const Type& fType;
-    const Storage fStorage;
+    bool isBuiltin() const {
+        return fBuiltin;
+    }
 
-    // Tracks how many sites read from the variable. If this is zero for a non-out variable (or
-    // becomes zero during optimization), the variable is dead and may be eliminated.
-    mutable int fReadCount;
-    // Tracks how many sites write to the variable. If this is zero, the variable is dead and may be
-    // eliminated.
-    mutable int fWriteCount;
+    Storage storage() const {
+        return (Storage) fStorage;
+    }
 
-    typedef Symbol INHERITED;
+    const Expression* initialValue() const;
+
+    void setDeclaration(VarDeclaration* declaration) {
+        SkASSERT(!fDeclaration);
+        fDeclaration = declaration;
+    }
+
+    void detachDeadVarDeclaration() const {
+        // The VarDeclaration is being deleted, so our reference to it has become stale.
+        // This variable is now dead, so it shouldn't matter that we are modifying its symbol.
+        const_cast<Variable*>(this)->fDeclaration = nullptr;
+    }
+
+    String description() const override {
+        return this->modifiers().description() + this->type().name() + " " + this->name();
+    }
+
+private:
+    VarDeclaration* fDeclaration = nullptr;
+    const Modifiers* fModifiers;
+    VariableStorage fStorage;
+    bool fBuiltin;
+
+    using INHERITED = Symbol;
+
+    friend class dsl::DSLCore;
+    friend class dsl::DSLFunction;
+    friend class VariableReference;
 };
 
 } // namespace SkSL

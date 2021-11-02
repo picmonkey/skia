@@ -9,11 +9,11 @@
 #ifndef GrVkTextureRenderTarget_DEFINED
 #define GrVkTextureRenderTarget_DEFINED
 
-#include "GrVkTexture.h"
-#include "GrVkRenderTarget.h"
-#include "GrVkGpu.h"
+#include "include/gpu/vk/GrVkTypes.h"
+#include "src/gpu/vk/GrVkRenderTarget.h"
+#include "src/gpu/vk/GrVkTexture.h"
 
-#include "GrTexturePriv.h"
+class GrVkGpu;
 
 #ifdef SK_BUILD_FOR_WIN
 // Windows gives bogus warnings about inheriting asTexture/asRenderTarget via dominance.
@@ -26,100 +26,69 @@ struct GrVkImageInfo;
 
 class GrVkTextureRenderTarget: public GrVkTexture, public GrVkRenderTarget {
 public:
-    static GrVkTextureRenderTarget* CreateNewTextureRenderTarget(GrVkGpu*, SkBudgeted,
-                                                                 const GrSurfaceDesc&,
-                                                                 const GrVkImage::ImageDesc&);
+    static sk_sp<GrVkTextureRenderTarget> MakeNewTextureRenderTarget(
+            GrVkGpu* gpu,
+            SkBudgeted budgeted,
+            SkISize dimensions,
+            VkFormat format,
+            uint32_t mipLevels,
+            int sampleCnt,
+            GrMipmapStatus mipmapStatus,
+            GrProtected isProtected);
 
-    static sk_sp<GrVkTextureRenderTarget> MakeWrappedTextureRenderTarget(GrVkGpu*,
-                                                                         const GrSurfaceDesc&,
-                                                                         GrWrapOwnership,
-                                                                         const GrVkImageInfo*);
+    static sk_sp<GrVkTextureRenderTarget> MakeWrappedTextureRenderTarget(
+            GrVkGpu*,
+            SkISize dimensions,
+            int sampleCnt,
+            GrWrapOwnership,
+            GrWrapCacheable,
+            const GrVkImageInfo&,
+            sk_sp<GrBackendSurfaceMutableStateImpl>);
 
-    bool updateForMipmap(GrVkGpu* gpu, const GrVkImageInfo& newInfo);
+    GrBackendFormat backendFormat() const override { return GrVkTexture::backendFormat(); }
 
 protected:
     void onAbandon() override {
-        GrVkRenderTarget::onAbandon();
+        // In order to correctly handle calling texture idle procs, GrVkTexture must go first.
         GrVkTexture::onAbandon();
+        GrVkRenderTarget::onAbandon();
     }
 
     void onRelease() override {
-        GrVkRenderTarget::onRelease();
+        // In order to correctly handle calling texture idle procs, GrVkTexture must go first.
         GrVkTexture::onRelease();
+        GrVkRenderTarget::onRelease();
     }
 
 private:
     GrVkTextureRenderTarget(GrVkGpu* gpu,
                             SkBudgeted budgeted,
-                            const GrSurfaceDesc& desc,
-                            const GrVkImageInfo& info,
-                            const GrVkImageView* texView,
-                            const GrVkImageInfo& msaaInfo,
-                            const GrVkImageView* colorAttachmentView,
-                            const GrVkImageView* resolveAttachmentView)
-        : GrSurface(gpu, desc)
-        , GrVkImage(info, GrVkImage::kNot_Wrapped)
-        , GrVkTexture(gpu, desc, info, texView, GrVkImage::kNot_Wrapped)
-        , GrVkRenderTarget(gpu, desc, info, msaaInfo, colorAttachmentView,
-                           resolveAttachmentView, GrVkImage::kNot_Wrapped) {
-        this->registerWithCache(budgeted);
-    }
+                            SkISize dimensions,
+                            sk_sp<GrVkImage> texture,
+                            sk_sp<GrVkImage> colorAttachment,
+                            sk_sp<GrVkImage> resolveAttachment,
+                            GrMipmapStatus);
 
     GrVkTextureRenderTarget(GrVkGpu* gpu,
-                            SkBudgeted budgeted,
-                            const GrSurfaceDesc& desc,
-                            const GrVkImageInfo& info,
-                            const GrVkImageView* texView,
-                            const GrVkImageView* colorAttachmentView)
-        : GrSurface(gpu, desc)
-        , GrVkImage(info, GrVkImage::kNot_Wrapped)
-        , GrVkTexture(gpu, desc, info, texView, GrVkImage::kNot_Wrapped)
-        , GrVkRenderTarget(gpu, desc, info, colorAttachmentView, GrVkImage::kNot_Wrapped) {
-        this->registerWithCache(budgeted);
-    }
-    GrVkTextureRenderTarget(GrVkGpu* gpu,
-                            const GrSurfaceDesc& desc,
-                            const GrVkImageInfo& info,
-                            const GrVkImageView* texView,
-                            const GrVkImageInfo& msaaInfo,
-                            const GrVkImageView* colorAttachmentView,
-                            const GrVkImageView* resolveAttachmentView,
-                            GrVkImage::Wrapped wrapped)
-        : GrSurface(gpu, desc)
-        , GrVkImage(info, wrapped)
-        , GrVkTexture(gpu, desc, info, texView, wrapped)
-        , GrVkRenderTarget(gpu, desc, info, msaaInfo, colorAttachmentView,
-                           resolveAttachmentView, wrapped) {
-        this->registerWithCacheWrapped();
-    }
+                            SkISize dimensions,
+                            sk_sp<GrVkImage> texture,
+                            sk_sp<GrVkImage> colorAttachment,
+                            sk_sp<GrVkImage> resolveAttachment,
+                            GrMipmapStatus,
+                            GrWrapCacheable);
 
-    GrVkTextureRenderTarget(GrVkGpu* gpu,
-                            const GrSurfaceDesc& desc,
-                            const GrVkImageInfo& info,
-                            const GrVkImageView* texView,
-                            const GrVkImageView* colorAttachmentView,
-                            GrVkImage::Wrapped wrapped)
-        : GrSurface(gpu, desc)
-        , GrVkImage(info, wrapped)
-        , GrVkTexture(gpu, desc, info, texView, wrapped)
-        , GrVkRenderTarget(gpu, desc, info, colorAttachmentView, wrapped) {
-        this->registerWithCacheWrapped();
-    }
+    size_t onGpuMemorySize() const override;
 
-    static GrVkTextureRenderTarget* Create(GrVkGpu*,
-                                           const GrSurfaceDesc&,
-                                           const GrVkImageInfo&,
-                                           SkBudgeted budgeted,
-                                           GrVkImage::Wrapped wrapped);
-
-    // GrGLRenderTarget accounts for the texture's memory and any MSAA renderbuffer's memory.
-    size_t onGpuMemorySize() const override {
-        // The plus 1 is to account for the resolve texture.
-        int numColorSamples = this->numColorSamples() + 1;
-        return GrSurface::ComputeSize(this->config(), this->width(), this->height(),
-                                      numColorSamples,  // TODO: this still correct?
-                                      this->texturePriv().hasMipMaps());
+    // In Vulkan we call the release proc after we are finished with the underlying
+    // GrVkImage::Resource object (which occurs after the GPU has finished all work on it).
+    void onSetRelease(sk_sp<GrRefCntedCallback> releaseHelper) override {
+        // Forward the release proc on to GrVkImage
+        GrVkTexture::onSetRelease(std::move(releaseHelper));
     }
 };
+
+#ifdef SK_BUILD_FOR_WIN
+#pragma warning(pop)
+#endif
 
 #endif

@@ -8,23 +8,24 @@
 #ifndef SkImageGenerator_DEFINED
 #define SkImageGenerator_DEFINED
 
-#include "SkBitmap.h"
-#include "SkColor.h"
-#include "SkImage.h"
-#include "SkImageInfo.h"
-#include "SkYUVSizeInfo.h"
+#include "include/core/SkBitmap.h"
+#include "include/core/SkColor.h"
+#include "include/core/SkImage.h"
+#include "include/core/SkImageInfo.h"
+#include "include/core/SkYUVAPixmaps.h"
 
-class GrContext;
-class GrContextThreadSafeProxy;
-class GrTextureProxy;
-class GrSamplerParams;
+class GrRecordingContext;
+class GrSurfaceProxyView;
+class GrSamplerState;
 class SkBitmap;
 class SkData;
 class SkMatrix;
 class SkPaint;
 class SkPicture;
 
-class SK_API SkImageGenerator : public SkNoncopyable {
+enum class GrImageTexGenPolicy : int;
+
+class SK_API SkImageGenerator {
 public:
     /**
      *  The PixelRef which takes ownership of this SkImageGenerator
@@ -41,7 +42,7 @@ public:
      *  If non-NULL is returned, the caller is responsible for calling
      *  unref() on the data when it is finished.
      */
-    SkData* refEncodedData() {
+    sk_sp<SkData> refEncodedData() {
         return this->onRefEncodedData();
     }
 
@@ -54,7 +55,7 @@ public:
      *  Can this generator be used to produce images that will be drawable to the specified context
      *  (or to CPU, if context is nullptr)?
      */
-    bool isValid(GrContext* context) const {
+    bool isValid(GrRecordingContext* context) const {
         return this->onIsValid(context);
     }
 
@@ -78,45 +79,37 @@ public:
      *         to scale. If the generator cannot perform this scale,
      *         it will return false.
      *
-     *         kIndex_8_SkColorType is not supported.
-     *
      *  @return true on success.
-     */
-    struct Options {
-        Options()
-            : fBehavior(SkTransferFunctionBehavior::kIgnore)
-        {}
-
-        SkTransferFunctionBehavior fBehavior;
-    };
-    bool getPixels(const SkImageInfo& info, void* pixels, size_t rowBytes, const Options* options);
-
-    /**
-     *  Simplified version of getPixels() that uses the default Options.
      */
     bool getPixels(const SkImageInfo& info, void* pixels, size_t rowBytes);
 
+    bool getPixels(const SkPixmap& pm) {
+        return this->getPixels(pm.info(), pm.writable_addr(), pm.rowBytes());
+    }
+
     /**
-     *  If decoding to YUV is supported, this returns true.  Otherwise, this
-     *  returns false and does not modify any of the parameters.
+     *  If decoding to YUV is supported, this returns true. Otherwise, this
+     *  returns false and the caller will ignore output parameter yuvaPixmapInfo.
      *
-     *  @param sizeInfo   Output parameter indicating the sizes and required
-     *                    allocation widths of the Y, U, and V planes.
-     *  @param colorSpace Output parameter.
+     * @param  supportedDataTypes Indicates the data type/planar config combinations that are
+     *                            supported by the caller. If the generator supports decoding to
+     *                            YUV(A), but not as a type in supportedDataTypes, this method
+     *                            returns false.
+     *  @param yuvaPixmapInfo Output parameter that specifies the planar configuration, subsampling,
+     *                        orientation, chroma siting, plane color types, and row bytes.
      */
-    bool queryYUV8(SkYUVSizeInfo* sizeInfo, SkYUVColorSpace* colorSpace) const;
+    bool queryYUVAInfo(const SkYUVAPixmapInfo::SupportedDataTypes& supportedDataTypes,
+                       SkYUVAPixmapInfo* yuvaPixmapInfo) const;
 
     /**
      *  Returns true on success and false on failure.
-     *  This always attempts to perform a full decode.  If the client only
-     *  wants size, it should call queryYUV8().
+     *  This always attempts to perform a full decode. To get the planar
+     *  configuration without decoding use queryYUVAInfo().
      *
-     *  @param sizeInfo   Needs to exactly match the values returned by the
-     *                    query, except the WidthBytes may be larger than the
-     *                    recommendation (but not smaller).
-     *  @param planes     Memory for each of the Y, U, and V planes.
+     *  @param yuvaPixmaps  Contains preallocated pixmaps configured according to a successful call
+     *                      to queryYUVAInfo().
      */
-    bool getYUV8Planes(const SkYUVSizeInfo& sizeInfo, void* planes[3]);
+    bool getYUVAPlanes(const SkYUVAPixmaps& yuvaPixmaps);
 
 #if SK_SUPPORT_GPU
     /**
@@ -135,14 +128,24 @@ public:
      *          return false;
      *      }
      *
-     *  Regarding the GrContext parameter:
+     *  Regarding the GrRecordingContext parameter:
      *
      *  It must be non-NULL. The generator should only succeed if:
      *  - its internal context is the same
      *  - it can somehow convert its texture into one that is valid for the provided context.
+     *
+     *  If the willNeedMipMaps flag is true, the generator should try to create a TextureProxy that
+     *  at least has the mip levels allocated and the base layer filled in. If this is not possible,
+     *  the generator is allowed to return a non mipped proxy, but this will have some additional
+     *  overhead in later allocating mips and copying of the base layer.
+     *
+     *  GrImageTexGenPolicy determines whether or not a new texture must be created (and its budget
+     *  status) or whether this may (but is not required to) return a pre-existing texture that is
+     *  retained by the generator (kDraw).
      */
-    sk_sp<GrTextureProxy> generateTexture(GrContext*, const SkImageInfo& info,
-                                          const SkIPoint& origin);
+    GrSurfaceProxyView generateTexture(GrRecordingContext*, const SkImageInfo& info,
+                                       const SkIPoint& origin, GrMipmapped, GrImageTexGenPolicy);
+
 #endif
 
     /**
@@ -163,22 +166,21 @@ public:
                                                              sk_sp<SkColorSpace>);
 
 protected:
-    enum {
-        kNeedNewImageUniqueID = 0
-    };
+    static constexpr int kNeedNewImageUniqueID = 0;
 
     SkImageGenerator(const SkImageInfo& info, uint32_t uniqueId = kNeedNewImageUniqueID);
 
-    virtual SkData* onRefEncodedData() { return nullptr; }
+    virtual sk_sp<SkData> onRefEncodedData() { return nullptr; }
+    struct Options {};
     virtual bool onGetPixels(const SkImageInfo&, void*, size_t, const Options&) { return false; }
-    virtual bool onIsValid(GrContext*) const { return true; }
-    virtual bool onQueryYUV8(SkYUVSizeInfo*, SkYUVColorSpace*) const { return false; }
-    virtual bool onGetYUV8Planes(const SkYUVSizeInfo&, void*[3] /*planes*/) { return false; }
-
+    virtual bool onIsValid(GrRecordingContext*) const { return true; }
+    virtual bool onQueryYUVAInfo(const SkYUVAPixmapInfo::SupportedDataTypes&,
+                                 SkYUVAPixmapInfo*) const { return false; }
+    virtual bool onGetYUVAPlanes(const SkYUVAPixmaps&) { return false; }
 #if SK_SUPPORT_GPU
-    virtual bool onCanGenerateTexture() const { return false; }
-    virtual sk_sp<GrTextureProxy> onGenerateTexture(GrContext*, const SkImageInfo&,
-                                                    const SkIPoint&);   // returns nullptr
+    // returns nullptr
+    virtual GrSurfaceProxyView onGenerateTexture(GrRecordingContext*, const SkImageInfo&,
+                                                 const SkIPoint&, GrMipmapped, GrImageTexGenPolicy);
 #endif
 
 private:
@@ -191,6 +193,11 @@ private:
     // It is called from NewFromEncoded() after it has checked for any runtime factory.
     // The SkData will never be NULL, as that will have been checked by NewFromEncoded.
     static std::unique_ptr<SkImageGenerator> MakeFromEncodedImpl(sk_sp<SkData>);
+
+    SkImageGenerator(SkImageGenerator&&) = delete;
+    SkImageGenerator(const SkImageGenerator&) = delete;
+    SkImageGenerator& operator=(SkImageGenerator&&) = delete;
+    SkImageGenerator& operator=(const SkImageGenerator&) = delete;
 };
 
 #endif  // SkImageGenerator_DEFINED

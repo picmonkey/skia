@@ -1,0 +1,572 @@
+diff --git a/out/ios64/products.xcodeproj/project.pbxproj b/out/ios64/products.xcodeproj/project.pbxproj
+index 2407b14937..8dba82b5f2 100644
+--- a/out/ios64/products.xcodeproj/project.pbxproj
++++ b/out/ios64/products.xcodeproj/project.pbxproj
+@@ -47,7 +47,6 @@
+ 		04621A7476662E1214A6DE80 /* simplepatternformatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DB59A739C8D9F141371F50DA /* simplepatternformatter.cpp */; };
+ 		04906CD36CA2A4F6ECA76EE0 /* GrSemaphoreOp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F81F97450AF6AA99DE6AD31D /* GrSemaphoreOp.cpp */; };
+ 		04EE3297696857B5A5C8A2B9 /* SkDeviceLooper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02374717AB6BD539308519EA /* SkDeviceLooper.cpp */; };
+-		06383C25C1664C4EDBDFC9D1 /* SkSLSPIRVCodeGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0A4B90DC6FD9B4D8F8CA842C /* SkSLSPIRVCodeGenerator.cpp */; };
+ 		067B3991626234FE38473B5B /* GrDrawAtlasOp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC66423AF43BC66C94B8A52C /* GrDrawAtlasOp.cpp */; };
+ 		067CD21908E76734FA2DB9D3 /* serv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D701BA38418D349EE2158B0 /* serv.cpp */; };
+ 		06BE3953D7CD146087FB866D /* SkLocalMatrixShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB6827E2036701AE57E8B618 /* SkLocalMatrixShader.cpp */; };
+@@ -89,7 +88,6 @@
+ 		0EFC227F0F752CD73D45EAB9 /* function.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CE82140CF6714559A09723C /* function.cpp */; };
+ 		0F11FBD6EAF31E021F673DD5 /* SkRasterPipelineBlitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3DEB75334F1A1CD9893A3290 /* SkRasterPipelineBlitter.cpp */; };
+ 		0F3F574DDCC175C63651CBDA /* SkCachedData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D00760BBFE94DFC2EA666252 /* SkCachedData.cpp */; };
+-		0FA9192C0C772E899BC754F9 /* pngread.c in Sources */ = {isa = PBXBuildFile; fileRef = CBA78ECB351637CFC0949A10 /* pngread.c */; };
+ 		0FBCE1152E9818011BBC2050 /* name_mapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1DD4B16E5937C74BF31A3BE4 /* name_mapper.cpp */; };
+ 		0FEAD8A07D652D99B2B36A73 /* frame_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 32105341CB22C5C743BF29AD /* frame_enc.c */; };
+ 		102B1F853978BC6F9D79AD2B /* SkPDFMakeToUnicodeCmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3C507FDFD2F936D3F8B2005B /* SkPDFMakeToUnicodeCmap.cpp */; };
+@@ -100,18 +98,15 @@
+ 		113F14E7773A243FD2261ACA /* muxread.c in Sources */ = {isa = PBXBuildFile; fileRef = 28B64C6E796F21FA8C75F44D /* muxread.c */; };
+ 		117B62E92A2D246B858B5E87 /* SkMaskSwizzler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EAE64D7D09F5AE2B9F2E4F2 /* SkMaskSwizzler.cpp */; };
+ 		119A05C7AECF26C2F80D8EE0 /* dng_image_writer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3725EC3FE7984BB5F210616 /* dng_image_writer.cpp */; };
+-		11BD7E2F643E457AD0F7F72A /* pngwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 69DE7FA5193904E3FA85E4CB /* pngwrite.c */; };
+ 		1212E679CB98AED0DC1A82DC /* GrBezierEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 425CBD329CBCFFDA7994C6ED /* GrBezierEffect.cpp */; };
+ 		124C8F697C683E44B87530C7 /* SkFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CB85AFCAB0375A02C9CC1BBB /* SkFont.cpp */; };
+ 		1273F56E8F29FC0223EE9FAF /* SkPathOpsTightBounds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 525E486074F31F42BB594191 /* SkPathOpsTightBounds.cpp */; };
+ 		1305121D101651A7648F8207 /* jfdctfst.c in Sources */ = {isa = PBXBuildFile; fileRef = 225D74C486DF11CD31122804 /* jfdctfst.c */; };
+ 		130AB3A942E476C5FF9B0404 /* ebdt_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = A12B9DF00B1D98671B1473CA /* ebdt_table.cc */; };
+ 		132149E030B91B08126562E1 /* umutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B85B83EEFAB9CA4D11EA449B /* umutex.cpp */; };
+-		138AFEFAD589C9BB8482F691 /* png.c in Sources */ = {isa = PBXBuildFile; fileRef = 1CFA82991E6A9BD20713DEEE /* png.c */; };
+ 		139A67F31A850935DED89E01 /* ubidi_props.c in Sources */ = {isa = PBXBuildFile; fileRef = FCAB3450502A412C5E814716 /* ubidi_props.c */; };
+ 		1404CB09F72CA96399BCE036 /* SkRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC9DD822669595B154EE655 /* SkRecord.cpp */; };
+ 		147B2AB08583DBD805561AE7 /* SkDeque.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85C3CD1497893541AF5957E4 /* SkDeque.cpp */; };
+-		14A1A20221D741C9E71D1E9A /* pngget.c in Sources */ = {isa = PBXBuildFile; fileRef = 224EB6FE82A1D265BEE85591 /* pngget.c */; };
+ 		14ACC1A97D0E1F66BB1D6314 /* gzlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 8DE5AE792BE8BA7608F14928 /* gzlib.c */; };
+ 		155C13316F6F1E7CE8CA37E1 /* SkTLS_pthread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7118EC9CA4D0F9E499225DE /* SkTLS_pthread.cpp */; };
+ 		156E539D2921E84EA47BF162 /* GrBufferAllocPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C4C06170F44A5C4933DF9665 /* GrBufferAllocPool.cpp */; };
+@@ -124,7 +119,6 @@
+ 		168CBCEB42DFB74EC2B55282 /* GrTestUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 871C550B4855F10A81AFADD7 /* GrTestUtils.cpp */; };
+ 		16F77C8638A8A61A82A52026 /* SkFlattenable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE6D07978CFEFD36D8D0B8E0 /* SkFlattenable.cpp */; };
+ 		17214D1F16B9235B2790350C /* SkMipMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 660CBDAD264A127925F6FE6C /* SkMipMap.cpp */; };
+-		172C9BD43DE170003ED3FEF5 /* pngtrans.c in Sources */ = {isa = PBXBuildFile; fileRef = 5DC86A3E87DF127779BDD5AE /* pngtrans.c */; };
+ 		17B2B0008E247A5E9822D7FC /* umath.c in Sources */ = {isa = PBXBuildFile; fileRef = 7020BB27BCD2B36385D5BE4E /* umath.c */; };
+ 		17B434C75018E6C07AB5C244 /* SkLinearBitmapPipeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F5100FCC47F963EDAB354F3 /* SkLinearBitmapPipeline.cpp */; };
+ 		17EFF4014C55EA1D1C5FBDB0 /* SkBigPicture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABAAA022B6B0091C597AAA24 /* SkBigPicture.cpp */; };
+@@ -154,7 +148,6 @@
+ 		1E4A3D619D7F7A239406AE3C /* SkDQuadLineIntersection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15AFF7FC1A693E5EC1B46F64 /* SkDQuadLineIntersection.cpp */; };
+ 		1E65AC435612A132A61964EE /* rescaler_mips_dsp_r2.c in Sources */ = {isa = PBXBuildFile; fileRef = C91F4BDEE8E6F498AE604337 /* rescaler_mips_dsp_r2.c */; };
+ 		1E910F1F348F30C863CB6D49 /* range_checked_byte_ptr.cc in Sources */ = {isa = PBXBuildFile; fileRef = 37A68EA50CAD2590DE22CAD9 /* range_checked_byte_ptr.cc */; };
+-		1E9646A0A06B84A27D296117 /* pngmem.c in Sources */ = {isa = PBXBuildFile; fileRef = E25AB8FAB23C60CB8C7B6BCD /* pngmem.c */; };
+ 		1F422E742D3142194712CC85 /* rbbi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 972A781FA8833CE76390DEE5 /* rbbi.cpp */; };
+ 		1FA35BC41AD6081642AF701A /* dng_exceptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 391718BD43DC2CDC6D585D33 /* dng_exceptions.cpp */; };
+ 		1FF6AE4BBAD4923193BE530D /* enc_msa.c in Sources */ = {isa = PBXBuildFile; fileRef = 5A68E360C7AD5DB5CA3423FF /* enc_msa.c */; };
+@@ -177,7 +170,6 @@
+ 		2498A7BE98130BA4ABFE46F2 /* ubidiwrt.c in Sources */ = {isa = PBXBuildFile; fileRef = 028D081E59BA1F4AA37A1222 /* ubidiwrt.c */; };
+ 		250270545B153FBB78E7E917 /* SkPDFMakeCIDGlyphWidthsArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 638CD8290CAD6B1FE3563B3F /* SkPDFMakeCIDGlyphWidthsArray.cpp */; };
+ 		25146CDE7A2024DB0B39A86C /* SkBitmapProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AFA77B72EEAF28E6C64D5F07 /* SkBitmapProvider.cpp */; };
+-		2514D2E8BD203C18466FEDBE /* SkSLCFGGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59D8293BDC970A17E6D7782E /* SkSLCFGGenerator.cpp */; };
+ 		25200933E49311E46E9ED2A8 /* SkDisplacementMapEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5377078D9EE41A13C0B2071A /* SkDisplacementMapEffect.cpp */; };
+ 		25300659751531095D827215 /* GrProgramDesc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A4CE35E267D496DE935E31F2 /* GrProgramDesc.cpp */; };
+ 		25A8A5D5D52C8C3E0D921164 /* GrTraceMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9DAB33D257D91C3011260C6 /* GrTraceMarker.cpp */; };
+@@ -207,12 +199,10 @@
+ 		2A317056761C413544C72DD5 /* SkStroke.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30E8F5C4FBF9E4EDECCDE63A /* SkStroke.cpp */; };
+ 		2A9F9A3964616C52A6FA44C1 /* GrYUVEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC1D369F4AB71DFE6A3CB552 /* GrYUVEffect.cpp */; };
+ 		2ACDEFCE261CADE5E76B1403 /* Sk2DPathEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D4AD1813E2433FA4C9A6554 /* Sk2DPathEffect.cpp */; };
+-		2B297EAA2A27F396FE103C56 /* SkGifImageReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 099CE440BB1D3B0567EA7860 /* SkGifImageReader.cpp */; };
+ 		2B3B39B3E30E6B703E2BB53D /* spirv_validator_options.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D4C3A7D8F6746269EAB733FD /* spirv_validator_options.cpp */; };
+ 		2B71C5A096783BF01D32E2B1 /* SkPictureContentInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4E34C8AFACC4F7CB7A306F53 /* SkPictureContentInfo.cpp */; };
+ 		2BAC3286889ABCBCAB644167 /* SkOpEdgeBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B60496A5F0B95B587B78C7DC /* SkOpEdgeBuilder.cpp */; };
+ 		2C71310857E0BE5C74626575 /* GrAtlasTextContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8495F56E0C53C37D8B7C07FC /* GrAtlasTextContext.cpp */; };
+-		2C7228D2C577633536CE2A26 /* pngrutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 3E54E1C55BB62CC2D376B3F0 /* pngrutil.c */; };
+ 		2C8C0376FDCC376D71BE5C75 /* servls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8BB36E47883E2A7090604313 /* servls.cpp */; };
+ 		2CF6E88E8A8B5825B60FBBF6 /* GrAAConvexTessellator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D634D5EAD8FC5D2FC1B419D /* GrAAConvexTessellator.cpp */; };
+ 		2D3444B8D221C7A7043AE794 /* SkDeferredCanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 980E45C9F8B58760B64F4992 /* SkDeferredCanvas.cpp */; };
+@@ -227,7 +217,6 @@
+ 		2E4559C0CE34197F915C770D /* uhash.c in Sources */ = {isa = PBXBuildFile; fileRef = B66A7F7BED872A09C7B17BDA /* uhash.c */; };
+ 		2E64DC8D67B870D9134954A4 /* ruleiter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45DFBA4F491F485BF4CA210F /* ruleiter.cpp */; };
+ 		2EC1A6291888F6E33C8744C6 /* dng_memory_stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22251AD5F6DA943AFEEC35C4 /* dng_memory_stream.cpp */; };
+-		2F13A0D0F2ABE386B681FA0E /* SkSLIRGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436A6A1F74BBF67642A8154B /* SkSLIRGenerator.cpp */; };
+ 		2F1A0EC0942C52CAB3F05966 /* SkSpriteBlitter_ARGB32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC9FDC7474F0D1C3504E4D75 /* SkSpriteBlitter_ARGB32.cpp */; };
+ 		2FC30D2E460B2077AECAB5FB /* dng_simple_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E46347AD4CE05CF645F2564 /* dng_simple_image.cpp */; };
+ 		2FE830984299CABBEAFAEE8F /* GrGLSLUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80EFC0D416CC0E7E360A05BE /* GrGLSLUtil.cpp */; };
+@@ -361,7 +350,6 @@
+ 		475128909FD15246399B34B0 /* glyph_metrics.cc in Sources */ = {isa = PBXBuildFile; fileRef = 21187E67F88D6C1D47457265 /* glyph_metrics.cc */; };
+ 		4764F2D97132985D0D2163BF /* SkJpegInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BB96C272B047B6C1EDA8A03 /* SkJpegInfo.cpp */; };
+ 		47846CD2F9D6928C8E92BC74 /* GrOvalEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2ACAAFAF566D7DC37BC1A84C /* GrOvalEffect.cpp */; };
+-		47926C0246533E01E6FD098C /* pngwio.c in Sources */ = {isa = PBXBuildFile; fileRef = CB8E1C4DEAF12D658FDCE8F0 /* pngwio.c */; };
+ 		47B6184AA7E966A012B399DC /* GrDrawingManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E96BE7D5557E44D35B8D106D /* GrDrawingManager.cpp */; };
+ 		47F4849EF5721493A185F1BE /* SkImage_Gpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8D2106FAD240C5EECFF9F6E9 /* SkImage_Gpu.cpp */; };
+ 		483C500726DFD55279968118 /* inftrees.c in Sources */ = {isa = PBXBuildFile; fileRef = B53742DE34D91A0A3B1A6BD3 /* inftrees.c */; };
+@@ -384,7 +372,6 @@
+ 		4DD3FC497DE7271F91D46BE1 /* GrPipeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCD688628DFDC3FE53C5EFCA /* GrPipeline.cpp */; };
+ 		4E53786283D7D62C4DD3D88C /* dng_xy_coord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A912EB0D64D4953DE6C2A999 /* dng_xy_coord.cpp */; };
+ 		4E8266FD7DDBDB92708B7587 /* dng_lens_correction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 60326805B05D81C36D7FFB07 /* dng_lens_correction.cpp */; };
+-		4E8B97381F630BC8B18BFB28 /* filter_neon_intrinsics.c in Sources */ = {isa = PBXBuildFile; fileRef = 8F138A650D0754FF46538C45 /* filter_neon_intrinsics.c */; };
+ 		4F05230C508D6D48E72256AD /* SkRRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAD947E373915EBCA1B07DE /* SkRRect.cpp */; };
+ 		4F1B167DC62E750D47A02C52 /* GrSRGBEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D2261D885D494CB74A4DAB9 /* GrSRGBEffect.cpp */; };
+ 		4F25F48413C09FD64BE763F0 /* SkRRectsGaussianEdgeMaskFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4E651BB4D2DB073C57E1C806 /* SkRRectsGaussianEdgeMaskFilter.cpp */; };
+@@ -395,7 +382,6 @@
+ 		5013BE495CD3A02EDC64818B /* rescaler_mips32.c in Sources */ = {isa = PBXBuildFile; fileRef = FF50E790D56FD2E271F1E9FF /* rescaler_mips32.c */; };
+ 		5017B90155AEF1C2D9BF80C9 /* filters.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D76629326162BA4D6595E68 /* filters.c */; };
+ 		503B91A7FF34E0F3FA260241 /* name_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9907C1A8674CCB564C885537 /* name_table.cc */; };
+-		506B4203DC8999DA3C82D2EB /* pngwtran.c in Sources */ = {isa = PBXBuildFile; fileRef = 56092AC00263D557FF38714C /* pngwtran.c */; };
+ 		5083D315E94B0FA9AC642FE9 /* uarrsort.c in Sources */ = {isa = PBXBuildFile; fileRef = DF66759FC88D34E8DCEB5841 /* uarrsort.c */; };
+ 		50ACEE51D826F2AF977B6804 /* yuv.c in Sources */ = {isa = PBXBuildFile; fileRef = 4C41A970C500C5B3440D1A69 /* yuv.c */; };
+ 		5143F995775243B2C82BD0B6 /* GrGpuCommandBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA339BE00B25AC11947827ED /* GrGpuCommandBuffer.cpp */; };
+@@ -536,7 +522,6 @@
+ 		729DF91926020AD8C8FB3FE0 /* SkJpegCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BA235B57F3966F7EBD0E68F /* SkJpegCodec.cpp */; };
+ 		72B1EC966B6F8B0A8A945717 /* SkThreadID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FBDBA4E7C1B774CAFDAB5055 /* SkThreadID.cpp */; };
+ 		72C1672ACEE8C3C2CA1EFBAC /* uscript.c in Sources */ = {isa = PBXBuildFile; fileRef = 8D113C337946373E6E2E4C2A /* uscript.c */; };
+-		72FBF4D7772F3011C4A3FBB9 /* pngrio.c in Sources */ = {isa = PBXBuildFile; fileRef = B8F4D22B686A71C2028618D9 /* pngrio.c */; };
+ 		736E7DC695718DE39AEC5474 /* locmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F3D05182E3FD50696FB9F60 /* locmap.c */; };
+ 		73990A441C983C147E9B3D0D /* GrGLBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27B409A7C21102F39C9068E7 /* GrGLBuffer.cpp */; };
+ 		73A3E5C32F986F1AFD022FC5 /* instruction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9201DD8C56A40BBB4B4A988 /* instruction.cpp */; };
+@@ -565,7 +550,6 @@
+ 		78EF072053E42D5B364DD96D /* GrShaderCaps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE95B3CF7F51A9FD02354E05 /* GrShaderCaps.cpp */; };
+ 		79094192896D8F1F65EF85B6 /* pass_manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C8A731C44B2F3A962A6FC9E9 /* pass_manager.cpp */; };
+ 		791BD40E03F88AEC59F01BF0 /* rescaler.c in Sources */ = {isa = PBXBuildFile; fileRef = 82C4D4365E5931164734AA39 /* rescaler.c */; };
+-		7959B1D4015B9353E68C2C3E /* pngset.c in Sources */ = {isa = PBXBuildFile; fileRef = F280AAC01E12FC1FDBBA97AD /* pngset.c */; };
+ 		795D88129B3056C3F2829317 /* uts46.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 273E5D42DBB0213A8E96C1FD /* uts46.cpp */; };
+ 		7961BB0E8C53AC0CB57D3C36 /* jccolor.c in Sources */ = {isa = PBXBuildFile; fileRef = 2322EC849A0AE0EA7901B899 /* jccolor.c */; };
+ 		7972D7E90C87D6D2AEACB5F7 /* types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD08F37B81CC04CA32171F6B /* types.cpp */; };
+@@ -627,7 +611,6 @@
+ 		874CACBBB351C0E01AEFBBAC /* SkScan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ACE86464B83CC29677033420 /* SkScan.cpp */; };
+ 		874EEE9726A328992F2470CA /* xmlrole.c in Sources */ = {isa = PBXBuildFile; fileRef = 0346665F4CC7C17CBA0C89CB /* xmlrole.c */; };
+ 		87570054777C0E8459ED9AB7 /* GrDistanceFieldGenFromVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BCBAA0D763AD17F91FB9BBD /* GrDistanceFieldGenFromVector.cpp */; };
+-		87DB6839186D317C7E8C7FD3 /* arm_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 33503EF608E84C778B52020D /* arm_init.c */; };
+ 		8863838D5771780A3077D286 /* GrGLSLGeometryProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F356E3332C0652CA55AE1BAF /* GrGLSLGeometryProcessor.cpp */; };
+ 		888830999ED1A22D5893CFD4 /* bytestrieiterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27908AC40D101E99EA71A479 /* bytestrieiterator.cpp */; };
+ 		889A26B4C48F60DA302087FC /* SkPDFConvertType1FontStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A43A564BB09ECD1FD5E315F /* SkPDFConvertType1FontStream.cpp */; };
+@@ -730,7 +713,6 @@
+ 		9C92EDDE6042498421CA1472 /* validate_type_unique.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CBC981169EFE822F02DA973 /* validate_type_unique.cpp */; };
+ 		9CAF5C23D194034E6A724CFA /* jidctflt.c in Sources */ = {isa = PBXBuildFile; fileRef = 6DFB513DDE25B4B4C031F3A4 /* jidctflt.c */; };
+ 		9CBBE73C6D4A5D557305C9DE /* SkColorSpace_ICC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D9F2BC325A19C03B7D8C901B /* SkColorSpace_ICC.cpp */; };
+-		9CC83407075F248B1CC5A493 /* pngwutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 8FC0E5117EDD7015AC1C2020 /* pngwutil.c */; };
+ 		9CFD1D7B3689FAADCFF9DF1F /* dng_host.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BB7BF1715AB48F91B72CE82 /* dng_host.cpp */; };
+ 		9D63ABE5C8B7EB1FD9249E44 /* SkOverdrawCanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5192077202BA2F9526535AE4 /* SkOverdrawCanvas.cpp */; };
+ 		9D6A42A44C48C2AD6DA02E74 /* SkOpContour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ED90893B71E2BF957E37257E /* SkOpContour.cpp */; };
+@@ -779,7 +761,6 @@
+ 		A72C078D8927A88D7B03B468 /* SkIcoCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B7FA7E4812E441E1EDA1FB /* SkIcoCodec.cpp */; };
+ 		A75A587198C6E34BE0047528 /* SkRawAdapterCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1D0EB97A6358971F427289BD /* SkRawAdapterCodec.cpp */; };
+ 		A75B913D89F95F0C47A8A2F9 /* SkBlitRow_D16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3054471ABA3C48D45293B8 /* SkBlitRow_D16.cpp */; };
+-		A7F64583AA328BE71BBFFE8A /* SkSLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9A7DED71944631D822990AA /* SkSLParser.cpp */; };
+ 		A82DAF7DD26DEFE3247DABBD /* SkSRGB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B5BAD5F781178A10C2C124 /* SkSRGB.cpp */; };
+ 		A85AA9CB3C929A14D41788DD /* SkColorTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A045E1DE66109D1E607560D8 /* SkColorTable.cpp */; };
+ 		A860364618BF41A026C749FD /* SkTwoPointConicalGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6A985C94B1F5D330E9198D1 /* SkTwoPointConicalGradient.cpp */; };
+@@ -829,7 +810,6 @@
+ 		B15D6832FE0422A1150E543E /* GrGLVaryingHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F43627D307FEB56E4C6983D /* GrGLVaryingHandler.cpp */; };
+ 		B19D73513789CCAE97DF369C /* SkThreadedBMPDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C767AE404E9160D7C35BEC22 /* SkThreadedBMPDevice.cpp */; };
+ 		B1EDD6897ACD120145F49164 /* SkRawCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1019B5D1D7905929B84D075 /* SkRawCodec.cpp */; };
+-		B20476B7C207D770903353EA /* pngrtran.c in Sources */ = {isa = PBXBuildFile; fileRef = 96BFC8F909434D505A2BB105 /* pngrtran.c */; };
+ 		B215E922AB6B1FC380479FF7 /* InstancedOp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4923C17FC0D008C970572665 /* InstancedOp.cpp */; };
+ 		B24373A155E7EA4B0DEC786B /* sk_surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF7888DDE9A8739652781294 /* sk_surface.cpp */; };
+ 		B26F2330A1A0357E9D21F4AD /* argb_mips_dsp_r2.c in Sources */ = {isa = PBXBuildFile; fileRef = C5673CFBC9CD617CC6352319 /* argb_mips_dsp_r2.c */; };
+@@ -894,7 +874,6 @@
+ 		BE199D25CC870B14CCC3BC5F /* GrBackendTextureImageGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8A04391F6D0E5EF1E176587 /* GrBackendTextureImageGenerator.cpp */; };
+ 		BE21EA4FC23809759C55504D /* alpha_processing_mips_dsp_r2.c in Sources */ = {isa = PBXBuildFile; fileRef = 03A0296BE135517B74EAB51E /* alpha_processing_mips_dsp_r2.c */; };
+ 		BE2E91CF0ACC09D832383A36 /* SkRecords.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9170725CEAC6502E25185353 /* SkRecords.cpp */; };
+-		BE4E419DCE57B4BECE3718D3 /* SkSLGLSLCodeGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9EFD9C2C10771548F6B5F2F7 /* SkSLGLSLCodeGenerator.cpp */; };
+ 		BF4ABB50B620EDD1D537C65A /* generic_table_builder.cc in Sources */ = {isa = PBXBuildFile; fileRef = 42C1AD3D6F0A62869C88EAB4 /* generic_table_builder.cc */; };
+ 		BF8C8183A5207655E221B4FC /* SkJpegEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54E98F22A519917CBC7E5B84 /* SkJpegEncoder.cpp */; };
+ 		BFEFD5A0C7E7040A87B40B9B /* GrRegionOp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDEEE62916329F7CA57546A8 /* GrRegionOp.cpp */; };
+@@ -967,7 +946,6 @@
+ 		CBA8AFE912DDFAB06917FD5F /* GrOp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A18599F9DAE7C14204004D46 /* GrOp.cpp */; };
+ 		CBB556E573DD2A226774526A /* SkFontLCDConfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0346E18D817DDC6233999153 /* SkFontLCDConfig.cpp */; };
+ 		CBC56D062A7E4077A6D34DFD /* dng_rect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE2126AA30E40FBC078B8BCF /* dng_rect.cpp */; };
+-		CBEC1BBF267BCB7E619F4513 /* pngpread.c in Sources */ = {isa = PBXBuildFile; fileRef = 12B46B49B2B072735E6EBA6B /* pngpread.c */; };
+ 		CC19E02FC0E9E00904019DDA /* chariter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B9FE81CA8366B8250F1A66C4 /* chariter.cpp */; };
+ 		CC1E31030D9E84EC43348796 /* SkPixelRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B8B3724CACF36EB5504A13EA /* SkPixelRef.cpp */; };
+ 		CC3037169F1579527D927BE7 /* vp8l_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 81F11F64355D4AC757D04C1C /* vp8l_enc.c */; };
+@@ -1103,7 +1081,6 @@
+ 		DE96B4B81854C75491DD2C7A /* SkWriteBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F84240719EF903312238199D /* SkWriteBuffer.cpp */; };
+ 		DEA1CEBDA22C609D6C6B2CE3 /* small_glyph_metrics.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8F8682AB8C22AC8776741330 /* small_glyph_metrics.cc */; };
+ 		DEE6AC6EA35999B941C9F818 /* dng_memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0DB846F934FFE365726BF144 /* dng_memory.cpp */; };
+-		DEFBC6EC1F1D318400510863 /* opts_configuration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DEFBC6EB1F1D318400510863 /* opts_configuration.cpp */; };
+ 		DEFBC6ED1F1D334900510863 /* SkOpts_crc32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45136AB5E1DC8079A84206B3 /* SkOpts_crc32.cpp */; };
+ 		DF06F9B2205327AB2B66FDC2 /* message.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC4B181E46A66EBF373DD254 /* message.cpp */; };
+ 		DF11E96EE57DF170F838A4E6 /* SkPathOpsQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89DB52A398F9F938065C7407 /* SkPathOpsQuad.cpp */; };
+@@ -1143,7 +1120,6 @@
+ 		E625A168A66500E19DCA57DB /* dng_render.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E978AB0445264A4638D6612A /* dng_render.cpp */; };
+ 		E628CD2E1B0BCBA52417532F /* muxinternal.c in Sources */ = {isa = PBXBuildFile; fileRef = 7711CCC111E2E476B4293CFC /* muxinternal.c */; };
+ 		E68AA3DC49700BDD34CBFD44 /* SkFontMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 24484C070A056BF944877892 /* SkFontMgr.cpp */; };
+-		E6CC796CB081582B099D06D1 /* lex.layout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDE44BF882C2C0D600C4B88C /* lex.layout.cpp */; };
+ 		E6D0112A660293E97DC0BC89 /* construct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD1F0A7B233398265EBC5FE4 /* construct.cpp */; };
+ 		E7164D4F96EF3D58E4812FC8 /* GrPaint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFDAFE1B2C867FDD51BACD38 /* GrPaint.cpp */; };
+ 		E73187D95BFF0B92272D214C /* ustr_wcs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D43587492D9B6109945A2666 /* ustr_wcs.cpp */; };
+@@ -1235,7 +1211,6 @@
+ 		FA4B5A01B4AD82FFC57AB492 /* def_use_manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0988767306F558598C09DD0E /* def_use_manager.cpp */; };
+ 		FA4B8A3C6F748101FD0F1B25 /* GrColorSpaceXform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E71409A178694C94FC61583A /* GrColorSpaceXform.cpp */; };
+ 		FA99E3D6B3E30947E8F258B7 /* SkReduceOrder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1DF905BC95024D924A7EA03C /* SkReduceOrder.cpp */; };
+-		FAAB9CD0FE598C1177740AAF /* pngerror.c in Sources */ = {isa = PBXBuildFile; fileRef = E8CE1C49746238031A389DE9 /* pngerror.c */; };
+ 		FABFB17CE53DFA00952E4F65 /* GrBitmapTextureMaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377A1A75BD52B0F374B33A77 /* GrBitmapTextureMaker.cpp */; };
+ 		FAE1CA1FE646B510D2256EFA /* SkColorSpace_A2B.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C07C1B675553DB6230D63789 /* SkColorSpace_A2B.cpp */; };
+ 		FAE1FFABB15179D25D28AE48 /* SkDumpCanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E875F11A6214F7385EB24CA7 /* SkDumpCanvas.cpp */; };
+@@ -1340,14 +1315,12 @@
+ 		096936CDEE04F73366115A16 /* SkMD5.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkMD5.cpp; path = src/core/SkMD5.cpp; sourceTree = "<group>"; };
+ 		09729112B4C121D523EB881F /* umapfile.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = umapfile.c; path = third_party/externals/icu/source/common/umapfile.c; sourceTree = "<group>"; };
+ 		0988767306F558598C09DD0E /* def_use_manager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = def_use_manager.cpp; path = "third_party/externals/spirv-tools/source/opt/def_use_manager.cpp"; sourceTree = "<group>"; };
+-		099CE440BB1D3B0567EA7860 /* SkGifImageReader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkGifImageReader.cpp; path = third_party/gif/SkGifImageReader.cpp; sourceTree = "<group>"; };
+ 		099D05D6338A5DC884C6AA25 /* SkMathPriv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkMathPriv.h; path = src/core/SkMathPriv.h; sourceTree = "<group>"; };
+ 		09D9945EFC3A51846FA6F424 /* ucasemap_titlecase_brkiter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ucasemap_titlecase_brkiter.cpp; path = third_party/externals/icu/source/common/ucasemap_titlecase_brkiter.cpp; sourceTree = "<group>"; };
+ 		0A058EC0905E80DF1365DAB3 /* SkPaintPriv.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkPaintPriv.cpp; path = src/core/SkPaintPriv.cpp; sourceTree = "<group>"; };
+ 		0A1536743868C1F06867E872 /* dng_tone_curve.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = dng_tone_curve.h; path = third_party/externals/dng_sdk/source/dng_tone_curve.h; sourceTree = "<group>"; };
+ 		0A1ED0AED5CE957FE7582517 /* SkNullCanvas.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkNullCanvas.h; path = include/utils/SkNullCanvas.h; sourceTree = "<group>"; };
+ 		0A3EBC82776EAB4709A691DF /* GrAtlasTextBlob.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrAtlasTextBlob.h; path = src/gpu/text/GrAtlasTextBlob.h; sourceTree = "<group>"; };
+-		0A4B90DC6FD9B4D8F8CA842C /* SkSLSPIRVCodeGenerator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkSLSPIRVCodeGenerator.cpp; path = src/sksl/SkSLSPIRVCodeGenerator.cpp; sourceTree = "<group>"; };
+ 		0A77FCB1B4D55DEAE54AB9E4 /* SkLinearBitmapPipeline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkLinearBitmapPipeline.h; path = src/core/SkLinearBitmapPipeline.h; sourceTree = "<group>"; };
+ 		0AAEA3994D28947612EE3A7C /* GrRectOpFactory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GrRectOpFactory.cpp; path = src/gpu/ops/GrRectOpFactory.cpp; sourceTree = "<group>"; };
+ 		0AC5603A8D0E7EE669AB2F2A /* jcinit.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jcinit.c; path = "third_party/externals/libjpeg-turbo/jcinit.c"; sourceTree = "<group>"; };
+@@ -1404,7 +1377,6 @@
+ 		12174CBA402B871388E6136E /* rescaler_neon.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = rescaler_neon.c; path = third_party/externals/libwebp/src/dsp/rescaler_neon.c; sourceTree = "<group>"; };
+ 		12584DD0751840C01384B6E1 /* bitmap_glyph.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = bitmap_glyph.cc; path = third_party/externals/sfntly/cpp/src/sfntly/table/bitmap/bitmap_glyph.cc; sourceTree = "<group>"; };
+ 		1266FCE925664BBD88E9DE15 /* SkPathOpsConic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkPathOpsConic.cpp; path = src/pathops/SkPathOpsConic.cpp; sourceTree = "<group>"; };
+-		12B46B49B2B072735E6EBA6B /* pngpread.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pngpread.c; path = third_party/libpng/pngpread.c; sourceTree = "<group>"; };
+ 		12DF42FA2A11550F4DB57A63 /* rbbiscan.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = rbbiscan.cpp; path = third_party/externals/icu/source/common/rbbiscan.cpp; sourceTree = "<group>"; };
+ 		12E8BD8B3F8C6A1E4FCE1B03 /* jddctmgr.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jddctmgr.c; path = "third_party/externals/libjpeg-turbo/jddctmgr.c"; sourceTree = "<group>"; };
+ 		1312E4E11A678CC4445BCA60 /* SkTaskGroup.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkTaskGroup.cpp; path = src/core/SkTaskGroup.cpp; sourceTree = "<group>"; };
+@@ -1480,7 +1452,6 @@
+ 		1CA50C9240158B87D109CF5B /* SkHRESULT.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkHRESULT.cpp; path = src/utils/win/SkHRESULT.cpp; sourceTree = "<group>"; };
+ 		1CE82140CF6714559A09723C /* function.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = function.cpp; path = "third_party/externals/spirv-tools/source/opt/function.cpp"; sourceTree = "<group>"; };
+ 		1CEF442513EA754DF3F588DF /* SkTypefaceCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkTypefaceCache.h; path = src/core/SkTypefaceCache.h; sourceTree = "<group>"; };
+-		1CFA82991E6A9BD20713DEEE /* png.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = png.c; path = third_party/libpng/png.c; sourceTree = "<group>"; };
+ 		1D06D8DF8D12B399B4146862 /* SkVertState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkVertState.cpp; path = src/core/SkVertState.cpp; sourceTree = "<group>"; };
+ 		1D0EB97A6358971F427289BD /* SkRawAdapterCodec.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkRawAdapterCodec.cpp; path = src/codec/SkRawAdapterCodec.cpp; sourceTree = "<group>"; };
+ 		1D4B3880970F370111D22FAD /* GrGLInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrGLInterface.h; path = include/gpu/gl/GrGLInterface.h; sourceTree = "<group>"; };
+@@ -1526,7 +1497,6 @@
+ 		22251AD5F6DA943AFEEC35C4 /* dng_memory_stream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dng_memory_stream.cpp; path = third_party/externals/dng_sdk/source/dng_memory_stream.cpp; sourceTree = "<group>"; };
+ 		2226CC23EF84CE0815193611 /* SkNextID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkNextID.h; path = src/core/SkNextID.h; sourceTree = "<group>"; };
+ 		2242EBD6D401B3D56EA6E986 /* dng_point.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dng_point.cpp; path = third_party/externals/dng_sdk/source/dng_point.cpp; sourceTree = "<group>"; };
+-		224EB6FE82A1D265BEE85591 /* pngget.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pngget.c; path = third_party/libpng/pngget.c; sourceTree = "<group>"; };
+ 		225D74C486DF11CD31122804 /* jfdctfst.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jfdctfst.c; path = "third_party/externals/libjpeg-turbo/jfdctfst.c"; sourceTree = "<group>"; };
+ 		227634330A6294A66891A6F1 /* SkBmpMaskCodec.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkBmpMaskCodec.cpp; path = src/codec/SkBmpMaskCodec.cpp; sourceTree = "<group>"; };
+ 		22CC95220CE0A05DD0C13356 /* dng_string_list.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = dng_string_list.h; path = third_party/externals/dng_sdk/source/dng_string_list.h; sourceTree = "<group>"; };
+@@ -1664,7 +1634,6 @@
+ 		32F37DA9CC53F0C51C8C9EFF /* brkeng.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = brkeng.cpp; path = third_party/externals/icu/source/common/brkeng.cpp; sourceTree = "<group>"; };
+ 		32FBD3EB190435001E8A341F /* GrTraceMarker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrTraceMarker.h; path = src/gpu/GrTraceMarker.h; sourceTree = "<group>"; };
+ 		330C2DE244C2058C6DDB0846 /* filters_msa.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = filters_msa.c; path = third_party/externals/libwebp/src/dsp/filters_msa.c; sourceTree = "<group>"; };
+-		33503EF608E84C778B52020D /* arm_init.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = arm_init.c; path = third_party/libpng/arm/arm_init.c; sourceTree = "<group>"; };
+ 		3357A9CFA2BEE930111D63FE /* SkImageInfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkImageInfo.cpp; path = src/core/SkImageInfo.cpp; sourceTree = "<group>"; };
+ 		336C68E58EF248D60F8A9385 /* SkFontStyle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkFontStyle.h; path = include/core/SkFontStyle.h; sourceTree = "<group>"; };
+ 		3380239732CFD100AFFADCBD /* SkScalerContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkScalerContext.h; path = src/core/SkScalerContext.h; sourceTree = "<group>"; };
+@@ -1737,7 +1706,6 @@
+ 		3E3868A1912EF2B2AF13C8D1 /* SkOSPath.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkOSPath.cpp; path = src/utils/SkOSPath.cpp; sourceTree = "<group>"; };
+ 		3E508521A9995482A52AE949 /* uchar.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = uchar.c; path = third_party/externals/icu/source/common/uchar.c; sourceTree = "<group>"; };
+ 		3E53E4A2CB417E13D44A3502 /* GrTextBlobCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrTextBlobCache.h; path = src/gpu/text/GrTextBlobCache.h; sourceTree = "<group>"; };
+-		3E54E1C55BB62CC2D376B3F0 /* pngrutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pngrutil.c; path = third_party/libpng/pngrutil.c; sourceTree = "<group>"; };
+ 		3E771E319CFF3B1B96922BD7 /* uniset_closure.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = uniset_closure.cpp; path = third_party/externals/icu/source/common/uniset_closure.cpp; sourceTree = "<group>"; };
+ 		3EB55F83BE0D76EA9EB61F43 /* SkSLString.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkSLString.cpp; path = src/sksl/SkSLString.cpp; sourceTree = "<group>"; };
+ 		3EE491B5B58C558C2ADAB13E /* GrGLTextureRenderTarget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GrGLTextureRenderTarget.cpp; path = src/gpu/gl/GrGLTextureRenderTarget.cpp; sourceTree = "<group>"; };
+@@ -1775,7 +1743,6 @@
+ 		42CE9F6756F908D5E1A5C7AB /* SkDConicLineIntersection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkDConicLineIntersection.cpp; path = src/pathops/SkDConicLineIntersection.cpp; sourceTree = "<group>"; };
+ 		4335B4BF84CE557EB87A3755 /* config_enc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = config_enc.c; path = third_party/externals/libwebp/src/enc/config_enc.c; sourceTree = "<group>"; };
+ 		434A9417310C343F9BD76B32 /* ucmndata.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = ucmndata.c; path = third_party/externals/icu/source/common/ucmndata.c; sourceTree = "<group>"; };
+-		436A6A1F74BBF67642A8154B /* SkSLIRGenerator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkSLIRGenerator.cpp; path = src/sksl/SkSLIRGenerator.cpp; sourceTree = "<group>"; };
+ 		43755FDC41D8A4F85816C832 /* SkPDFDocument.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkPDFDocument.cpp; path = src/pdf/SkPDFDocument.cpp; sourceTree = "<group>"; };
+ 		43D193AA95EADC8F5A93368F /* lossless_enc_mips_dsp_r2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = lossless_enc_mips_dsp_r2.c; path = third_party/externals/libwebp/src/dsp/lossless_enc_mips_dsp_r2.c; sourceTree = "<group>"; };
+ 		43D8DD92ADB98E65473AF283 /* SkColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkColor.cpp; path = src/core/SkColor.cpp; sourceTree = "<group>"; };
+@@ -1902,7 +1869,6 @@
+ 		55F5BCBD27074F053D349EA8 /* file_input_stream.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = file_input_stream.cc; path = third_party/externals/sfntly/cpp/src/sfntly/port/file_input_stream.cc; sourceTree = "<group>"; };
+ 		55FD1E47874A1738D441B2ED /* ucnvdisp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = ucnvdisp.c; path = third_party/externals/icu/source/common/ucnvdisp.c; sourceTree = "<group>"; };
+ 		56085AC97DB3D1B646DDCA84 /* SkSweepGradient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkSweepGradient.h; path = src/effects/gradients/SkSweepGradient.h; sourceTree = "<group>"; };
+-		56092AC00263D557FF38714C /* pngwtran.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pngwtran.c; path = third_party/libpng/pngwtran.c; sourceTree = "<group>"; };
+ 		5613B978B6DA4E1443EC45B2 /* unorm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = unorm.cpp; path = third_party/externals/icu/source/common/unorm.cpp; sourceTree = "<group>"; };
+ 		561E11A2E1039B2E3DCCD95F /* dng_spline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = dng_spline.h; path = third_party/externals/dng_sdk/source/dng_spline.h; sourceTree = "<group>"; };
+ 		562F455840B1AB4A40DD1100 /* unifunct.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = unifunct.cpp; path = third_party/externals/icu/source/common/unifunct.cpp; sourceTree = "<group>"; };
+@@ -1938,7 +1904,6 @@
+ 		5958E48A2A61D97D0E238961 /* memory_byte_array.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = memory_byte_array.cc; path = third_party/externals/sfntly/cpp/src/sfntly/data/memory_byte_array.cc; sourceTree = "<group>"; };
+ 		59725A99A6E2892D525DED54 /* SkPaintFilterCanvas.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkPaintFilterCanvas.h; path = include/utils/SkPaintFilterCanvas.h; sourceTree = "<group>"; };
+ 		597F1D6AB98FEF416FD0A27D /* GrGLGpuCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrGLGpuCommandBuffer.h; path = src/gpu/gl/GrGLGpuCommandBuffer.h; sourceTree = "<group>"; };
+-		59D8293BDC970A17E6D7782E /* SkSLCFGGenerator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkSLCFGGenerator.cpp; path = src/sksl/SkSLCFGGenerator.cpp; sourceTree = "<group>"; };
+ 		59E531F4CCDE4F13C335024E /* GrMesh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrMesh.h; path = src/gpu/GrMesh.h; sourceTree = "<group>"; };
+ 		59F6D485629E83AA77CEE0A6 /* dng_matrix.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dng_matrix.cpp; path = third_party/externals/dng_sdk/source/dng_matrix.cpp; sourceTree = "<group>"; };
+ 		59FA17A890EF931AF2F04A91 /* SkArithmeticImageFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkArithmeticImageFilter.h; path = include/effects/SkArithmeticImageFilter.h; sourceTree = "<group>"; };
+@@ -1968,7 +1933,6 @@
+ 		5D6FC086445490B73798AB64 /* GrConfigConversionEffect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrConfigConversionEffect.h; path = src/gpu/effects/GrConfigConversionEffect.h; sourceTree = "<group>"; };
+ 		5D72D97EDADA86400C4ADEC4 /* dng_tile_iterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = dng_tile_iterator.h; path = third_party/externals/dng_sdk/source/dng_tile_iterator.h; sourceTree = "<group>"; };
+ 		5DB4B050BEB89563F337B04C /* jdatasrc-tj.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = "jdatasrc-tj.c"; path = "third_party/externals/libjpeg-turbo/jdatasrc-tj.c"; sourceTree = "<group>"; };
+-		5DC86A3E87DF127779BDD5AE /* pngtrans.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pngtrans.c; path = third_party/libpng/pngtrans.c; sourceTree = "<group>"; };
+ 		5DF8666FE0091B9E7826AF88 /* GrGLSLVarying.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrGLSLVarying.h; path = src/gpu/glsl/GrGLSLVarying.h; sourceTree = "<group>"; };
+ 		5E0A18BCAE8694F528B28564 /* SkLinearBitmapPipeline_tile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkLinearBitmapPipeline_tile.h; path = src/core/SkLinearBitmapPipeline_tile.h; sourceTree = "<group>"; };
+ 		5E1BB98FE1F2F6CD2E234362 /* uscript_props.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = uscript_props.cpp; path = third_party/externals/icu/source/common/uscript_props.cpp; sourceTree = "<group>"; };
+@@ -2065,7 +2029,6 @@
+ 		699D72788B4BF7B6A4C411AC /* SkCubicClipper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkCubicClipper.h; path = src/core/SkCubicClipper.h; sourceTree = "<group>"; };
+ 		69CF04CC21AF84D4BEEAB07E /* GrCoordTransform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrCoordTransform.h; path = src/gpu/GrCoordTransform.h; sourceTree = "<group>"; };
+ 		69D94B1482194DDF7ACD0424 /* GrNonAAStrokeRectOp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GrNonAAStrokeRectOp.cpp; path = src/gpu/ops/GrNonAAStrokeRectOp.cpp; sourceTree = "<group>"; };
+-		69DE7FA5193904E3FA85E4CB /* pngwrite.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pngwrite.c; path = third_party/libpng/pngwrite.c; sourceTree = "<group>"; };
+ 		69FBC4AEFF656216F32B01AC /* SkGr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkGr.h; path = src/gpu/SkGr.h; sourceTree = "<group>"; };
+ 		6A1111CF82B979C088B1F909 /* GrAAConvexPathRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GrAAConvexPathRenderer.cpp; path = src/gpu/ops/GrAAConvexPathRenderer.cpp; sourceTree = "<group>"; };
+ 		6A2EFAD3B4FADF8D4541E071 /* GrGpuResource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GrGpuResource.cpp; path = src/gpu/GrGpuResource.cpp; sourceTree = "<group>"; };
+@@ -2313,14 +2276,12 @@
+ 		8E8F0FC43FEF3DE30B71E52D /* dng_rational.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dng_rational.cpp; path = third_party/externals/dng_sdk/source/dng_rational.cpp; sourceTree = "<group>"; };
+ 		8E8F4C89285E207C9AD6E576 /* SkPtrRecorder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkPtrRecorder.cpp; path = src/core/SkPtrRecorder.cpp; sourceTree = "<group>"; };
+ 		8EEC7CA52A97C80AF15BC126 /* ucase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ucase.cpp; path = third_party/externals/icu/source/common/ucase.cpp; sourceTree = "<group>"; };
+-		8F138A650D0754FF46538C45 /* filter_neon_intrinsics.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = filter_neon_intrinsics.c; path = third_party/libpng/arm/filter_neon_intrinsics.c; sourceTree = "<group>"; };
+ 		8F6E20D99FAA8F164563D05B /* dng_1d_function.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dng_1d_function.cpp; path = third_party/externals/dng_sdk/source/dng_1d_function.cpp; sourceTree = "<group>"; };
+ 		8F736D93EC4EFD767F789A4E /* SkImageFilterCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkImageFilterCache.h; path = src/core/SkImageFilterCache.h; sourceTree = "<group>"; };
+ 		8F84AC038F0134B3DE774F2A /* GrDrawOpTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrDrawOpTest.h; path = src/gpu/GrDrawOpTest.h; sourceTree = "<group>"; };
+ 		8F8682AB8C22AC8776741330 /* small_glyph_metrics.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = small_glyph_metrics.cc; path = third_party/externals/sfntly/cpp/src/sfntly/table/bitmap/small_glyph_metrics.cc; sourceTree = "<group>"; };
+ 		8F96B1FBFF9051A4D7D73619 /* ucln_cmn.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ucln_cmn.cpp; path = third_party/externals/icu/source/common/ucln_cmn.cpp; sourceTree = "<group>"; };
+ 		8FAD947E373915EBCA1B07DE /* SkRRect.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkRRect.cpp; path = src/core/SkRRect.cpp; sourceTree = "<group>"; };
+-		8FC0E5117EDD7015AC1C2020 /* pngwutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pngwutil.c; path = third_party/libpng/pngwutil.c; sourceTree = "<group>"; };
+ 		8FC20A450B53387D36FCC83E /* dng_classes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = dng_classes.h; path = third_party/externals/dng_sdk/source/dng_classes.h; sourceTree = "<group>"; };
+ 		9020CDA7D8569A0FD53E6C64 /* wrbmp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = wrbmp.c; path = "third_party/externals/libjpeg-turbo/wrbmp.c"; sourceTree = "<group>"; };
+ 		90305BF864BA85F24746224F /* dng_safe_arithmetic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = dng_safe_arithmetic.h; path = third_party/externals/dng_sdk/source/dng_safe_arithmetic.h; sourceTree = "<group>"; };
+@@ -2361,7 +2322,6 @@
+ 		96678BBB6055F5C0E5F24577 /* SkRecordDraw.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkRecordDraw.cpp; path = src/core/SkRecordDraw.cpp; sourceTree = "<group>"; };
+ 		9677D028F364C88FE20BD502 /* SkUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkUtils.h; path = src/core/SkUtils.h; sourceTree = "<group>"; };
+ 		96B2FA9028A8918F61A879EF /* cmap_table.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = cmap_table.cc; path = third_party/externals/sfntly/cpp/src/sfntly/table/core/cmap_table.cc; sourceTree = "<group>"; };
+-		96BFC8F909434D505A2BB105 /* pngrtran.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pngrtran.c; path = third_party/libpng/pngrtran.c; sourceTree = "<group>"; };
+ 		96E401220B3BBC9E34174FAE /* dng_color_space.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dng_color_space.cpp; path = third_party/externals/dng_sdk/source/dng_color_space.cpp; sourceTree = "<group>"; };
+ 		970FA6F9B5FE32FDA2D5CD0D /* SkColorFilterShader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkColorFilterShader.cpp; path = src/core/SkColorFilterShader.cpp; sourceTree = "<group>"; };
+ 		97236E52E26C1806652C8D3A /* jdmarker.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jdmarker.c; path = "third_party/externals/libjpeg-turbo/jdmarker.c"; sourceTree = "<group>"; };
+@@ -2421,7 +2381,6 @@
+ 		9E71FF38D69D9A879814B36C /* SkEmbossMask.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkEmbossMask.cpp; path = src/effects/SkEmbossMask.cpp; sourceTree = "<group>"; };
+ 		9E865A62B08F36A1D55E6C55 /* SkMorphologyImageFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkMorphologyImageFilter.h; path = include/effects/SkMorphologyImageFilter.h; sourceTree = "<group>"; };
+ 		9EEDE17A249EA1D3FC9D996E /* GrGLUtil.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GrGLUtil.cpp; path = src/gpu/gl/GrGLUtil.cpp; sourceTree = "<group>"; };
+-		9EFD9C2C10771548F6B5F2F7 /* SkSLGLSLCodeGenerator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkSLGLSLCodeGenerator.cpp; path = src/sksl/SkSLGLSLCodeGenerator.cpp; sourceTree = "<group>"; };
+ 		9EFE84194C4587491948596F /* ucharstriebuilder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ucharstriebuilder.cpp; path = third_party/externals/icu/source/common/ucharstriebuilder.cpp; sourceTree = "<group>"; };
+ 		9F0E3CC20A55D02FB1DDAC03 /* GrCoverageSetOpXP.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GrCoverageSetOpXP.cpp; path = src/gpu/effects/GrCoverageSetOpXP.cpp; sourceTree = "<group>"; };
+ 		9F1B895FCE724757805D0130 /* SkSwizzler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkSwizzler.cpp; path = src/codec/SkSwizzler.cpp; sourceTree = "<group>"; };
+@@ -2610,7 +2569,6 @@
+ 		B8E792E5A4F429FE7906DD1E /* ucnv_lmb.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = ucnv_lmb.c; path = third_party/externals/icu/source/common/ucnv_lmb.c; sourceTree = "<group>"; };
+ 		B8EA2E827CF83C7AA780732E /* SkGradientBitmapCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkGradientBitmapCache.cpp; path = src/effects/gradients/SkGradientBitmapCache.cpp; sourceTree = "<group>"; };
+ 		B8EFBEC33911EC3EA672BDF3 /* GrNonAAFillRectOp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GrNonAAFillRectOp.cpp; path = src/gpu/ops/GrNonAAFillRectOp.cpp; sourceTree = "<group>"; };
+-		B8F4D22B686A71C2028618D9 /* pngrio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pngrio.c; path = third_party/libpng/pngrio.c; sourceTree = "<group>"; };
+ 		B9029C8C2E36870B0A48180A /* jcdctmgr.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jcdctmgr.c; path = "third_party/externals/libjpeg-turbo/jcdctmgr.c"; sourceTree = "<group>"; };
+ 		B98062402F995B71EF1FE5E8 /* SkNormalFlatSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkNormalFlatSource.h; path = src/core/SkNormalFlatSource.h; sourceTree = "<group>"; };
+ 		B9C77DE504F00B699284A580 /* SkLumaColorFilter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkLumaColorFilter.cpp; path = src/effects/SkLumaColorFilter.cpp; sourceTree = "<group>"; };
+@@ -2752,10 +2710,8 @@
+ 		CB2ADAFB4E8B239B6459BFDE /* GrSimpleTextureEffect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrSimpleTextureEffect.h; path = src/gpu/effects/GrSimpleTextureEffect.h; sourceTree = "<group>"; };
+ 		CB34BC3C30305794BC3BCDE8 /* ebsc_table.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ebsc_table.cc; path = third_party/externals/sfntly/cpp/src/sfntly/table/bitmap/ebsc_table.cc; sourceTree = "<group>"; };
+ 		CB85AFCAB0375A02C9CC1BBB /* SkFont.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkFont.cpp; path = src/core/SkFont.cpp; sourceTree = "<group>"; };
+-		CB8E1C4DEAF12D658FDCE8F0 /* pngwio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pngwio.c; path = third_party/libpng/pngwio.c; sourceTree = "<group>"; };
+ 		CB922D533315271EA06963C1 /* GrOpList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrOpList.h; path = src/gpu/GrOpList.h; sourceTree = "<group>"; };
+ 		CB96BD48CB98BE6BFC7CB25C /* ucnv_u32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = ucnv_u32.c; path = third_party/externals/icu/source/common/ucnv_u32.c; sourceTree = "<group>"; };
+-		CBA78ECB351637CFC0949A10 /* pngread.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pngread.c; path = third_party/libpng/pngread.c; sourceTree = "<group>"; };
+ 		CC19D6AA19CB238EE943A596 /* GrTextureRenderTargetProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrTextureRenderTargetProxy.h; path = src/gpu/GrTextureRenderTargetProxy.h; sourceTree = "<group>"; };
+ 		CC2C868EAF30005E74A33761 /* SkBitSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkBitSet.h; path = src/utils/SkBitSet.h; sourceTree = "<group>"; };
+ 		CC31852A6A00D246015BB0D7 /* GrDiscardOp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrDiscardOp.h; path = src/gpu/ops/GrDiscardOp.h; sourceTree = "<group>"; };
+@@ -2901,7 +2857,6 @@
+ 		DDAF45B955EB37D5DC3E6935 /* GrAlphaThresholdFragmentProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrAlphaThresholdFragmentProcessor.h; path = src/effects/GrAlphaThresholdFragmentProcessor.h; sourceTree = "<group>"; };
+ 		DDB3DD30C6DA7F5FA5F7EDEF /* SkXfermodeInterpretation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkXfermodeInterpretation.h; path = src/core/SkXfermodeInterpretation.h; sourceTree = "<group>"; };
+ 		DDDA119962587EBCEF03C2A3 /* ustrtrns.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ustrtrns.cpp; path = third_party/externals/icu/source/common/ustrtrns.cpp; sourceTree = "<group>"; };
+-		DDE44BF882C2C0D600C4B88C /* lex.layout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = lex.layout.cpp; path = src/sksl/lex.layout.cpp; sourceTree = "<group>"; };
+ 		DDEEE62916329F7CA57546A8 /* GrRegionOp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GrRegionOp.cpp; path = src/gpu/ops/GrRegionOp.cpp; sourceTree = "<group>"; };
+ 		DDF273968C5EEB2914EDE8F0 /* adler32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = adler32.c; path = third_party/externals/zlib/adler32.c; sourceTree = "<group>"; };
+ 		DE156F2C930E2DB07713FE67 /* SkBlurImageFilter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkBlurImageFilter.cpp; path = src/core/SkBlurImageFilter.cpp; sourceTree = "<group>"; };
+@@ -2994,7 +2949,6 @@
+ 		DE9F6C0EE189113B5439E190 /* GrOnFlushResourceProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrOnFlushResourceProvider.h; path = src/gpu/GrOnFlushResourceProvider.h; sourceTree = "<group>"; };
+ 		DEBAF526A6BD1A7A7CF94C00 /* SkTypefacePriv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkTypefacePriv.h; path = src/core/SkTypefacePriv.h; sourceTree = "<group>"; };
+ 		DEBB4095AE2A710FF705B27A /* GrRRectEffect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrRRectEffect.h; path = src/gpu/effects/GrRRectEffect.h; sourceTree = "<group>"; };
+-		DEFBC6EB1F1D318400510863 /* opts_configuration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = opts_configuration.cpp; path = src/opts/opts_configuration.cpp; sourceTree = "<group>"; };
+ 		DEFCA98AF39B50655F3FEFD5 /* SkXfermode_proccoeff.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkXfermode_proccoeff.h; path = src/core/SkXfermode_proccoeff.h; sourceTree = "<group>"; };
+ 		DF4543BEBBC7684F6129A1C7 /* GrSurfacePriv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrSurfacePriv.h; path = src/gpu/GrSurfacePriv.h; sourceTree = "<group>"; };
+ 		DF66759FC88D34E8DCEB5841 /* uarrsort.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = uarrsort.c; path = third_party/externals/icu/source/common/uarrsort.c; sourceTree = "<group>"; };
+@@ -3017,7 +2971,6 @@
+ 		E20698E3C47D574548DCFDB0 /* SkBlitter_Sprite.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkBlitter_Sprite.cpp; path = src/core/SkBlitter_Sprite.cpp; sourceTree = "<group>"; };
+ 		E2336AE45C80F7EA5715A7DA /* SkXPSDevice.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkXPSDevice.cpp; path = src/xps/SkXPSDevice.cpp; sourceTree = "<group>"; };
+ 		E24E57C6788CA3CB79A8BEE4 /* SkImageShader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkImageShader.cpp; path = src/image/SkImageShader.cpp; sourceTree = "<group>"; };
+-		E25AB8FAB23C60CB8C7B6BCD /* pngmem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pngmem.c; path = third_party/libpng/pngmem.c; sourceTree = "<group>"; };
+ 		E27704173B9718F53FB22C10 /* unistr_cnv.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = unistr_cnv.cpp; path = third_party/externals/icu/source/common/unistr_cnv.cpp; sourceTree = "<group>"; };
+ 		E2B844A38B926607A2DEF08F /* GrProxyMove.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrProxyMove.h; path = src/gpu/effects/GrProxyMove.h; sourceTree = "<group>"; };
+ 		E2BA38D3F7B9CBA749A0F4D7 /* lossless_enc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = lossless_enc.c; path = third_party/externals/libwebp/src/dsp/lossless_enc.c; sourceTree = "<group>"; };
+@@ -3066,14 +3019,12 @@
+ 		E875F11A6214F7385EB24CA7 /* SkDumpCanvas.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkDumpCanvas.cpp; path = src/utils/SkDumpCanvas.cpp; sourceTree = "<group>"; };
+ 		E879F930BF9C27ABE6B736BE /* SkColorMatrixFilterRowMajor255.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkColorMatrixFilterRowMajor255.cpp; path = src/core/SkColorMatrixFilterRowMajor255.cpp; sourceTree = "<group>"; };
+ 		E8AF0796912C9C7D56F6426B /* locutil.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = locutil.cpp; path = third_party/externals/icu/source/common/locutil.cpp; sourceTree = "<group>"; };
+-		E8CE1C49746238031A389DE9 /* pngerror.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pngerror.c; path = third_party/libpng/pngerror.c; sourceTree = "<group>"; };
+ 		E9251F0F0E0DCD09CC9D3F26 /* GrGLUniformHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrGLUniformHandler.h; path = src/gpu/gl/GrGLUniformHandler.h; sourceTree = "<group>"; };
+ 		E94DC8E4F5C3EBBD8BF3A828 /* SkTableMaskFilter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkTableMaskFilter.cpp; path = src/effects/SkTableMaskFilter.cpp; sourceTree = "<group>"; };
+ 		E94F06680D3A39DA2E5F06E1 /* font_data_table.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = font_data_table.cc; path = third_party/externals/sfntly/cpp/src/sfntly/table/font_data_table.cc; sourceTree = "<group>"; };
+ 		E95D1B2452AEE3E061E9DDA6 /* SkSLSymbolTable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkSLSymbolTable.cpp; path = src/sksl/ir/SkSLSymbolTable.cpp; sourceTree = "<group>"; };
+ 		E96BE7D5557E44D35B8D106D /* GrDrawingManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GrDrawingManager.cpp; path = src/gpu/GrDrawingManager.cpp; sourceTree = "<group>"; };
+ 		E978AB0445264A4638D6612A /* dng_render.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dng_render.cpp; path = third_party/externals/dng_sdk/source/dng_render.cpp; sourceTree = "<group>"; };
+-		E9A7DED71944631D822990AA /* SkSLParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkSLParser.cpp; path = src/sksl/SkSLParser.cpp; sourceTree = "<group>"; };
+ 		E9EC72F5BC1237F2CFDD090B /* SkNullCanvas.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkNullCanvas.cpp; path = src/utils/SkNullCanvas.cpp; sourceTree = "<group>"; };
+ 		E9FB9A4FF6DE00F4BA977FF5 /* GrGLProgramDataManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrGLProgramDataManager.h; path = src/gpu/gl/GrGLProgramDataManager.h; sourceTree = "<group>"; };
+ 		EA454DB3DCF21E545623C9B5 /* utrie2_builder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = utrie2_builder.cpp; path = third_party/externals/icu/source/common/utrie2_builder.cpp; sourceTree = "<group>"; };
+@@ -3138,7 +3089,6 @@
+ 		F1F6A3FC46B24A769B0098CF /* GrFragmentProcessor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GrFragmentProcessor.cpp; path = src/gpu/GrFragmentProcessor.cpp; sourceTree = "<group>"; };
+ 		F211F56EEDADE76537C12275 /* loca_table.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = loca_table.cc; path = third_party/externals/sfntly/cpp/src/sfntly/table/truetype/loca_table.cc; sourceTree = "<group>"; };
+ 		F263640DD447552AF23BB75A /* cost_mips_dsp_r2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = cost_mips_dsp_r2.c; path = third_party/externals/libwebp/src/dsp/cost_mips_dsp_r2.c; sourceTree = "<group>"; };
+-		F280AAC01E12FC1FDBBA97AD /* pngset.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pngset.c; path = third_party/libpng/pngset.c; sourceTree = "<group>"; };
+ 		F289D5A887B55ABAE9559656 /* SkDWriteFontFileStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkDWriteFontFileStream.h; path = src/utils/win/SkDWriteFontFileStream.h; sourceTree = "<group>"; };
+ 		F28FF9EC58F791A550A43691 /* index_sub_table_format4.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = index_sub_table_format4.cc; path = third_party/externals/sfntly/cpp/src/sfntly/table/bitmap/index_sub_table_format4.cc; sourceTree = "<group>"; };
+ 		F29542E01D110E1536DAA047 /* SkPaintImageFilter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkPaintImageFilter.cpp; path = src/effects/SkPaintImageFilter.cpp; sourceTree = "<group>"; };
+@@ -3989,16 +3939,10 @@
+ 		5FE59F04DD30C840E7C7DC59 /* sksl */ = {
+ 			isa = PBXGroup;
+ 			children = (
+-				59D8293BDC970A17E6D7782E /* SkSLCFGGenerator.cpp */,
+ 				E14F727E50DD0827CEA0677C /* SkSLCompiler.cpp */,
+-				9EFD9C2C10771548F6B5F2F7 /* SkSLGLSLCodeGenerator.cpp */,
+-				436A6A1F74BBF67642A8154B /* SkSLIRGenerator.cpp */,
+-				E9A7DED71944631D822990AA /* SkSLParser.cpp */,
+-				0A4B90DC6FD9B4D8F8CA842C /* SkSLSPIRVCodeGenerator.cpp */,
+ 				3EB55F83BE0D76EA9EB61F43 /* SkSLString.cpp */,
+ 				DA342C9168EF421C108493DD /* SkSLUtil.cpp */,
+ 				A98B1642639696E8E24DB00A /* ir */,
+-				DDE44BF882C2C0D600C4B88C /* lex.layout.cpp */,
+ 			);
+ 			name = sksl;
+ 			sourceTree = "<group>";
+@@ -4354,8 +4298,6 @@
+ 			children = (
+ 				EAB0BA9228F448DCFADB2A17 /* etc1 */,
+ 				45C6CD48B9E0D98A33B0B8AF /* externals */,
+-				95CADAACC6BF9E732163E90C /* gif */,
+-				B5842609E905398C976FCDEE /* libpng */,
+ 			);
+ 			name = third_party;
+ 			sourceTree = "<group>";
+@@ -4617,14 +4559,6 @@
+ 			name = private;
+ 			sourceTree = "<group>";
+ 		};
+-		95CADAACC6BF9E732163E90C /* gif */ = {
+-			isa = PBXGroup;
+-			children = (
+-				099CE440BB1D3B0567EA7860 /* SkGifImageReader.cpp */,
+-			);
+-			name = gif;
+-			sourceTree = "<group>";
+-		};
+ 		993A639C57A975E8F8D69A17 /* cpp */ = {
+ 			isa = PBXGroup;
+ 			children = (
+@@ -4821,29 +4755,6 @@
+ 			name = fonts;
+ 			sourceTree = "<group>";
+ 		};
+-		B5842609E905398C976FCDEE /* libpng */ = {
+-			isa = PBXGroup;
+-			children = (
+-				D567AC2AD52B8EB19C390C5B /* arm */,
+-				1CFA82991E6A9BD20713DEEE /* png.c */,
+-				E8CE1C49746238031A389DE9 /* pngerror.c */,
+-				224EB6FE82A1D265BEE85591 /* pngget.c */,
+-				E25AB8FAB23C60CB8C7B6BCD /* pngmem.c */,
+-				12B46B49B2B072735E6EBA6B /* pngpread.c */,
+-				CBA78ECB351637CFC0949A10 /* pngread.c */,
+-				B8F4D22B686A71C2028618D9 /* pngrio.c */,
+-				96BFC8F909434D505A2BB105 /* pngrtran.c */,
+-				3E54E1C55BB62CC2D376B3F0 /* pngrutil.c */,
+-				F280AAC01E12FC1FDBBA97AD /* pngset.c */,
+-				5DC86A3E87DF127779BDD5AE /* pngtrans.c */,
+-				CB8E1C4DEAF12D658FDCE8F0 /* pngwio.c */,
+-				69DE7FA5193904E3FA85E4CB /* pngwrite.c */,
+-				56092AC00263D557FF38714C /* pngwtran.c */,
+-				8FC0E5117EDD7015AC1C2020 /* pngwutil.c */,
+-			);
+-			name = libpng;
+-			sourceTree = "<group>";
+-		};
+ 		B6F96E7644630DA7DE07C002 /* image_type_recognition */ = {
+ 			isa = PBXGroup;
+ 			children = (
+@@ -4924,7 +4835,6 @@
+ 				4AAEC879237B4DB10081395C /* SkOpts_sse42.cpp */,
+ 				4AAEC877237B4D990081395C /* SkOpts_sse41.cpp */,
+ 				4AAEC875237B4D710081395C /* SkOpts_ssse3.cpp */,
+-				DEFBC6EB1F1D318400510863 /* opts_configuration.cpp */,
+ 				8B9533854771F178A06B52C6 /* SkBitmapProcState_arm_neon.cpp */,
+ 				D6F59949EBA565CD454E25FC /* SkBitmapProcState_matrixProcs_neon.cpp */,
+ 				B38E1DF0FA1965DE7F5D8890 /* SkBitmapProcState_opts_none.cpp */,
+@@ -5462,15 +5372,6 @@
+ 			name = sfntly;
+ 			sourceTree = "<group>";
+ 		};
+-		D567AC2AD52B8EB19C390C5B /* arm */ = {
+-			isa = PBXGroup;
+-			children = (
+-				33503EF608E84C778B52020D /* arm_init.c */,
+-				8F138A650D0754FF46538C45 /* filter_neon_intrinsics.c */,
+-			);
+-			name = arm;
+-			sourceTree = "<group>";
+-		};
+ 		D7827E487ACB1A8217737515 /* source */ = {
+ 			isa = PBXGroup;
+ 			children = (
+@@ -6330,7 +6231,6 @@
+ 				A82DAF7DD26DEFE3247DABBD /* SkSRGB.cpp in Sources */,
+ 				167AC442662F88E2367C2156 /* SkScalar.cpp in Sources */,
+ 				DEFBC6ED1F1D334900510863 /* SkOpts_crc32.cpp in Sources */,
+-				DEFBC6EC1F1D318400510863 /* opts_configuration.cpp in Sources */,
+ 				9E2EF59ACAC9B89E94B70C0D /* SkScalerContext.cpp in Sources */,
+ 				874CACBBB351C0E01AEFBBAC /* SkScan.cpp in Sources */,
+ 				038F453F982BCC7CF11C4FEB /* SkScan_AAAPath.cpp in Sources */,
+@@ -6734,17 +6634,11 @@
+ 				155C13316F6F1E7CE8CA37E1 /* SkTLS_pthread.cpp in Sources */,
+ 				C2C87FEA76E986D8256CCA04 /* SkOTTable_name.cpp in Sources */,
+ 				235A3EC3469CF7CFA5A36896 /* SkOTUtils.cpp in Sources */,
+-				2514D2E8BD203C18466FEDBE /* SkSLCFGGenerator.cpp in Sources */,
+ 				A4C93284F7A79A3A1CAE2E79 /* SkSLCompiler.cpp in Sources */,
+-				BE4E419DCE57B4BECE3718D3 /* SkSLGLSLCodeGenerator.cpp in Sources */,
+-				2F13A0D0F2ABE386B681FA0E /* SkSLIRGenerator.cpp in Sources */,
+-				A7F64583AA328BE71BBFFE8A /* SkSLParser.cpp in Sources */,
+-				06383C25C1664C4EDBDFC9D1 /* SkSLSPIRVCodeGenerator.cpp in Sources */,
+ 				49ACB6594CB8041C628E2A26 /* SkSLString.cpp in Sources */,
+ 				388CC7A3333D5A826CD3B356 /* SkSLUtil.cpp in Sources */,
+ 				AF50C5F6937C9843FFA702BF /* SkSLSymbolTable.cpp in Sources */,
+ 				7BC451518BB09E3E98EB1779 /* SkSLType.cpp in Sources */,
+-				E6CC796CB081582B099D06D1 /* lex.layout.cpp in Sources */,
+ 				C84D02C77942A998C3C3A1DB /* SkSVGCanvas.cpp in Sources */,
+ 				7F67CF84D538D90A41E700D5 /* SkSVGDevice.cpp in Sources */,
+ 				C73792A93409AD9134C6027D /* SkBase64.cpp in Sources */,
+@@ -7352,27 +7246,9 @@
+ 				DE16F3D91F50EA19002BEC8E /* SkSVGLine.cpp in Sources */,
+ 				9EC087EBA3393407D4705D18 /* uncompr.c in Sources */,
+ 				FF90F3DDE6B84E1EE63281EE /* zutil.c in Sources */,
+-				2B297EAA2A27F396FE103C56 /* SkGifImageReader.cpp in Sources */,
+-				87DB6839186D317C7E8C7FD3 /* arm_init.c in Sources */,
+-				4E8B97381F630BC8B18BFB28 /* filter_neon_intrinsics.c in Sources */,
+-				138AFEFAD589C9BB8482F691 /* png.c in Sources */,
+-				FAAB9CD0FE598C1177740AAF /* pngerror.c in Sources */,
+-				14A1A20221D741C9E71D1E9A /* pngget.c in Sources */,
+-				1E9646A0A06B84A27D296117 /* pngmem.c in Sources */,
+-				CBEC1BBF267BCB7E619F4513 /* pngpread.c in Sources */,
+-				0FA9192C0C772E899BC754F9 /* pngread.c in Sources */,
+ 				DE4F3EF71F16EE1300C0312C /* hb-warning.cc in Sources */,
+-				72FBF4D7772F3011C4A3FBB9 /* pngrio.c in Sources */,
+-				B20476B7C207D770903353EA /* pngrtran.c in Sources */,
+ 				DE16F3DE1F50EA19002BEC8E /* SkSVGRect.cpp in Sources */,
+-				2C7228D2C577633536CE2A26 /* pngrutil.c in Sources */,
+-				7959B1D4015B9353E68C2C3E /* pngset.c in Sources */,
+-				172C9BD43DE170003ED3FEF5 /* pngtrans.c in Sources */,
+-				47926C0246533E01E6FD098C /* pngwio.c in Sources */,
+-				11BD7E2F643E457AD0F7F72A /* pngwrite.c in Sources */,
+ 				DE4F3EE61F16EE1300C0312C /* hb-ot-shape-complex-hebrew.cc in Sources */,
+-				506B4203DC8999DA3C82D2EB /* pngwtran.c in Sources */,
+-				9CC83407075F248B1CC5A493 /* pngwutil.c in Sources */,
+ 				DE4F3EE01F16EE1300C0312C /* hb-ot-font.cc in Sources */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+@@ -7383,7 +7259,7 @@
+ 		8F9C026F6A26650150BAE577 /* Debug */ = {
+ 			isa = XCBuildConfiguration;
+ 			buildSettings = {
+-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
++				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+ 				CLANG_ENABLE_OBJC_WEAK = YES;
+ 				CONFIGURATION_BUILD_DIR = "../../../SkiaLibs/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+ 				EXECUTABLE_PREFIX = "";
+@@ -7467,7 +7343,7 @@
+ 		DE3091E71ED643A50079DD2A /* Release */ = {
+ 			isa = XCBuildConfiguration;
+ 			buildSettings = {
+-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
++				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+ 				CLANG_ENABLE_OBJC_WEAK = YES;
+ 				CONFIGURATION_BUILD_DIR = "../../../SkiaLibs/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+ 				ENABLE_BITCODE = NO;
+@@ -7536,6 +7412,7 @@
+ 			isa = XCBuildConfiguration;
+ 			buildSettings = {
+ 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
++				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+ 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+ 				CLANG_WARN_BOOL_CONVERSION = YES;
+ 				CLANG_WARN_COMMA = YES;
+@@ -7554,7 +7431,7 @@
+ 				CLANG_WARN_UNREACHABLE_CODE = YES;
+ 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+ 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+-				GCC_C_LANGUAGE_STANDARD = gnu11;
++				GCC_C_LANGUAGE_STANDARD = c11;
+ 				GCC_NO_COMMON_BLOCKS = YES;
+ 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+ 				GCC_WARN_ABOUT_RETURN_TYPE = YES;

@@ -527,6 +527,8 @@ protected:
 
     std::unique_ptr<GrShaderCaps> fShaderCaps;
 
+public:
+
     bool fNPOTTextureTileSupport                     : 1;
     bool fMipmapSupport                              : 1;
     bool fReuseScratchTextures                       : 1;

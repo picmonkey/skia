@@ -27,6 +27,8 @@
 /* Version number of package */
 #define VERSION "1.5.1"
 
+#define THREAD_LOCAL  
+
 /* The size of `size_t', as reported by the compiler through the
  * builtin macro __SIZEOF_SIZE_T__. If the compiler does not
  * report __SIZEOF_SIZE_T__ add a custom rule for the compiler

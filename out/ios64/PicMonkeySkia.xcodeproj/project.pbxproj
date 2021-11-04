@@ -1256,10 +1256,126 @@
 		DDA53B5EA2BAF37AFDC4DB41 /* uresdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9E9DD206D938F9D64E73FAF8 /* uresdata.cpp */; };
 		DDADAA441E0EB730C58E49D4 /* SkImageImageFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43C836EF935C97E6E7D99D67 /* SkImageImageFilter.cpp */; };
 		DE067F389F6A9832C07B9597 /* double-conversion-bignum-dtoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A071730FBE08FF212226014C /* double-conversion-bignum-dtoa.cpp */; };
+		DE0A42E8273363370056DC46 /* jsimd_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = DE0A42E7273363360056DC46 /* jsimd_neon.S */; };
+		DE0A42FA273430EB0056DC46 /* pngwio.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0A42EC273430E90056DC46 /* pngwio.c */; };
+		DE0A42FB273430EB0056DC46 /* pngwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0A42ED273430E90056DC46 /* pngwrite.c */; };
+		DE0A42FC273430EB0056DC46 /* pngerror.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0A42EE273430E90056DC46 /* pngerror.c */; };
+		DE0A42FD273430EB0056DC46 /* pngrutil.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0A42EF273430EA0056DC46 /* pngrutil.c */; };
+		DE0A42FE273430EB0056DC46 /* pngset.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0A42F0273430EA0056DC46 /* pngset.c */; };
+		DE0A42FF273430EB0056DC46 /* pngwtran.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0A42F1273430EA0056DC46 /* pngwtran.c */; };
+		DE0A4300273430EB0056DC46 /* png.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0A42F2273430EA0056DC46 /* png.c */; };
+		DE0A4301273430EB0056DC46 /* pngwutil.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0A42F3273430EA0056DC46 /* pngwutil.c */; };
+		DE0A4302273430EB0056DC46 /* pngget.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0A42F4273430EA0056DC46 /* pngget.c */; };
+		DE0A4303273430EB0056DC46 /* pngmem.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0A42F5273430EA0056DC46 /* pngmem.c */; };
+		DE0A4304273430EB0056DC46 /* pngrtran.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0A42F6273430EA0056DC46 /* pngrtran.c */; };
+		DE0A4305273430EB0056DC46 /* pngpread.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0A42F7273430EA0056DC46 /* pngpread.c */; };
+		DE0A4306273430EB0056DC46 /* pngread.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0A42F8273430EB0056DC46 /* pngread.c */; };
+		DE0A4307273430EB0056DC46 /* pngrio.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0A42F9273430EB0056DC46 /* pngrio.c */; };
+		DE0A4309273431B20056DC46 /* pngtrans.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4308273431B20056DC46 /* pngtrans.c */; };
+		DE0A430B273432250056DC46 /* palette_neon_intrinsics.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0A430A273432250056DC46 /* palette_neon_intrinsics.c */; };
+		DE0A430D2734328D0056DC46 /* arm_init.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0A430C2734328C0056DC46 /* arm_init.c */; };
+		DE0A447627343FBE0056DC46 /* font_factory.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43B627343FBD0056DC46 /* font_factory.cc */; };
+		DE0A447727343FBE0056DC46 /* subsetter.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43BB27343FBD0056DC46 /* subsetter.cc */; };
+		DE0A447827343FBE0056DC46 /* glyph_table_subsetter.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43BC27343FBD0056DC46 /* glyph_table_subsetter.cc */; };
+		DE0A447927343FBE0056DC46 /* table_subsetter_impl.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43BF27343FBD0056DC46 /* table_subsetter_impl.cc */; };
+		DE0A447A27343FBE0056DC46 /* tag.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43C027343FBD0056DC46 /* tag.cc */; };
+		DE0A447B27343FBE0056DC46 /* table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43C727343FBD0056DC46 /* table.cc */; };
+		DE0A447C27343FBE0056DC46 /* maximum_profile_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43CA27343FBD0056DC46 /* maximum_profile_table.cc */; };
+		DE0A447D27343FBE0056DC46 /* horizontal_device_metrics_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43CB27343FBD0056DC46 /* horizontal_device_metrics_table.cc */; };
+		DE0A447E27343FBE0056DC46 /* horizontal_metrics_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43CC27343FBD0056DC46 /* horizontal_metrics_table.cc */; };
+		DE0A447F27343FBE0056DC46 /* font_header_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43CF27343FBD0056DC46 /* font_header_table.cc */; };
+		DE0A448027343FBE0056DC46 /* os2_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43D227343FBD0056DC46 /* os2_table.cc */; };
+		DE0A448127343FBE0056DC46 /* cmap_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43D427343FBD0056DC46 /* cmap_table.cc */; };
+		DE0A448227343FBE0056DC46 /* horizontal_header_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43D727343FBD0056DC46 /* horizontal_header_table.cc */; };
+		DE0A448327343FBE0056DC46 /* name_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43D827343FBD0056DC46 /* name_table.cc */; };
+		DE0A448427343FBE0056DC46 /* byte_array_table_builder.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43DA27343FBD0056DC46 /* byte_array_table_builder.cc */; };
+		DE0A448527343FBE0056DC46 /* glyph_metrics.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43DD27343FBD0056DC46 /* glyph_metrics.cc */; };
+		DE0A448627343FBE0056DC46 /* index_sub_table_format2.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43E227343FBD0056DC46 /* index_sub_table_format2.cc */; };
+		DE0A448727343FBE0056DC46 /* composite_bitmap_glyph.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43E427343FBD0056DC46 /* composite_bitmap_glyph.cc */; };
+		DE0A448827343FBE0056DC46 /* simple_bitmap_glyph.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43E627343FBD0056DC46 /* simple_bitmap_glyph.cc */; };
+		DE0A448927343FBE0056DC46 /* index_sub_table_format3.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43E727343FBD0056DC46 /* index_sub_table_format3.cc */; };
+		DE0A448A27343FBE0056DC46 /* index_sub_table_format4.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43EA27343FBD0056DC46 /* index_sub_table_format4.cc */; };
+		DE0A448B27343FBE0056DC46 /* ebdt_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43EB27343FBD0056DC46 /* ebdt_table.cc */; };
+		DE0A448C27343FBE0056DC46 /* ebsc_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43ED27343FBD0056DC46 /* ebsc_table.cc */; };
+		DE0A448D27343FBE0056DC46 /* index_sub_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43EE27343FBD0056DC46 /* index_sub_table.cc */; };
+		DE0A448E27343FBE0056DC46 /* index_sub_table_format1.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43EF27343FBD0056DC46 /* index_sub_table_format1.cc */; };
+		DE0A448F27343FBE0056DC46 /* index_sub_table_format5.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43F127343FBD0056DC46 /* index_sub_table_format5.cc */; };
+		DE0A449027343FBE0056DC46 /* bitmap_glyph_info.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43F227343FBD0056DC46 /* bitmap_glyph_info.cc */; };
+		DE0A449127343FBE0056DC46 /* big_glyph_metrics.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43F327343FBD0056DC46 /* big_glyph_metrics.cc */; };
+		DE0A449227343FBE0056DC46 /* bitmap_size_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43F627343FBD0056DC46 /* bitmap_size_table.cc */; };
+		DE0A449327343FBE0056DC46 /* eblc_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43F827343FBD0056DC46 /* eblc_table.cc */; };
+		DE0A449427343FBE0056DC46 /* bitmap_glyph.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43FA27343FBD0056DC46 /* bitmap_glyph.cc */; };
+		DE0A449527343FBE0056DC46 /* small_glyph_metrics.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43FC27343FBD0056DC46 /* small_glyph_metrics.cc */; };
+		DE0A449627343FBE0056DC46 /* font_data_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A43FE27343FBD0056DC46 /* font_data_table.cc */; };
+		DE0A449727343FBE0056DC46 /* generic_table_builder.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A440227343FBD0056DC46 /* generic_table_builder.cc */; };
+		DE0A449827343FBE0056DC46 /* table_based_table_builder.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A440327343FBD0056DC46 /* table_based_table_builder.cc */; };
+		DE0A449927343FBE0056DC46 /* subtable.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A440427343FBD0056DC46 /* subtable.cc */; };
+		DE0A449A27343FBE0056DC46 /* glyph_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A440927343FBD0056DC46 /* glyph_table.cc */; };
+		DE0A449B27343FBE0056DC46 /* loca_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A440A27343FBD0056DC46 /* loca_table.cc */; };
+		DE0A449C27343FBE0056DC46 /* header.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A440D27343FBD0056DC46 /* header.cc */; };
+		DE0A449D27343FBE0056DC46 /* font.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A440F27343FBD0056DC46 /* font.cc */; };
+		DE0A449E27343FBE0056DC46 /* memory_input_stream.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A441727343FBD0056DC46 /* memory_input_stream.cc */; };
+		DE0A449F27343FBE0056DC46 /* file_input_stream.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A441B27343FBD0056DC46 /* file_input_stream.cc */; };
+		DE0A44A027343FBE0056DC46 /* lock.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A441E27343FBD0056DC46 /* lock.cc */; };
+		DE0A44A127343FBE0056DC46 /* memory_output_stream.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A442227343FBD0056DC46 /* memory_output_stream.cc */; };
+		DE0A44A227343FBE0056DC46 /* readable_font_data.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A442527343FBD0056DC46 /* readable_font_data.cc */; };
+		DE0A44A327343FBE0056DC46 /* font_input_stream.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A442727343FBD0056DC46 /* font_input_stream.cc */; };
+		DE0A44A427343FBE0056DC46 /* byte_array.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A442827343FBD0056DC46 /* byte_array.cc */; };
+		DE0A44A527343FBE0056DC46 /* font_data.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A442B27343FBD0056DC46 /* font_data.cc */; };
+		DE0A44A627343FBE0056DC46 /* growable_memory_byte_array.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A442D27343FBD0056DC46 /* growable_memory_byte_array.cc */; };
+		DE0A44A727343FBE0056DC46 /* font_output_stream.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A442E27343FBD0056DC46 /* font_output_stream.cc */; };
+		DE0A44A827343FBE0056DC46 /* writable_font_data.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A443327343FBD0056DC46 /* writable_font_data.cc */; };
+		DE0A44A927343FBE0056DC46 /* memory_byte_array.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A443427343FBD0056DC46 /* memory_byte_array.cc */; };
+		DE0A4553273442E00056DC46 /* BUILD.gn in Resources */ = {isa = PBXBuildFile; fileRef = DE0A454A273442E00056DC46 /* BUILD.gn */; };
+		DE0A4554273442E00056DC46 /* skshaper.gni in Resources */ = {isa = PBXBuildFile; fileRef = DE0A454D273442E00056DC46 /* skshaper.gni */; };
+		DE0A4556273442E00056DC46 /* SkShaper_primitive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4550273442E00056DC46 /* SkShaper_primitive.cpp */; };
+		DE0A4558273442E00056DC46 /* SkShaper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4552273442E00056DC46 /* SkShaper.cpp */; };
+		DE0A4585273445A80056DC46 /* SkSVGFeMorphology.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A455B273445A80056DC46 /* SkSVGFeMorphology.cpp */; };
+		DE0A4586273445A80056DC46 /* SkSVGAttributeParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A455C273445A80056DC46 /* SkSVGAttributeParser.cpp */; };
+		DE0A4587273445A80056DC46 /* SkSVGLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A455D273445A80056DC46 /* SkSVGLine.cpp */; };
+		DE0A4588273445A80056DC46 /* SkSVGRenderContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A455E273445A80056DC46 /* SkSVGRenderContext.cpp */; };
+		DE0A4589273445A80056DC46 /* SkSVGFeLightSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A455F273445A80056DC46 /* SkSVGFeLightSource.cpp */; };
+		DE0A458A273445A80056DC46 /* SkSVGUse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4560273445A80056DC46 /* SkSVGUse.cpp */; };
+		DE0A458B273445A80056DC46 /* SkSVGMask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4561273445A80056DC46 /* SkSVGMask.cpp */; };
+		DE0A458C273445A80056DC46 /* SkSVGFe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4562273445A80056DC46 /* SkSVGFe.cpp */; };
+		DE0A458D273445A80056DC46 /* SkSVGLinearGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4563273445A80056DC46 /* SkSVGLinearGradient.cpp */; };
+		DE0A458E273445A80056DC46 /* SkSVGRadialGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4564273445A80056DC46 /* SkSVGRadialGradient.cpp */; };
+		DE0A458F273445A80056DC46 /* SkSVGText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4565273445A80056DC46 /* SkSVGText.cpp */; };
+		DE0A4590273445A80056DC46 /* SkSVGFeComposite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4567273445A80056DC46 /* SkSVGFeComposite.cpp */; };
+		DE0A4591273445A80056DC46 /* SkSVGFeOffset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4568273445A80056DC46 /* SkSVGFeOffset.cpp */; };
+		DE0A4592273445A80056DC46 /* SkSVGPoly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4569273445A80056DC46 /* SkSVGPoly.cpp */; };
+		DE0A4593273445A80056DC46 /* SkSVGFeDisplacementMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A456A273445A80056DC46 /* SkSVGFeDisplacementMap.cpp */; };
+		DE0A4594273445A80056DC46 /* SkSVGNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A456B273445A80056DC46 /* SkSVGNode.cpp */; };
+		DE0A4595273445A80056DC46 /* SkSVGFeGaussianBlur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A456C273445A80056DC46 /* SkSVGFeGaussianBlur.cpp */; };
+		DE0A4596273445A80056DC46 /* SkSVGFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A456D273445A80056DC46 /* SkSVGFilter.cpp */; };
+		DE0A4597273445A80056DC46 /* SkSVGShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A456E273445A80056DC46 /* SkSVGShape.cpp */; };
+		DE0A4598273445A80056DC46 /* SkSVGFeTurbulence.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A456F273445A80056DC46 /* SkSVGFeTurbulence.cpp */; };
+		DE0A4599273445A80056DC46 /* SkSVGValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4570273445A80056DC46 /* SkSVGValue.cpp */; };
+		DE0A459A273445A80056DC46 /* SkSVGClipPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4571273445A80056DC46 /* SkSVGClipPath.cpp */; };
+		DE0A459B273445A80056DC46 /* SkSVGFilterContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4572273445A80056DC46 /* SkSVGFilterContext.cpp */; };
+		DE0A459C273445A80056DC46 /* SkSVGFeImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4573273445A80056DC46 /* SkSVGFeImage.cpp */; };
+		DE0A459D273445A80056DC46 /* SkSVGDOM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4574273445A80056DC46 /* SkSVGDOM.cpp */; };
+		DE0A459E273445A80056DC46 /* SkSVGEllipse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4575273445A80056DC46 /* SkSVGEllipse.cpp */; };
+		DE0A459F273445A80056DC46 /* SkSVGAttribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4576273445A80056DC46 /* SkSVGAttribute.cpp */; };
+		DE0A45A0273445A80056DC46 /* SkSVGCircle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4577273445A80056DC46 /* SkSVGCircle.cpp */; };
+		DE0A45A1273445A80056DC46 /* SkSVGPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4578273445A80056DC46 /* SkSVGPath.cpp */; };
+		DE0A45A2273445A80056DC46 /* SkSVGFeColorMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4579273445A80056DC46 /* SkSVGFeColorMatrix.cpp */; };
+		DE0A45A3273445A80056DC46 /* SkSVGRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A457A273445A80056DC46 /* SkSVGRect.cpp */; };
+		DE0A45A4273445A80056DC46 /* SkSVGSVG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A457B273445A80056DC46 /* SkSVGSVG.cpp */; };
+		DE0A45A5273445A80056DC46 /* SkSVGGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A457C273445A80056DC46 /* SkSVGGradient.cpp */; };
+		DE0A45A6273445A80056DC46 /* SkSVGFeFlood.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A457D273445A80056DC46 /* SkSVGFeFlood.cpp */; };
+		DE0A45A7273445A80056DC46 /* SkSVGPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A457E273445A80056DC46 /* SkSVGPattern.cpp */; };
+		DE0A45A8273445A80056DC46 /* SkSVGImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A457F273445A80056DC46 /* SkSVGImage.cpp */; };
+		DE0A45A9273445A80056DC46 /* SkSVGStop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4580273445A80056DC46 /* SkSVGStop.cpp */; };
+		DE0A45AA273445A80056DC46 /* SkSVGFeBlend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4581273445A80056DC46 /* SkSVGFeBlend.cpp */; };
+		DE0A45AB273445A80056DC46 /* SkSVGContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4582273445A80056DC46 /* SkSVGContainer.cpp */; };
+		DE0A45AC273445A80056DC46 /* SkSVGFeLighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4583273445A80056DC46 /* SkSVGFeLighting.cpp */; };
+		DE0A45AD273445A80056DC46 /* SkSVGTransformableNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4584273445A80056DC46 /* SkSVGTransformableNode.cpp */; };
+		DE0A45AF273447EF0056DC46 /* hb-coretext.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A45AE273447EE0056DC46 /* hb-coretext.cc */; };
 		DE0CEF771C1038C60BBB4764 /* SkShaderImageFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43E86FE26FBDE971174AFF76 /* SkShaderImageFilter.cpp */; };
 		DE1AFBD464AA8E054F75D845 /* GrGLAssembleGLInterfaceAutogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 580A876FA0BF5228BCDD41E1 /* GrGLAssembleGLInterfaceAutogen.cpp */; };
+		DE35710127335AC400CE713C /* jsimd.c in Sources */ = {isa = PBXBuildFile; fileRef = DE35710027335AC400CE713C /* jsimd.c */; };
 		DE3588481C63C1761D33141B /* GrAttachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E77A99C42B706EACE1A6CC74 /* GrAttachment.cpp */; };
-		DE6C8BAC272AEEFC00F6406A /* arm64 in Resources */ = {isa = PBXBuildFile; fileRef = DE6C8BAB272AEEFC00F6406A /* arm64 */; };
 		DE6C8C93272AF14F00F6406A /* hb-common.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C46272AF14700F6406A /* hb-common.cc */; };
 		DE6C8C97272AF14F00F6406A /* hb-ot-shape-complex-hangul.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C4A272AF14700F6406A /* hb-ot-shape-complex-hangul.cc */; };
 		DE6C8C99272AF14F00F6406A /* hb-ot-shape-complex-vowel-constraints.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C4C272AF14800F6406A /* hb-ot-shape-complex-vowel-constraints.cc */; };
@@ -1267,7 +1383,6 @@
 		DE6C8C9E272AF14F00F6406A /* hb-ot-shape-complex-default.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C51272AF14800F6406A /* hb-ot-shape-complex-default.cc */; };
 		DE6C8C9F272AF14F00F6406A /* hb-ot-name.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C52272AF14800F6406A /* hb-ot-name.cc */; };
 		DE6C8CA0272AF14F00F6406A /* hb-ot-font.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C53272AF14800F6406A /* hb-ot-font.cc */; };
-		DE6C8CA2272AF14F00F6406A /* hb-ot-shape-complex-use-table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C55272AF14900F6406A /* hb-ot-shape-complex-use-table.cc */; };
 		DE6C8CA4272AF15000F6406A /* hb-face.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C57272AF14900F6406A /* hb-face.cc */; };
 		DE6C8CA5272AF15000F6406A /* hb-subset-cff-common.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C58272AF14900F6406A /* hb-subset-cff-common.cc */; };
 		DE6C8CA6272AF15000F6406A /* hb-ot-cff1-table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C59272AF14900F6406A /* hb-ot-cff1-table.cc */; };
@@ -1299,7 +1414,6 @@
 		DE6C8CC8272AF15000F6406A /* hb-ot-map.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C7B272AF14D00F6406A /* hb-ot-map.cc */; };
 		DE6C8CCA272AF15000F6406A /* hb-static.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C7D272AF14D00F6406A /* hb-static.cc */; };
 		DE6C8CCB272AF15000F6406A /* hb-map.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C7E272AF14D00F6406A /* hb-map.cc */; };
-		DE6C8CCC272AF15000F6406A /* hb-ot-name-language.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C7F272AF14D00F6406A /* hb-ot-name-language.cc */; };
 		DE6C8CCE272AF15000F6406A /* hb-blob.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C81272AF14E00F6406A /* hb-blob.cc */; };
 		DE6C8CD1272AF15000F6406A /* hb-subset.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C84272AF14E00F6406A /* hb-subset.cc */; };
 		DE6C8CD2272AF15000F6406A /* hb-shape-plan.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C85272AF14E00F6406A /* hb-shape-plan.cc */; };
@@ -1307,14 +1421,18 @@
 		DE6C8CD4272AF15000F6406A /* hb-shaper.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C87272AF14E00F6406A /* hb-shaper.cc */; };
 		DE6C8CD5272AF15000F6406A /* hb-subset-input.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C88272AF14E00F6406A /* hb-subset-input.cc */; };
 		DE6C8CD6272AF15000F6406A /* hb-ot-face.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C89272AF14E00F6406A /* hb-ot-face.cc */; };
-		DE6C8CD7272AF15000F6406A /* hb-warning.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C8A272AF14E00F6406A /* hb-warning.cc */; };
-		DE6C8CD8272AF15000F6406A /* hb-subset-glyf.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C8B272AF14F00F6406A /* hb-subset-glyf.cc */; };
 		DE6C8CDA272AF15000F6406A /* hb-ot-shape-complex-indic-table.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C8D272AF14F00F6406A /* hb-ot-shape-complex-indic-table.cc */; };
 		DE6C8CDB272AF15000F6406A /* hb-ot-shape-complex-use.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C8F272AF14F00F6406A /* hb-ot-shape-complex-use.cc */; };
 		DE6C8CDC272AF15000F6406A /* hb-set.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C90272AF14F00F6406A /* hb-set.cc */; };
 		DE6C8CDD272AF15000F6406A /* hb-ot-shape-complex-khmer.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C91272AF14F00F6406A /* hb-ot-shape-complex-khmer.cc */; };
 		DE6C8CDE272AF15000F6406A /* hb-ot-shape-complex-arabic.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C92272AF14F00F6406A /* hb-ot-shape-complex-arabic.cc */; };
-		DE6C8D3D272C46F100F6406A /* svg in Resources */ = {isa = PBXBuildFile; fileRef = DE6C8D3C272C46F100F6406A /* svg */; };
+		DE8C26B227345239003E6AAB /* hb-fallback-shape.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE8C26B127345239003E6AAB /* hb-fallback-shape.cc */; };
+		DE8C26B427345267003E6AAB /* hb-ucd.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE8C26B327345267003E6AAB /* hb-ucd.cc */; };
+		DE8C26B6273454DB003E6AAB /* hb-ot-shape-complex-syllabic.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE8C26B5273454DB003E6AAB /* hb-ot-shape-complex-syllabic.cc */; };
+		DE8C26B827345590003E6AAB /* hb-number.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE8C26B727345590003E6AAB /* hb-number.cc */; };
+		DE8C26BA2734566A003E6AAB /* hb-ot-metrics.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE8C26B92734566A003E6AAB /* hb-ot-metrics.cc */; };
+		DE8C292C273473F5003E6AAB /* icudtl_dat.S in Sources */ = {isa = PBXBuildFile; fileRef = DE8C292A273473F5003E6AAB /* icudtl_dat.S */; };
+		DE8C292D273473F5003E6AAB /* icudt56l_dat.s in Sources */ = {isa = PBXBuildFile; fileRef = DE8C292B273473F5003E6AAB /* icudt56l_dat.s */; };
 		DE9140402729F011003A24D8 /* xmltok.c in Sources */ = {isa = PBXBuildFile; fileRef = DE91403C2729F010003A24D8 /* xmltok.c */; };
 		DE9140412729F011003A24D8 /* xmlrole.c in Sources */ = {isa = PBXBuildFile; fileRef = DE91403E2729F010003A24D8 /* xmlrole.c */; };
 		DE9140422729F011003A24D8 /* xmlparse.c in Sources */ = {isa = PBXBuildFile; fileRef = DE91403F2729F010003A24D8 /* xmlparse.c */; };
@@ -1683,7 +1801,6 @@
 		0E94C5C48882BB8F3C26010D /* SkImageEncoder_CG.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkImageEncoder_CG.cpp; path = src/ports/SkImageEncoder_CG.cpp; sourceTree = "<group>"; };
 		0E9F4F46C3E0DF377B5CB3E1 /* GrShape.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrShape.h; path = src/gpu/geometry/GrShape.h; sourceTree = "<group>"; };
 		0EBAC2BEA7742D3CBA17B5F1 /* GrModulateAtlasCoverageEffect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GrModulateAtlasCoverageEffect.h; path = src/gpu/effects/GrModulateAtlasCoverageEffect.h; sourceTree = "<group>"; };
-		0EE0A6E641FDD2265F6FA30E /* icudtl.dat */ = {isa = PBXFileReference; lastKnownFileType = text; name = icudtl.dat; path = third_party/externals/icu/ios/icudtl.dat; sourceTree = "<group>"; };
 		0EF7B407E8B57E3F4BCC9629 /* rbbitblb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = rbbitblb.h; path = third_party/externals/icu/source/common/rbbitblb.h; sourceTree = "<group>"; };
 		0F061190217A26902B7A6C35 /* number_patternmodifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = number_patternmodifier.h; path = third_party/externals/icu/source/i18n/number_patternmodifier.h; sourceTree = "<group>"; };
 		0F1094C62F49CF41D5BAF3A7 /* SkMemory_malloc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkMemory_malloc.cpp; path = src/ports/SkMemory_malloc.cpp; sourceTree = "<group>"; };
@@ -3942,11 +4059,196 @@
 		DDC5BF22FFE264259A1E4F5B /* SkEventTracer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkEventTracer.h; path = include/utils/SkEventTracer.h; sourceTree = "<group>"; };
 		DDD5DC02BA9A8D1C541ECE74 /* SkCoverageMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkCoverageMode.h; path = include/core/SkCoverageMode.h; sourceTree = "<group>"; };
 		DDDA05D032D601E8AEB6585F /* normlzr.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = normlzr.cpp; path = third_party/externals/icu/source/common/normlzr.cpp; sourceTree = "<group>"; };
+		DE0A42E7273363360056DC46 /* jsimd_neon.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = jsimd_neon.S; path = "third_party/externals/libjpeg-turbo/simd/arm64/jsimd_neon.S"; sourceTree = "<group>"; };
+		DE0A42EC273430E90056DC46 /* pngwio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwio.c; path = third_party/externals/libpng/pngwio.c; sourceTree = "<group>"; };
+		DE0A42ED273430E90056DC46 /* pngwrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwrite.c; path = third_party/externals/libpng/pngwrite.c; sourceTree = "<group>"; };
+		DE0A42EE273430E90056DC46 /* pngerror.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngerror.c; path = third_party/externals/libpng/pngerror.c; sourceTree = "<group>"; };
+		DE0A42EF273430EA0056DC46 /* pngrutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngrutil.c; path = third_party/externals/libpng/pngrutil.c; sourceTree = "<group>"; };
+		DE0A42F0273430EA0056DC46 /* pngset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngset.c; path = third_party/externals/libpng/pngset.c; sourceTree = "<group>"; };
+		DE0A42F1273430EA0056DC46 /* pngwtran.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwtran.c; path = third_party/externals/libpng/pngwtran.c; sourceTree = "<group>"; };
+		DE0A42F2273430EA0056DC46 /* png.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = png.c; path = third_party/externals/libpng/png.c; sourceTree = "<group>"; };
+		DE0A42F3273430EA0056DC46 /* pngwutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwutil.c; path = third_party/externals/libpng/pngwutil.c; sourceTree = "<group>"; };
+		DE0A42F4273430EA0056DC46 /* pngget.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngget.c; path = third_party/externals/libpng/pngget.c; sourceTree = "<group>"; };
+		DE0A42F5273430EA0056DC46 /* pngmem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngmem.c; path = third_party/externals/libpng/pngmem.c; sourceTree = "<group>"; };
+		DE0A42F6273430EA0056DC46 /* pngrtran.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngrtran.c; path = third_party/externals/libpng/pngrtran.c; sourceTree = "<group>"; };
+		DE0A42F7273430EA0056DC46 /* pngpread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngpread.c; path = third_party/externals/libpng/pngpread.c; sourceTree = "<group>"; };
+		DE0A42F8273430EB0056DC46 /* pngread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngread.c; path = third_party/externals/libpng/pngread.c; sourceTree = "<group>"; };
+		DE0A42F9273430EB0056DC46 /* pngrio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngrio.c; path = third_party/externals/libpng/pngrio.c; sourceTree = "<group>"; };
+		DE0A4308273431B20056DC46 /* pngtrans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngtrans.c; path = third_party/externals/libpng/pngtrans.c; sourceTree = "<group>"; };
+		DE0A430A273432250056DC46 /* palette_neon_intrinsics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = palette_neon_intrinsics.c; path = third_party/externals/libpng/arm/palette_neon_intrinsics.c; sourceTree = "<group>"; };
+		DE0A430C2734328C0056DC46 /* arm_init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = arm_init.c; path = third_party/externals/libpng/arm/arm_init.c; sourceTree = "<group>"; };
+		DE0A43B627343FBD0056DC46 /* font_factory.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_factory.cc; sourceTree = "<group>"; };
+		DE0A43B927343FBD0056DC46 /* subsetter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = subsetter.h; sourceTree = "<group>"; };
+		DE0A43BA27343FBD0056DC46 /* table_subsetter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = table_subsetter.h; sourceTree = "<group>"; };
+		DE0A43BB27343FBD0056DC46 /* subsetter.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = subsetter.cc; sourceTree = "<group>"; };
+		DE0A43BC27343FBD0056DC46 /* glyph_table_subsetter.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = glyph_table_subsetter.cc; sourceTree = "<group>"; };
+		DE0A43BD27343FBD0056DC46 /* glyph_table_subsetter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glyph_table_subsetter.h; sourceTree = "<group>"; };
+		DE0A43BE27343FBD0056DC46 /* table_subsetter_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = table_subsetter_impl.h; sourceTree = "<group>"; };
+		DE0A43BF27343FBD0056DC46 /* table_subsetter_impl.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = table_subsetter_impl.cc; sourceTree = "<group>"; };
+		DE0A43C027343FBD0056DC46 /* tag.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tag.cc; sourceTree = "<group>"; };
+		DE0A43C127343FBD0056DC46 /* tag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tag.h; sourceTree = "<group>"; };
+		DE0A43C327343FBD0056DC46 /* fixed1616.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fixed1616.h; sourceTree = "<group>"; };
+		DE0A43C427343FBD0056DC46 /* font_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = font_math.h; sourceTree = "<group>"; };
+		DE0A43C527343FBD0056DC46 /* font_factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = font_factory.h; sourceTree = "<group>"; };
+		DE0A43C727343FBD0056DC46 /* table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = table.cc; sourceTree = "<group>"; };
+		DE0A43C927343FBD0056DC46 /* os2_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = os2_table.h; sourceTree = "<group>"; };
+		DE0A43CA27343FBD0056DC46 /* maximum_profile_table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = maximum_profile_table.cc; sourceTree = "<group>"; };
+		DE0A43CB27343FBD0056DC46 /* horizontal_device_metrics_table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = horizontal_device_metrics_table.cc; sourceTree = "<group>"; };
+		DE0A43CC27343FBD0056DC46 /* horizontal_metrics_table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = horizontal_metrics_table.cc; sourceTree = "<group>"; };
+		DE0A43CD27343FBD0056DC46 /* name_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = name_table.h; sourceTree = "<group>"; };
+		DE0A43CE27343FBD0056DC46 /* font_header_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = font_header_table.h; sourceTree = "<group>"; };
+		DE0A43CF27343FBD0056DC46 /* font_header_table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_header_table.cc; sourceTree = "<group>"; };
+		DE0A43D027343FBD0056DC46 /* maximum_profile_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maximum_profile_table.h; sourceTree = "<group>"; };
+		DE0A43D127343FBD0056DC46 /* cmap_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cmap_table.h; sourceTree = "<group>"; };
+		DE0A43D227343FBD0056DC46 /* os2_table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = os2_table.cc; sourceTree = "<group>"; };
+		DE0A43D327343FBD0056DC46 /* horizontal_metrics_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = horizontal_metrics_table.h; sourceTree = "<group>"; };
+		DE0A43D427343FBD0056DC46 /* cmap_table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cmap_table.cc; sourceTree = "<group>"; };
+		DE0A43D527343FBD0056DC46 /* horizontal_header_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = horizontal_header_table.h; sourceTree = "<group>"; };
+		DE0A43D627343FBD0056DC46 /* horizontal_device_metrics_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = horizontal_device_metrics_table.h; sourceTree = "<group>"; };
+		DE0A43D727343FBD0056DC46 /* horizontal_header_table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = horizontal_header_table.cc; sourceTree = "<group>"; };
+		DE0A43D827343FBD0056DC46 /* name_table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = name_table.cc; sourceTree = "<group>"; };
+		DE0A43D927343FBD0056DC46 /* header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = header.h; sourceTree = "<group>"; };
+		DE0A43DA27343FBD0056DC46 /* byte_array_table_builder.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = byte_array_table_builder.cc; sourceTree = "<group>"; };
+		DE0A43DC27343FBD0056DC46 /* index_sub_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = index_sub_table.h; sourceTree = "<group>"; };
+		DE0A43DD27343FBD0056DC46 /* glyph_metrics.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = glyph_metrics.cc; sourceTree = "<group>"; };
+		DE0A43DE27343FBD0056DC46 /* ebdt_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ebdt_table.h; sourceTree = "<group>"; };
+		DE0A43DF27343FBD0056DC46 /* bitmap_glyph_info.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitmap_glyph_info.h; sourceTree = "<group>"; };
+		DE0A43E027343FBD0056DC46 /* index_sub_table_format4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = index_sub_table_format4.h; sourceTree = "<group>"; };
+		DE0A43E127343FBD0056DC46 /* small_glyph_metrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = small_glyph_metrics.h; sourceTree = "<group>"; };
+		DE0A43E227343FBD0056DC46 /* index_sub_table_format2.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = index_sub_table_format2.cc; sourceTree = "<group>"; };
+		DE0A43E327343FBD0056DC46 /* composite_bitmap_glyph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = composite_bitmap_glyph.h; sourceTree = "<group>"; };
+		DE0A43E427343FBD0056DC46 /* composite_bitmap_glyph.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = composite_bitmap_glyph.cc; sourceTree = "<group>"; };
+		DE0A43E527343FBD0056DC46 /* index_sub_table_format3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = index_sub_table_format3.h; sourceTree = "<group>"; };
+		DE0A43E627343FBD0056DC46 /* simple_bitmap_glyph.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simple_bitmap_glyph.cc; sourceTree = "<group>"; };
+		DE0A43E727343FBD0056DC46 /* index_sub_table_format3.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = index_sub_table_format3.cc; sourceTree = "<group>"; };
+		DE0A43E827343FBD0056DC46 /* bitmap_size_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitmap_size_table.h; sourceTree = "<group>"; };
+		DE0A43E927343FBD0056DC46 /* bitmap_glyph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitmap_glyph.h; sourceTree = "<group>"; };
+		DE0A43EA27343FBD0056DC46 /* index_sub_table_format4.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = index_sub_table_format4.cc; sourceTree = "<group>"; };
+		DE0A43EB27343FBD0056DC46 /* ebdt_table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ebdt_table.cc; sourceTree = "<group>"; };
+		DE0A43EC27343FBD0056DC46 /* simple_bitmap_glyph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = simple_bitmap_glyph.h; sourceTree = "<group>"; };
+		DE0A43ED27343FBD0056DC46 /* ebsc_table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ebsc_table.cc; sourceTree = "<group>"; };
+		DE0A43EE27343FBD0056DC46 /* index_sub_table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = index_sub_table.cc; sourceTree = "<group>"; };
+		DE0A43EF27343FBD0056DC46 /* index_sub_table_format1.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = index_sub_table_format1.cc; sourceTree = "<group>"; };
+		DE0A43F027343FBD0056DC46 /* index_sub_table_format2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = index_sub_table_format2.h; sourceTree = "<group>"; };
+		DE0A43F127343FBD0056DC46 /* index_sub_table_format5.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = index_sub_table_format5.cc; sourceTree = "<group>"; };
+		DE0A43F227343FBD0056DC46 /* bitmap_glyph_info.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bitmap_glyph_info.cc; sourceTree = "<group>"; };
+		DE0A43F327343FBD0056DC46 /* big_glyph_metrics.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = big_glyph_metrics.cc; sourceTree = "<group>"; };
+		DE0A43F427343FBD0056DC46 /* big_glyph_metrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = big_glyph_metrics.h; sourceTree = "<group>"; };
+		DE0A43F527343FBD0056DC46 /* glyph_metrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glyph_metrics.h; sourceTree = "<group>"; };
+		DE0A43F627343FBD0056DC46 /* bitmap_size_table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bitmap_size_table.cc; sourceTree = "<group>"; };
+		DE0A43F727343FBD0056DC46 /* ebsc_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ebsc_table.h; sourceTree = "<group>"; };
+		DE0A43F827343FBD0056DC46 /* eblc_table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = eblc_table.cc; sourceTree = "<group>"; };
+		DE0A43F927343FBD0056DC46 /* index_sub_table_format1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = index_sub_table_format1.h; sourceTree = "<group>"; };
+		DE0A43FA27343FBD0056DC46 /* bitmap_glyph.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bitmap_glyph.cc; sourceTree = "<group>"; };
+		DE0A43FB27343FBD0056DC46 /* eblc_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = eblc_table.h; sourceTree = "<group>"; };
+		DE0A43FC27343FBD0056DC46 /* small_glyph_metrics.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = small_glyph_metrics.cc; sourceTree = "<group>"; };
+		DE0A43FD27343FBD0056DC46 /* index_sub_table_format5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = index_sub_table_format5.h; sourceTree = "<group>"; };
+		DE0A43FE27343FBD0056DC46 /* font_data_table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_data_table.cc; sourceTree = "<group>"; };
+		DE0A43FF27343FBD0056DC46 /* subtable_container_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = subtable_container_table.h; sourceTree = "<group>"; };
+		DE0A440027343FBD0056DC46 /* generic_table_builder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = generic_table_builder.h; sourceTree = "<group>"; };
+		DE0A440127343FBD0056DC46 /* table_based_table_builder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = table_based_table_builder.h; sourceTree = "<group>"; };
+		DE0A440227343FBD0056DC46 /* generic_table_builder.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = generic_table_builder.cc; sourceTree = "<group>"; };
+		DE0A440327343FBD0056DC46 /* table_based_table_builder.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = table_based_table_builder.cc; sourceTree = "<group>"; };
+		DE0A440427343FBD0056DC46 /* subtable.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = subtable.cc; sourceTree = "<group>"; };
+		DE0A440527343FBD0056DC46 /* table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = table.h; sourceTree = "<group>"; };
+		DE0A440627343FBD0056DC46 /* subtable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = subtable.h; sourceTree = "<group>"; };
+		DE0A440827343FBD0056DC46 /* glyph_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glyph_table.h; sourceTree = "<group>"; };
+		DE0A440927343FBD0056DC46 /* glyph_table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = glyph_table.cc; sourceTree = "<group>"; };
+		DE0A440A27343FBD0056DC46 /* loca_table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = loca_table.cc; sourceTree = "<group>"; };
+		DE0A440B27343FBD0056DC46 /* loca_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = loca_table.h; sourceTree = "<group>"; };
+		DE0A440C27343FBD0056DC46 /* byte_array_table_builder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = byte_array_table_builder.h; sourceTree = "<group>"; };
+		DE0A440D27343FBD0056DC46 /* header.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = header.cc; sourceTree = "<group>"; };
+		DE0A440E27343FBD0056DC46 /* font_data_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = font_data_table.h; sourceTree = "<group>"; };
+		DE0A440F27343FBD0056DC46 /* font.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font.cc; sourceTree = "<group>"; };
+		DE0A441027343FBD0056DC46 /* font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = font.h; sourceTree = "<group>"; };
+		DE0A441227343FBD0056DC46 /* type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = type.h; sourceTree = "<group>"; };
+		DE0A441327343FBD0056DC46 /* exception_type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = exception_type.h; sourceTree = "<group>"; };
+		DE0A441427343FBD0056DC46 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		DE0A441527343FBD0056DC46 /* endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
+		DE0A441627343FBD0056DC46 /* memory_output_stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory_output_stream.h; sourceTree = "<group>"; };
+		DE0A441727343FBD0056DC46 /* memory_input_stream.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memory_input_stream.cc; sourceTree = "<group>"; };
+		DE0A441827343FBD0056DC46 /* lock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lock.h; sourceTree = "<group>"; };
+		DE0A441927343FBD0056DC46 /* input_stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = input_stream.h; sourceTree = "<group>"; };
+		DE0A441A27343FBD0056DC46 /* memory_input_stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory_input_stream.h; sourceTree = "<group>"; };
+		DE0A441B27343FBD0056DC46 /* file_input_stream.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = file_input_stream.cc; sourceTree = "<group>"; };
+		DE0A441C27343FBD0056DC46 /* logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logging.h; sourceTree = "<group>"; };
+		DE0A441D27343FBD0056DC46 /* file_input_stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = file_input_stream.h; sourceTree = "<group>"; };
+		DE0A441E27343FBD0056DC46 /* lock.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lock.cc; sourceTree = "<group>"; };
+		DE0A441F27343FBD0056DC46 /* java_iterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = java_iterator.h; sourceTree = "<group>"; };
+		DE0A442027343FBD0056DC46 /* output_stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = output_stream.h; sourceTree = "<group>"; };
+		DE0A442127343FBD0056DC46 /* refcount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = refcount.h; sourceTree = "<group>"; };
+		DE0A442227343FBD0056DC46 /* memory_output_stream.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memory_output_stream.cc; sourceTree = "<group>"; };
+		DE0A442327343FBD0056DC46 /* atomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atomic.h; sourceTree = "<group>"; };
+		DE0A442527343FBD0056DC46 /* readable_font_data.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = readable_font_data.cc; sourceTree = "<group>"; };
+		DE0A442627343FBD0056DC46 /* font_output_stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = font_output_stream.h; sourceTree = "<group>"; };
+		DE0A442727343FBD0056DC46 /* font_input_stream.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_input_stream.cc; sourceTree = "<group>"; };
+		DE0A442827343FBD0056DC46 /* byte_array.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = byte_array.cc; sourceTree = "<group>"; };
+		DE0A442927343FBD0056DC46 /* readable_font_data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = readable_font_data.h; sourceTree = "<group>"; };
+		DE0A442A27343FBD0056DC46 /* font_data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = font_data.h; sourceTree = "<group>"; };
+		DE0A442B27343FBD0056DC46 /* font_data.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_data.cc; sourceTree = "<group>"; };
+		DE0A442C27343FBD0056DC46 /* font_input_stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = font_input_stream.h; sourceTree = "<group>"; };
+		DE0A442D27343FBD0056DC46 /* growable_memory_byte_array.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = growable_memory_byte_array.cc; sourceTree = "<group>"; };
+		DE0A442E27343FBD0056DC46 /* font_output_stream.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_output_stream.cc; sourceTree = "<group>"; };
+		DE0A442F27343FBD0056DC46 /* byte_array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = byte_array.h; sourceTree = "<group>"; };
+		DE0A443027343FBD0056DC46 /* growable_memory_byte_array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = growable_memory_byte_array.h; sourceTree = "<group>"; };
+		DE0A443127343FBD0056DC46 /* memory_byte_array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory_byte_array.h; sourceTree = "<group>"; };
+		DE0A443227343FBD0056DC46 /* writable_font_data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = writable_font_data.h; sourceTree = "<group>"; };
+		DE0A443327343FBD0056DC46 /* writable_font_data.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = writable_font_data.cc; sourceTree = "<group>"; };
+		DE0A443427343FBD0056DC46 /* memory_byte_array.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memory_byte_array.cc; sourceTree = "<group>"; };
+		DE0A454A273442E00056DC46 /* BUILD.gn */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BUILD.gn; sourceTree = "<group>"; };
+		DE0A454C273442E00056DC46 /* SkShaper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkShaper.h; sourceTree = "<group>"; };
+		DE0A454D273442E00056DC46 /* skshaper.gni */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = skshaper.gni; sourceTree = "<group>"; };
+		DE0A4550273442E00056DC46 /* SkShaper_primitive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkShaper_primitive.cpp; sourceTree = "<group>"; };
+		DE0A4552273442E00056DC46 /* SkShaper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkShaper.cpp; sourceTree = "<group>"; };
+		DE0A455B273445A80056DC46 /* SkSVGFeMorphology.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGFeMorphology.cpp; sourceTree = "<group>"; };
+		DE0A455C273445A80056DC46 /* SkSVGAttributeParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGAttributeParser.cpp; sourceTree = "<group>"; };
+		DE0A455D273445A80056DC46 /* SkSVGLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGLine.cpp; sourceTree = "<group>"; };
+		DE0A455E273445A80056DC46 /* SkSVGRenderContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGRenderContext.cpp; sourceTree = "<group>"; };
+		DE0A455F273445A80056DC46 /* SkSVGFeLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGFeLightSource.cpp; sourceTree = "<group>"; };
+		DE0A4560273445A80056DC46 /* SkSVGUse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGUse.cpp; sourceTree = "<group>"; };
+		DE0A4561273445A80056DC46 /* SkSVGMask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGMask.cpp; sourceTree = "<group>"; };
+		DE0A4562273445A80056DC46 /* SkSVGFe.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGFe.cpp; sourceTree = "<group>"; };
+		DE0A4563273445A80056DC46 /* SkSVGLinearGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGLinearGradient.cpp; sourceTree = "<group>"; };
+		DE0A4564273445A80056DC46 /* SkSVGRadialGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGRadialGradient.cpp; sourceTree = "<group>"; };
+		DE0A4565273445A80056DC46 /* SkSVGText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGText.cpp; sourceTree = "<group>"; };
+		DE0A4566273445A80056DC46 /* SkSVGTextPriv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkSVGTextPriv.h; sourceTree = "<group>"; };
+		DE0A4567273445A80056DC46 /* SkSVGFeComposite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGFeComposite.cpp; sourceTree = "<group>"; };
+		DE0A4568273445A80056DC46 /* SkSVGFeOffset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGFeOffset.cpp; sourceTree = "<group>"; };
+		DE0A4569273445A80056DC46 /* SkSVGPoly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGPoly.cpp; sourceTree = "<group>"; };
+		DE0A456A273445A80056DC46 /* SkSVGFeDisplacementMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGFeDisplacementMap.cpp; sourceTree = "<group>"; };
+		DE0A456B273445A80056DC46 /* SkSVGNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGNode.cpp; sourceTree = "<group>"; };
+		DE0A456C273445A80056DC46 /* SkSVGFeGaussianBlur.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGFeGaussianBlur.cpp; sourceTree = "<group>"; };
+		DE0A456D273445A80056DC46 /* SkSVGFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGFilter.cpp; sourceTree = "<group>"; };
+		DE0A456E273445A80056DC46 /* SkSVGShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGShape.cpp; sourceTree = "<group>"; };
+		DE0A456F273445A80056DC46 /* SkSVGFeTurbulence.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGFeTurbulence.cpp; sourceTree = "<group>"; };
+		DE0A4570273445A80056DC46 /* SkSVGValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGValue.cpp; sourceTree = "<group>"; };
+		DE0A4571273445A80056DC46 /* SkSVGClipPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGClipPath.cpp; sourceTree = "<group>"; };
+		DE0A4572273445A80056DC46 /* SkSVGFilterContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGFilterContext.cpp; sourceTree = "<group>"; };
+		DE0A4573273445A80056DC46 /* SkSVGFeImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGFeImage.cpp; sourceTree = "<group>"; };
+		DE0A4574273445A80056DC46 /* SkSVGDOM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGDOM.cpp; sourceTree = "<group>"; };
+		DE0A4575273445A80056DC46 /* SkSVGEllipse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGEllipse.cpp; sourceTree = "<group>"; };
+		DE0A4576273445A80056DC46 /* SkSVGAttribute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGAttribute.cpp; sourceTree = "<group>"; };
+		DE0A4577273445A80056DC46 /* SkSVGCircle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGCircle.cpp; sourceTree = "<group>"; };
+		DE0A4578273445A80056DC46 /* SkSVGPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGPath.cpp; sourceTree = "<group>"; };
+		DE0A4579273445A80056DC46 /* SkSVGFeColorMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGFeColorMatrix.cpp; sourceTree = "<group>"; };
+		DE0A457A273445A80056DC46 /* SkSVGRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGRect.cpp; sourceTree = "<group>"; };
+		DE0A457B273445A80056DC46 /* SkSVGSVG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGSVG.cpp; sourceTree = "<group>"; };
+		DE0A457C273445A80056DC46 /* SkSVGGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGGradient.cpp; sourceTree = "<group>"; };
+		DE0A457D273445A80056DC46 /* SkSVGFeFlood.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGFeFlood.cpp; sourceTree = "<group>"; };
+		DE0A457E273445A80056DC46 /* SkSVGPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGPattern.cpp; sourceTree = "<group>"; };
+		DE0A457F273445A80056DC46 /* SkSVGImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGImage.cpp; sourceTree = "<group>"; };
+		DE0A4580273445A80056DC46 /* SkSVGStop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGStop.cpp; sourceTree = "<group>"; };
+		DE0A4581273445A80056DC46 /* SkSVGFeBlend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGFeBlend.cpp; sourceTree = "<group>"; };
+		DE0A4582273445A80056DC46 /* SkSVGContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGContainer.cpp; sourceTree = "<group>"; };
+		DE0A4583273445A80056DC46 /* SkSVGFeLighting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGFeLighting.cpp; sourceTree = "<group>"; };
+		DE0A4584273445A80056DC46 /* SkSVGTransformableNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGTransformableNode.cpp; sourceTree = "<group>"; };
+		DE0A45AE273447EE0056DC46 /* hb-coretext.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-coretext.cc"; path = "third_party/externals/harfbuzz/src/hb-coretext.cc"; sourceTree = "<group>"; };
 		DE1478CDE87B18A5E9D197B9 /* SkTypeface_remote.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkTypeface_remote.h; path = src/core/SkTypeface_remote.h; sourceTree = "<group>"; };
 		DE23960BF3D4F77D648CB205 /* SkDeferredDisplayListRecorder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkDeferredDisplayListRecorder.cpp; path = src/core/SkDeferredDisplayListRecorder.cpp; sourceTree = "<group>"; };
 		DE23C4CDD7EB5B28085E06CA /* SkSLProgramSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkSLProgramSettings.h; path = src/sksl/SkSLProgramSettings.h; sourceTree = "<group>"; };
 		DE2A644B6600589F0CE37E86 /* jccoefct.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jccoefct.c; path = "third_party/externals/libjpeg-turbo/jccoefct.c"; sourceTree = "<group>"; };
 		DE33A123F847CE8CB33BF686 /* dng_iptc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dng_iptc.cpp; path = third_party/externals/dng_sdk/source/dng_iptc.cpp; sourceTree = "<group>"; };
+		DE35710027335AC400CE713C /* jsimd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jsimd.c; path = "third_party/externals/libjpeg-turbo/simd/arm64/jsimd.c"; sourceTree = "<group>"; };
 		DE5BD0D4F554BF617A4FF013 /* OpsTask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OpsTask.h; path = src/gpu/ops/OpsTask.h; sourceTree = "<group>"; };
 		DE6C8BAB272AEEFC00F6406A /* arm64 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = arm64; path = "third_party/externals/libjpeg-turbo/simd/arm64"; sourceTree = "<group>"; };
 		DE6C8C46272AF14700F6406A /* hb-common.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-common.cc"; path = "third_party/externals/harfbuzz/src/hb-common.cc"; sourceTree = "<group>"; };
@@ -3956,7 +4258,6 @@
 		DE6C8C51272AF14800F6406A /* hb-ot-shape-complex-default.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-default.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-default.cc"; sourceTree = "<group>"; };
 		DE6C8C52272AF14800F6406A /* hb-ot-name.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-name.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-name.cc"; sourceTree = "<group>"; };
 		DE6C8C53272AF14800F6406A /* hb-ot-font.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-font.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-font.cc"; sourceTree = "<group>"; };
-		DE6C8C55272AF14900F6406A /* hb-ot-shape-complex-use-table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-use-table.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-use-table.cc"; sourceTree = "<group>"; };
 		DE6C8C57272AF14900F6406A /* hb-face.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-face.cc"; path = "third_party/externals/harfbuzz/src/hb-face.cc"; sourceTree = "<group>"; };
 		DE6C8C58272AF14900F6406A /* hb-subset-cff-common.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-subset-cff-common.cc"; path = "third_party/externals/harfbuzz/src/hb-subset-cff-common.cc"; sourceTree = "<group>"; };
 		DE6C8C59272AF14900F6406A /* hb-ot-cff1-table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-cff1-table.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-cff1-table.cc"; sourceTree = "<group>"; };
@@ -3988,7 +4289,6 @@
 		DE6C8C7B272AF14D00F6406A /* hb-ot-map.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-map.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-map.cc"; sourceTree = "<group>"; };
 		DE6C8C7D272AF14D00F6406A /* hb-static.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-static.cc"; path = "third_party/externals/harfbuzz/src/hb-static.cc"; sourceTree = "<group>"; };
 		DE6C8C7E272AF14D00F6406A /* hb-map.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-map.cc"; path = "third_party/externals/harfbuzz/src/hb-map.cc"; sourceTree = "<group>"; };
-		DE6C8C7F272AF14D00F6406A /* hb-ot-name-language.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-name-language.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-name-language.cc"; sourceTree = "<group>"; };
 		DE6C8C81272AF14E00F6406A /* hb-blob.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-blob.cc"; path = "third_party/externals/harfbuzz/src/hb-blob.cc"; sourceTree = "<group>"; };
 		DE6C8C84272AF14E00F6406A /* hb-subset.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-subset.cc"; path = "third_party/externals/harfbuzz/src/hb-subset.cc"; sourceTree = "<group>"; };
 		DE6C8C85272AF14E00F6406A /* hb-shape-plan.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-shape-plan.cc"; path = "third_party/externals/harfbuzz/src/hb-shape-plan.cc"; sourceTree = "<group>"; };
@@ -3996,16 +4296,20 @@
 		DE6C8C87272AF14E00F6406A /* hb-shaper.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-shaper.cc"; path = "third_party/externals/harfbuzz/src/hb-shaper.cc"; sourceTree = "<group>"; };
 		DE6C8C88272AF14E00F6406A /* hb-subset-input.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-subset-input.cc"; path = "third_party/externals/harfbuzz/src/hb-subset-input.cc"; sourceTree = "<group>"; };
 		DE6C8C89272AF14E00F6406A /* hb-ot-face.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-face.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-face.cc"; sourceTree = "<group>"; };
-		DE6C8C8A272AF14E00F6406A /* hb-warning.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-warning.cc"; path = "third_party/externals/harfbuzz/src/hb-warning.cc"; sourceTree = "<group>"; };
-		DE6C8C8B272AF14F00F6406A /* hb-subset-glyf.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-subset-glyf.cc"; path = "third_party/externals/harfbuzz/src/hb-subset-glyf.cc"; sourceTree = "<group>"; };
 		DE6C8C8D272AF14F00F6406A /* hb-ot-shape-complex-indic-table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-indic-table.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-indic-table.cc"; sourceTree = "<group>"; };
 		DE6C8C8E272AF14F00F6406A /* hb-ot-shape-normalize.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = "hb-ot-shape-normalize.hh"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-normalize.hh"; sourceTree = "<group>"; };
 		DE6C8C8F272AF14F00F6406A /* hb-ot-shape-complex-use.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-use.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-use.cc"; sourceTree = "<group>"; };
 		DE6C8C90272AF14F00F6406A /* hb-set.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-set.cc"; path = "third_party/externals/harfbuzz/src/hb-set.cc"; sourceTree = "<group>"; };
 		DE6C8C91272AF14F00F6406A /* hb-ot-shape-complex-khmer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-khmer.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-khmer.cc"; sourceTree = "<group>"; };
 		DE6C8C92272AF14F00F6406A /* hb-ot-shape-complex-arabic.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-arabic.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-arabic.cc"; sourceTree = "<group>"; };
-		DE6C8D3C272C46F100F6406A /* svg */ = {isa = PBXFileReference; lastKnownFileType = folder; name = svg; path = modules/svg; sourceTree = "<group>"; };
 		DE7644E997EF858B23E5A333 /* sortkey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sortkey.h; path = third_party/externals/icu/source/i18n/unicode/sortkey.h; sourceTree = "<group>"; };
+		DE8C26B127345239003E6AAB /* hb-fallback-shape.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-fallback-shape.cc"; path = "third_party/externals/harfbuzz/src/hb-fallback-shape.cc"; sourceTree = "<group>"; };
+		DE8C26B327345267003E6AAB /* hb-ucd.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ucd.cc"; path = "third_party/externals/harfbuzz/src/hb-ucd.cc"; sourceTree = "<group>"; };
+		DE8C26B5273454DB003E6AAB /* hb-ot-shape-complex-syllabic.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-syllabic.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-syllabic.cc"; sourceTree = "<group>"; };
+		DE8C26B727345590003E6AAB /* hb-number.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-number.cc"; path = "third_party/externals/harfbuzz/src/hb-number.cc"; sourceTree = "<group>"; };
+		DE8C26B92734566A003E6AAB /* hb-ot-metrics.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-metrics.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-metrics.cc"; sourceTree = "<group>"; };
+		DE8C292A273473F5003E6AAB /* icudtl_dat.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = icudtl_dat.S; sourceTree = "<group>"; };
+		DE8C292B273473F5003E6AAB /* icudt56l_dat.s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = icudt56l_dat.s; sourceTree = "<group>"; };
 		DE91403C2729F010003A24D8 /* xmltok.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xmltok.c; path = third_party/externals/expat/lib/xmltok.c; sourceTree = "<group>"; };
 		DE91403D2729F010003A24D8 /* xmltok.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xmltok.h; path = third_party/externals/expat/lib/xmltok.h; sourceTree = "<group>"; };
 		DE91403E2729F010003A24D8 /* xmlrole.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xmlrole.c; path = third_party/externals/expat/lib/xmlrole.c; sourceTree = "<group>"; };
@@ -4791,6 +5095,8 @@
 		18F62EBD72BCDF6020D632E0 /* harfbuzz */ = {
 			isa = PBXGroup;
 			children = (
+				DE8C26B327345267003E6AAB /* hb-ucd.cc */,
+				DE0A45AE273447EE0056DC46 /* hb-coretext.cc */,
 				DE6C8C70272AF14C00F6406A /* hb-aat-layout.cc */,
 				DE6C8C76272AF14C00F6406A /* hb-aat-map.cc */,
 				DE6C8C81272AF14E00F6406A /* hb-blob.cc */,
@@ -4799,6 +5105,7 @@
 				DE6C8C46272AF14700F6406A /* hb-common.cc */,
 				DE6C8C57272AF14900F6406A /* hb-face.cc */,
 				DE6C8C67272AF14B00F6406A /* hb-font.cc */,
+				DE8C26B127345239003E6AAB /* hb-fallback-shape.cc */,
 				DE6C8C66272AF14B00F6406A /* hb-gobject-enums.cc.tmpl */,
 				DE6C8C6B272AF14B00F6406A /* hb-icu.cc */,
 				DE6C8C7E272AF14D00F6406A /* hb-map.cc */,
@@ -4806,14 +5113,16 @@
 				DE6C8C5E272AF14A00F6406A /* hb-ot-cff2-table.cc */,
 				DE6C8C63272AF14A00F6406A /* hb-ot-color.cc */,
 				DE6C8C89272AF14E00F6406A /* hb-ot-face.cc */,
+				DE8C26B727345590003E6AAB /* hb-number.cc */,
 				DE6C8C53272AF14800F6406A /* hb-ot-font.cc */,
 				DE6C8C5F272AF14A00F6406A /* hb-ot-layout.cc */,
 				DE6C8C7B272AF14D00F6406A /* hb-ot-map.cc */,
 				DE6C8C7A272AF14D00F6406A /* hb-ot-math.cc */,
-				DE6C8C7F272AF14D00F6406A /* hb-ot-name-language.cc */,
+				DE8C26B92734566A003E6AAB /* hb-ot-metrics.cc */,
 				DE6C8C52272AF14800F6406A /* hb-ot-name.cc */,
 				DE6C8C92272AF14F00F6406A /* hb-ot-shape-complex-arabic.cc */,
 				DE6C8C51272AF14800F6406A /* hb-ot-shape-complex-default.cc */,
+				DE8C26B5273454DB003E6AAB /* hb-ot-shape-complex-syllabic.cc */,
 				DE6C8C4A272AF14700F6406A /* hb-ot-shape-complex-hangul.cc */,
 				DE6C8C6E272AF14B00F6406A /* hb-ot-shape-complex-hebrew.cc */,
 				DE6C8C8D272AF14F00F6406A /* hb-ot-shape-complex-indic-table.cc */,
@@ -4821,7 +5130,6 @@
 				DE6C8C91272AF14F00F6406A /* hb-ot-shape-complex-khmer.cc */,
 				DE6C8C6C272AF14B00F6406A /* hb-ot-shape-complex-myanmar.cc */,
 				DE6C8C50272AF14800F6406A /* hb-ot-shape-complex-thai.cc */,
-				DE6C8C55272AF14900F6406A /* hb-ot-shape-complex-use-table.cc */,
 				DE6C8C8F272AF14F00F6406A /* hb-ot-shape-complex-use.cc */,
 				DE6C8C4C272AF14800F6406A /* hb-ot-shape-complex-vowel-constraints.cc */,
 				DE6C8C71272AF14C00F6406A /* hb-ot-shape-fallback.cc */,
@@ -4840,12 +5148,10 @@
 				DE6C8C75272AF14C00F6406A /* hb-subset-cff1.cc */,
 				DE6C8C5B272AF14900F6406A /* hb-subset-cff2.cc */,
 				DE6C8C69272AF14B00F6406A /* hb-subset-fuzzer.cc */,
-				DE6C8C8B272AF14F00F6406A /* hb-subset-glyf.cc */,
 				DE6C8C88272AF14E00F6406A /* hb-subset-input.cc */,
 				DE6C8C6D272AF14B00F6406A /* hb-subset-plan.cc */,
 				DE6C8C84272AF14E00F6406A /* hb-subset.cc */,
 				DE6C8C5D272AF14A00F6406A /* hb-unicode.cc */,
-				DE6C8C8A272AF14E00F6406A /* hb-warning.cc */,
 			);
 			name = harfbuzz;
 			sourceTree = "<group>";
@@ -5059,6 +5365,8 @@
 		376FBA480EB31215A380530C /* externals */ = {
 			isa = PBXGroup;
 			children = (
+				DE0A4310273439FB0056DC46 /* sfntly */,
+				DE0A42EB27342FAE0056DC46 /* png */,
 				0B6900162F8CECDC9316F450 /* dng_sdk */,
 				32099E58255A8D10D8C508E9 /* expat */,
 				18F62EBD72BCDF6020D632E0 /* harfbuzz */,
@@ -6837,7 +7145,8 @@
 		B41A7F931B62FF851CB9812E /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				DE6C8D3C272C46F100F6406A /* svg */,
+				DE0A4559273445980056DC46 /* svg */,
+				DE0A4549273442E00056DC46 /* skshaper */,
 				3E15942DE86B7D17B4BD0F63 /* include */,
 				ED9FBFAC6CBFCDE7434B0C3D /* src */,
 				CAB4130A8009801B9675C78A /* third_party */,
@@ -7310,19 +7619,12 @@
 		BEE73483D9C4821DDA95817D /* icu */ = {
 			isa = PBXGroup;
 			children = (
+				DE8C2929273473F5003E6AAB /* ios */,
 				156879F39CA29AB511E346BA /* config */,
 				FA99E29F156A704D018E6832 /* BUILD.gn */,
 				8D30975C17D3EF2BE788D301 /* icu.gni */,
 			);
 			name = icu;
-			sourceTree = "<group>";
-		};
-		C0E6B3F903BF499129A1C954 /* ios */ = {
-			isa = PBXGroup;
-			children = (
-				0EE0A6E641FDD2265F6FA30E /* icudtl.dat */,
-			);
-			name = ios;
 			sourceTree = "<group>";
 		};
 		C21264C9C8139FB7BA8C0435 /* gradients */ = {
@@ -7886,9 +8188,346 @@
 			name = piex;
 			sourceTree = "<group>";
 		};
+		DE0A42EB27342FAE0056DC46 /* png */ = {
+			isa = PBXGroup;
+			children = (
+				DE0A430C2734328C0056DC46 /* arm_init.c */,
+				DE0A430A273432250056DC46 /* palette_neon_intrinsics.c */,
+				DE0A4308273431B20056DC46 /* pngtrans.c */,
+				DE0A42F2273430EA0056DC46 /* png.c */,
+				DE0A42EE273430E90056DC46 /* pngerror.c */,
+				DE0A42F4273430EA0056DC46 /* pngget.c */,
+				DE0A42F5273430EA0056DC46 /* pngmem.c */,
+				DE0A42F7273430EA0056DC46 /* pngpread.c */,
+				DE0A42F8273430EB0056DC46 /* pngread.c */,
+				DE0A42F9273430EB0056DC46 /* pngrio.c */,
+				DE0A42F6273430EA0056DC46 /* pngrtran.c */,
+				DE0A42EF273430EA0056DC46 /* pngrutil.c */,
+				DE0A42F0273430EA0056DC46 /* pngset.c */,
+				DE0A42EC273430E90056DC46 /* pngwio.c */,
+				DE0A42ED273430E90056DC46 /* pngwrite.c */,
+				DE0A42F1273430EA0056DC46 /* pngwtran.c */,
+				DE0A42F3273430EA0056DC46 /* pngwutil.c */,
+			);
+			name = png;
+			sourceTree = "<group>";
+		};
+		DE0A4310273439FB0056DC46 /* sfntly */ = {
+			isa = PBXGroup;
+			children = (
+				DE0A438427343FBC0056DC46 /* src */,
+			);
+			name = sfntly;
+			sourceTree = "<group>";
+		};
+		DE0A438427343FBC0056DC46 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				DE0A43B527343FBD0056DC46 /* sfntly */,
+			);
+			name = src;
+			path = third_party/externals/sfntly/cpp/src;
+			sourceTree = "<group>";
+		};
+		DE0A43B527343FBD0056DC46 /* sfntly */ = {
+			isa = PBXGroup;
+			children = (
+				DE0A43B627343FBD0056DC46 /* font_factory.cc */,
+				DE0A43B727343FBD0056DC46 /* tools */,
+				DE0A43C027343FBD0056DC46 /* tag.cc */,
+				DE0A43C127343FBD0056DC46 /* tag.h */,
+				DE0A43C227343FBD0056DC46 /* math */,
+				DE0A43C527343FBD0056DC46 /* font_factory.h */,
+				DE0A43C627343FBD0056DC46 /* table */,
+				DE0A440F27343FBD0056DC46 /* font.cc */,
+				DE0A441027343FBD0056DC46 /* font.h */,
+				DE0A441127343FBD0056DC46 /* port */,
+				DE0A442427343FBD0056DC46 /* data */,
+			);
+			path = sfntly;
+			sourceTree = "<group>";
+		};
+		DE0A43B727343FBD0056DC46 /* tools */ = {
+			isa = PBXGroup;
+			children = (
+				DE0A43B827343FBD0056DC46 /* subsetter */,
+			);
+			path = tools;
+			sourceTree = "<group>";
+		};
+		DE0A43B827343FBD0056DC46 /* subsetter */ = {
+			isa = PBXGroup;
+			children = (
+				DE0A43B927343FBD0056DC46 /* subsetter.h */,
+				DE0A43BA27343FBD0056DC46 /* table_subsetter.h */,
+				DE0A43BB27343FBD0056DC46 /* subsetter.cc */,
+				DE0A43BC27343FBD0056DC46 /* glyph_table_subsetter.cc */,
+				DE0A43BD27343FBD0056DC46 /* glyph_table_subsetter.h */,
+				DE0A43BE27343FBD0056DC46 /* table_subsetter_impl.h */,
+				DE0A43BF27343FBD0056DC46 /* table_subsetter_impl.cc */,
+			);
+			path = subsetter;
+			sourceTree = "<group>";
+		};
+		DE0A43C227343FBD0056DC46 /* math */ = {
+			isa = PBXGroup;
+			children = (
+				DE0A43C327343FBD0056DC46 /* fixed1616.h */,
+				DE0A43C427343FBD0056DC46 /* font_math.h */,
+			);
+			path = math;
+			sourceTree = "<group>";
+		};
+		DE0A43C627343FBD0056DC46 /* table */ = {
+			isa = PBXGroup;
+			children = (
+				DE0A43C727343FBD0056DC46 /* table.cc */,
+				DE0A43C827343FBD0056DC46 /* core */,
+				DE0A43D927343FBD0056DC46 /* header.h */,
+				DE0A43DA27343FBD0056DC46 /* byte_array_table_builder.cc */,
+				DE0A43DB27343FBD0056DC46 /* bitmap */,
+				DE0A43FE27343FBD0056DC46 /* font_data_table.cc */,
+				DE0A43FF27343FBD0056DC46 /* subtable_container_table.h */,
+				DE0A440027343FBD0056DC46 /* generic_table_builder.h */,
+				DE0A440127343FBD0056DC46 /* table_based_table_builder.h */,
+				DE0A440227343FBD0056DC46 /* generic_table_builder.cc */,
+				DE0A440327343FBD0056DC46 /* table_based_table_builder.cc */,
+				DE0A440427343FBD0056DC46 /* subtable.cc */,
+				DE0A440527343FBD0056DC46 /* table.h */,
+				DE0A440627343FBD0056DC46 /* subtable.h */,
+				DE0A440727343FBD0056DC46 /* truetype */,
+				DE0A440C27343FBD0056DC46 /* byte_array_table_builder.h */,
+				DE0A440D27343FBD0056DC46 /* header.cc */,
+				DE0A440E27343FBD0056DC46 /* font_data_table.h */,
+			);
+			path = table;
+			sourceTree = "<group>";
+		};
+		DE0A43C827343FBD0056DC46 /* core */ = {
+			isa = PBXGroup;
+			children = (
+				DE0A43C927343FBD0056DC46 /* os2_table.h */,
+				DE0A43CA27343FBD0056DC46 /* maximum_profile_table.cc */,
+				DE0A43CB27343FBD0056DC46 /* horizontal_device_metrics_table.cc */,
+				DE0A43CC27343FBD0056DC46 /* horizontal_metrics_table.cc */,
+				DE0A43CD27343FBD0056DC46 /* name_table.h */,
+				DE0A43CE27343FBD0056DC46 /* font_header_table.h */,
+				DE0A43CF27343FBD0056DC46 /* font_header_table.cc */,
+				DE0A43D027343FBD0056DC46 /* maximum_profile_table.h */,
+				DE0A43D127343FBD0056DC46 /* cmap_table.h */,
+				DE0A43D227343FBD0056DC46 /* os2_table.cc */,
+				DE0A43D327343FBD0056DC46 /* horizontal_metrics_table.h */,
+				DE0A43D427343FBD0056DC46 /* cmap_table.cc */,
+				DE0A43D527343FBD0056DC46 /* horizontal_header_table.h */,
+				DE0A43D627343FBD0056DC46 /* horizontal_device_metrics_table.h */,
+				DE0A43D727343FBD0056DC46 /* horizontal_header_table.cc */,
+				DE0A43D827343FBD0056DC46 /* name_table.cc */,
+			);
+			path = core;
+			sourceTree = "<group>";
+		};
+		DE0A43DB27343FBD0056DC46 /* bitmap */ = {
+			isa = PBXGroup;
+			children = (
+				DE0A43DC27343FBD0056DC46 /* index_sub_table.h */,
+				DE0A43DD27343FBD0056DC46 /* glyph_metrics.cc */,
+				DE0A43DE27343FBD0056DC46 /* ebdt_table.h */,
+				DE0A43DF27343FBD0056DC46 /* bitmap_glyph_info.h */,
+				DE0A43E027343FBD0056DC46 /* index_sub_table_format4.h */,
+				DE0A43E127343FBD0056DC46 /* small_glyph_metrics.h */,
+				DE0A43E227343FBD0056DC46 /* index_sub_table_format2.cc */,
+				DE0A43E327343FBD0056DC46 /* composite_bitmap_glyph.h */,
+				DE0A43E427343FBD0056DC46 /* composite_bitmap_glyph.cc */,
+				DE0A43E527343FBD0056DC46 /* index_sub_table_format3.h */,
+				DE0A43E627343FBD0056DC46 /* simple_bitmap_glyph.cc */,
+				DE0A43E727343FBD0056DC46 /* index_sub_table_format3.cc */,
+				DE0A43E827343FBD0056DC46 /* bitmap_size_table.h */,
+				DE0A43E927343FBD0056DC46 /* bitmap_glyph.h */,
+				DE0A43EA27343FBD0056DC46 /* index_sub_table_format4.cc */,
+				DE0A43EB27343FBD0056DC46 /* ebdt_table.cc */,
+				DE0A43EC27343FBD0056DC46 /* simple_bitmap_glyph.h */,
+				DE0A43ED27343FBD0056DC46 /* ebsc_table.cc */,
+				DE0A43EE27343FBD0056DC46 /* index_sub_table.cc */,
+				DE0A43EF27343FBD0056DC46 /* index_sub_table_format1.cc */,
+				DE0A43F027343FBD0056DC46 /* index_sub_table_format2.h */,
+				DE0A43F127343FBD0056DC46 /* index_sub_table_format5.cc */,
+				DE0A43F227343FBD0056DC46 /* bitmap_glyph_info.cc */,
+				DE0A43F327343FBD0056DC46 /* big_glyph_metrics.cc */,
+				DE0A43F427343FBD0056DC46 /* big_glyph_metrics.h */,
+				DE0A43F527343FBD0056DC46 /* glyph_metrics.h */,
+				DE0A43F627343FBD0056DC46 /* bitmap_size_table.cc */,
+				DE0A43F727343FBD0056DC46 /* ebsc_table.h */,
+				DE0A43F827343FBD0056DC46 /* eblc_table.cc */,
+				DE0A43F927343FBD0056DC46 /* index_sub_table_format1.h */,
+				DE0A43FA27343FBD0056DC46 /* bitmap_glyph.cc */,
+				DE0A43FB27343FBD0056DC46 /* eblc_table.h */,
+				DE0A43FC27343FBD0056DC46 /* small_glyph_metrics.cc */,
+				DE0A43FD27343FBD0056DC46 /* index_sub_table_format5.h */,
+			);
+			path = bitmap;
+			sourceTree = "<group>";
+		};
+		DE0A440727343FBD0056DC46 /* truetype */ = {
+			isa = PBXGroup;
+			children = (
+				DE0A440827343FBD0056DC46 /* glyph_table.h */,
+				DE0A440927343FBD0056DC46 /* glyph_table.cc */,
+				DE0A440A27343FBD0056DC46 /* loca_table.cc */,
+				DE0A440B27343FBD0056DC46 /* loca_table.h */,
+			);
+			path = truetype;
+			sourceTree = "<group>";
+		};
+		DE0A441127343FBD0056DC46 /* port */ = {
+			isa = PBXGroup;
+			children = (
+				DE0A441227343FBD0056DC46 /* type.h */,
+				DE0A441327343FBD0056DC46 /* exception_type.h */,
+				DE0A441427343FBD0056DC46 /* config.h */,
+				DE0A441527343FBD0056DC46 /* endian.h */,
+				DE0A441627343FBD0056DC46 /* memory_output_stream.h */,
+				DE0A441727343FBD0056DC46 /* memory_input_stream.cc */,
+				DE0A441827343FBD0056DC46 /* lock.h */,
+				DE0A441927343FBD0056DC46 /* input_stream.h */,
+				DE0A441A27343FBD0056DC46 /* memory_input_stream.h */,
+				DE0A441B27343FBD0056DC46 /* file_input_stream.cc */,
+				DE0A441C27343FBD0056DC46 /* logging.h */,
+				DE0A441D27343FBD0056DC46 /* file_input_stream.h */,
+				DE0A441E27343FBD0056DC46 /* lock.cc */,
+				DE0A441F27343FBD0056DC46 /* java_iterator.h */,
+				DE0A442027343FBD0056DC46 /* output_stream.h */,
+				DE0A442127343FBD0056DC46 /* refcount.h */,
+				DE0A442227343FBD0056DC46 /* memory_output_stream.cc */,
+				DE0A442327343FBD0056DC46 /* atomic.h */,
+			);
+			path = port;
+			sourceTree = "<group>";
+		};
+		DE0A442427343FBD0056DC46 /* data */ = {
+			isa = PBXGroup;
+			children = (
+				DE0A442527343FBD0056DC46 /* readable_font_data.cc */,
+				DE0A442627343FBD0056DC46 /* font_output_stream.h */,
+				DE0A442727343FBD0056DC46 /* font_input_stream.cc */,
+				DE0A442827343FBD0056DC46 /* byte_array.cc */,
+				DE0A442927343FBD0056DC46 /* readable_font_data.h */,
+				DE0A442A27343FBD0056DC46 /* font_data.h */,
+				DE0A442B27343FBD0056DC46 /* font_data.cc */,
+				DE0A442C27343FBD0056DC46 /* font_input_stream.h */,
+				DE0A442D27343FBD0056DC46 /* growable_memory_byte_array.cc */,
+				DE0A442E27343FBD0056DC46 /* font_output_stream.cc */,
+				DE0A442F27343FBD0056DC46 /* byte_array.h */,
+				DE0A443027343FBD0056DC46 /* growable_memory_byte_array.h */,
+				DE0A443127343FBD0056DC46 /* memory_byte_array.h */,
+				DE0A443227343FBD0056DC46 /* writable_font_data.h */,
+				DE0A443327343FBD0056DC46 /* writable_font_data.cc */,
+				DE0A443427343FBD0056DC46 /* memory_byte_array.cc */,
+			);
+			path = data;
+			sourceTree = "<group>";
+		};
+		DE0A4549273442E00056DC46 /* skshaper */ = {
+			isa = PBXGroup;
+			children = (
+				DE0A454A273442E00056DC46 /* BUILD.gn */,
+				DE0A454B273442E00056DC46 /* include */,
+				DE0A454D273442E00056DC46 /* skshaper.gni */,
+				DE0A454E273442E00056DC46 /* src */,
+			);
+			name = skshaper;
+			path = modules/skshaper;
+			sourceTree = "<group>";
+		};
+		DE0A454B273442E00056DC46 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				DE0A454C273442E00056DC46 /* SkShaper.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		DE0A454E273442E00056DC46 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				DE0A4550273442E00056DC46 /* SkShaper_primitive.cpp */,
+				DE0A4552273442E00056DC46 /* SkShaper.cpp */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		DE0A4559273445980056DC46 /* svg */ = {
+			isa = PBXGroup;
+			children = (
+				DE0A455A273445A80056DC46 /* src */,
+			);
+			name = svg;
+			sourceTree = "<group>";
+		};
+		DE0A455A273445A80056DC46 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				DE0A455B273445A80056DC46 /* SkSVGFeMorphology.cpp */,
+				DE0A455C273445A80056DC46 /* SkSVGAttributeParser.cpp */,
+				DE0A455D273445A80056DC46 /* SkSVGLine.cpp */,
+				DE0A455E273445A80056DC46 /* SkSVGRenderContext.cpp */,
+				DE0A455F273445A80056DC46 /* SkSVGFeLightSource.cpp */,
+				DE0A4560273445A80056DC46 /* SkSVGUse.cpp */,
+				DE0A4561273445A80056DC46 /* SkSVGMask.cpp */,
+				DE0A4562273445A80056DC46 /* SkSVGFe.cpp */,
+				DE0A4563273445A80056DC46 /* SkSVGLinearGradient.cpp */,
+				DE0A4564273445A80056DC46 /* SkSVGRadialGradient.cpp */,
+				DE0A4565273445A80056DC46 /* SkSVGText.cpp */,
+				DE0A4566273445A80056DC46 /* SkSVGTextPriv.h */,
+				DE0A4567273445A80056DC46 /* SkSVGFeComposite.cpp */,
+				DE0A4568273445A80056DC46 /* SkSVGFeOffset.cpp */,
+				DE0A4569273445A80056DC46 /* SkSVGPoly.cpp */,
+				DE0A456A273445A80056DC46 /* SkSVGFeDisplacementMap.cpp */,
+				DE0A456B273445A80056DC46 /* SkSVGNode.cpp */,
+				DE0A456C273445A80056DC46 /* SkSVGFeGaussianBlur.cpp */,
+				DE0A456D273445A80056DC46 /* SkSVGFilter.cpp */,
+				DE0A456E273445A80056DC46 /* SkSVGShape.cpp */,
+				DE0A456F273445A80056DC46 /* SkSVGFeTurbulence.cpp */,
+				DE0A4570273445A80056DC46 /* SkSVGValue.cpp */,
+				DE0A4571273445A80056DC46 /* SkSVGClipPath.cpp */,
+				DE0A4572273445A80056DC46 /* SkSVGFilterContext.cpp */,
+				DE0A4573273445A80056DC46 /* SkSVGFeImage.cpp */,
+				DE0A4574273445A80056DC46 /* SkSVGDOM.cpp */,
+				DE0A4575273445A80056DC46 /* SkSVGEllipse.cpp */,
+				DE0A4576273445A80056DC46 /* SkSVGAttribute.cpp */,
+				DE0A4577273445A80056DC46 /* SkSVGCircle.cpp */,
+				DE0A4578273445A80056DC46 /* SkSVGPath.cpp */,
+				DE0A4579273445A80056DC46 /* SkSVGFeColorMatrix.cpp */,
+				DE0A457A273445A80056DC46 /* SkSVGRect.cpp */,
+				DE0A457B273445A80056DC46 /* SkSVGSVG.cpp */,
+				DE0A457C273445A80056DC46 /* SkSVGGradient.cpp */,
+				DE0A457D273445A80056DC46 /* SkSVGFeFlood.cpp */,
+				DE0A457E273445A80056DC46 /* SkSVGPattern.cpp */,
+				DE0A457F273445A80056DC46 /* SkSVGImage.cpp */,
+				DE0A4580273445A80056DC46 /* SkSVGStop.cpp */,
+				DE0A4581273445A80056DC46 /* SkSVGFeBlend.cpp */,
+				DE0A4582273445A80056DC46 /* SkSVGContainer.cpp */,
+				DE0A4583273445A80056DC46 /* SkSVGFeLighting.cpp */,
+				DE0A4584273445A80056DC46 /* SkSVGTransformableNode.cpp */,
+			);
+			name = src;
+			path = modules/svg/src;
+			sourceTree = "<group>";
+		};
+		DE8C2929273473F5003E6AAB /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				DE8C292A273473F5003E6AAB /* icudtl_dat.S */,
+				DE8C292B273473F5003E6AAB /* icudt56l_dat.s */,
+			);
+			name = ios;
+			path = third_party/icu/ios;
+			sourceTree = "<group>";
+		};
 		E0094E1E9227BD9640FE304A /* arm */ = {
 			isa = PBXGroup;
 			children = (
+				DE0A42E7273363360056DC46 /* jsimd_neon.S */,
+				DE35710027335AC400CE713C /* jsimd.c */,
 				DE6C8BAB272AEEFC00F6406A /* arm64 */,
 			);
 			name = arm;
@@ -8389,7 +9028,6 @@
 			isa = PBXGroup;
 			children = (
 				3240E1B11E7586658529C937 /* common */,
-				C0E6B3F903BF499129A1C954 /* ios */,
 				859C4CB69F56A0F42E14089C /* scripts */,
 				7118A17DBFC818DD89D631D6 /* source */,
 			);
@@ -9098,9 +9736,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DE6C8D3D272C46F100F6406A /* svg in Resources */,
-				DE6C8BAC272AEEFC00F6406A /* arm64 in Resources */,
 				DE6C8CB3272AF15000F6406A /* hb-gobject-enums.cc.tmpl in Resources */,
+				DE0A4554273442E00056DC46 /* skshaper.gni in Resources */,
+				DE0A4553273442E00056DC46 /* BUILD.gn in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9807,6 +10445,7 @@
 				54F17A4005A179F7D5191C3B /* sk_imageinfo.cpp in Sources */,
 				ACF17DAB9F6730A6645F2FE3 /* sk_paint.cpp in Sources */,
 				F141D05ECBF33F8760B2D095 /* sk_surface.cpp in Sources */,
+				DE0A449227343FBE0056DC46 /* bitmap_size_table.cc in Sources */,
 				FF58A522A273A92394109541 /* SkAndroidCodec.cpp in Sources */,
 				DE6C8CBD272AF15000F6406A /* hb-aat-layout.cc in Sources */,
 				9DED45B179C5FE9770B4E3DC /* SkAndroidCodecAdapter.cpp in Sources */,
@@ -9832,6 +10471,7 @@
 				07BCC59D10A74D8940B03C65 /* SkSampledCodec.cpp in Sources */,
 				2394FE272105357006C4EFB3 /* SkSampler.cpp in Sources */,
 				D1B256882C96773397B49BC8 /* SkStreamBuffer.cpp in Sources */,
+				DE0A4306273430EB0056DC46 /* pngread.c in Sources */,
 				D5873888892E7FC1A88D0943 /* SkSwizzler.cpp in Sources */,
 				2481058475CF8A5F9FF5A744 /* SkWbmpCodec.cpp in Sources */,
 				32E1FDE5A8771096DCCF712C /* SkWebpCodec.cpp in Sources */,
@@ -9846,6 +10486,7 @@
 				EB44B1BB0B826122D9B42384 /* SkBigPicture.cpp in Sources */,
 				D84165F7DF00BEC4E07C8551 /* SkBitmap.cpp in Sources */,
 				FA3E761DAD13F7840898EB2E /* SkBitmapCache.cpp in Sources */,
+				DE0A447C27343FBE0056DC46 /* maximum_profile_table.cc in Sources */,
 				2B03E67405097F75F68BBE63 /* SkBitmapDevice.cpp in Sources */,
 				85DB54BF48EF19420E7F4A4A /* SkBitmapProcState.cpp in Sources */,
 				77651DF48E20C5E3E24D7CA6 /* SkBitmapProcState_matrixProcs.cpp in Sources */,
@@ -9883,11 +10524,13 @@
 				5FE5A877AE2A1426784D1C81 /* SkDeferredDisplayList.cpp in Sources */,
 				0D909FD235B655B2E4200903 /* SkDeferredDisplayListRecorder.cpp in Sources */,
 				14CBCC7A2828C2A14C2A737E /* SkDeque.cpp in Sources */,
+				DE0A449D27343FBE0056DC46 /* font.cc in Sources */,
 				40EE34F9B79EC90404D160B8 /* SkDescriptor.cpp in Sources */,
 				25941E9514C5BC3B53D9DCB3 /* SkDevice.cpp in Sources */,
 				F969579DBD3075224313F754 /* SkDistanceFieldGen.cpp in Sources */,
 				65380C6298392FC5D686CF44 /* SkDocument.cpp in Sources */,
 				C1EC889AABBA20D478C13AF5 /* SkDraw.cpp in Sources */,
+				DE0A45AB273445A80056DC46 /* SkSVGContainer.cpp in Sources */,
 				15578211A8600103F7AEBB23 /* SkDrawLooper.cpp in Sources */,
 				DE6C8CCA272AF15000F6406A /* hb-static.cc in Sources */,
 				5FFB5A9EBB68CB2E0DCF8E3D /* SkDrawShadowInfo.cpp in Sources */,
@@ -9916,17 +10559,20 @@
 				DE6C8CA7272AF15000F6406A /* hb-shape-fuzzer.cc in Sources */,
 				18D9839E26A8A79919D2DA3A /* SkGraphics.cpp in Sources */,
 				507CF618CDFAE09FB14D6217 /* SkHalf.cpp in Sources */,
+				DE0A458C273445A80056DC46 /* SkSVGFe.cpp in Sources */,
 				CD4FBF0D828A2E6A96A9ACBD /* SkICC.cpp in Sources */,
 				4E6C1A217E111EC3F45A53BF /* SkIDChangeListener.cpp in Sources */,
 				F252B533AD465A3352B5276B /* SkImageFilter.cpp in Sources */,
 				DE6C8CC7272AF15000F6406A /* hb-ot-math.cc in Sources */,
 				26B2291A31163B55B8CA445E /* SkImageFilterCache.cpp in Sources */,
+				DE0A4596273445A80056DC46 /* SkSVGFilter.cpp in Sources */,
 				DF21EB5A12D927806946D6CB /* SkImageFilterTypes.cpp in Sources */,
 				C9EFD72DB11203006776929A /* SkImageGenerator.cpp in Sources */,
 				C758BE05FE5DFADAB804391C /* SkImageInfo.cpp in Sources */,
 				DE6C8CCE272AF15000F6406A /* hb-blob.cc in Sources */,
 				EA3651120F6F228C88C1E952 /* SkLatticeIter.cpp in Sources */,
 				2A529650D6890E54C66678E9 /* SkLineClipper.cpp in Sources */,
+				DE0A449327343FBE0056DC46 /* eblc_table.cc in Sources */,
 				AA4A59D4E37FA0D259E67E9A /* SkLocalMatrixImageFilter.cpp in Sources */,
 				8A4679B1B1D23E9FF768E807 /* SkM44.cpp in Sources */,
 				03FE560FDB11844803D7DB3E /* SkMD5.cpp in Sources */,
@@ -9947,15 +10593,18 @@
 				3962F35F0AB1A68674BBB8E4 /* SkMipmapAccessor.cpp in Sources */,
 				D8CDF1CBEA194FFD75587D82 /* SkModeColorFilter.cpp in Sources */,
 				D721166DEB85CCA2E745C6DC /* SkOpts.cpp in Sources */,
+				DE0A45AA273445A80056DC46 /* SkSVGFeBlend.cpp in Sources */,
 				18ADA9C291E789AE8AA3AD42 /* SkOpts_erms.cpp in Sources */,
 				F92E38680A8CE6CD4B0A051E /* SkOverdrawCanvas.cpp in Sources */,
 				B6E36D97491AC554238A4400 /* SkPaint.cpp in Sources */,
 				C72011F977DE48B2C1FC19C3 /* SkPaintPriv.cpp in Sources */,
 				11FB9585142AAED0F20D31B7 /* SkPath.cpp in Sources */,
+				DE0A44A327343FBE0056DC46 /* font_input_stream.cc in Sources */,
 				55AC70882B7BF527090A0970 /* SkPathBuilder.cpp in Sources */,
 				D89B204155AB9A440645E093 /* SkPathEffect.cpp in Sources */,
 				D90A1FE67F3E06022FFD2F6A /* SkPathMeasure.cpp in Sources */,
 				0DF03D1F2260A8FF35C73C52 /* SkPathRef.cpp in Sources */,
+				DE8C26B227345239003E6AAB /* hb-fallback-shape.cc in Sources */,
 				A9DA515CC95FE6780ABF85E3 /* SkPath_serial.cpp in Sources */,
 				61F4C145A6CE1D8D1CBD4C20 /* SkPicture.cpp in Sources */,
 				78A12D02139E940D3418E6D8 /* SkPictureData.cpp in Sources */,
@@ -9971,7 +10620,6 @@
 				DE6C8CB6272AF15000F6406A /* hb-subset-fuzzer.cc in Sources */,
 				362297F37AFB53BCC57BF7EC /* SkPoint3.cpp in Sources */,
 				49E95A7FBA2CA8A1769155DD /* SkPromiseImageTexture.cpp in Sources */,
-				DE6C8CA2272AF14F00F6406A /* hb-ot-shape-complex-use-table.cc in Sources */,
 				3EC2317C96F9E6B73DDBF364 /* SkPtrRecorder.cpp in Sources */,
 				168D224E66430565386AC35F /* SkQuadClipper.cpp in Sources */,
 				1C4CCD32637808990392C06F /* SkRRect.cpp in Sources */,
@@ -9991,11 +10639,16 @@
 				76E1DD6768F2EDBE78046257 /* SkRegion_path.cpp in Sources */,
 				8A18ED56BBBDF26C5EDD39B5 /* SkRemoteGlyphCache.cpp in Sources */,
 				6FA9D98AC3EFB35AD96D17A5 /* SkResourceCache.cpp in Sources */,
+				DE8C26B6273454DB003E6AAB /* hb-ot-shape-complex-syllabic.cc in Sources */,
 				A1ABA231E44E47E22FD21B20 /* SkRuntimeEffect.cpp in Sources */,
+				DE8C26BA2734566A003E6AAB /* hb-ot-metrics.cc in Sources */,
 				C917B0D040663301F6ECC3B6 /* SkScalar.cpp in Sources */,
 				60E9243F955A689F6E5903DA /* SkScalerCache.cpp in Sources */,
+				DE0A448B27343FBE0056DC46 /* ebdt_table.cc in Sources */,
 				F6DC2BF2D0C1CEE4DF767D8C /* SkScalerContext.cpp in Sources */,
+				DE0A44A027343FBE0056DC46 /* lock.cc in Sources */,
 				46C822E1A79B05CD9177A6B3 /* SkScan.cpp in Sources */,
+				DE0A449927343FBE0056DC46 /* subtable.cc in Sources */,
 				959216E7AE7D7665FB739398 /* SkScan_AAAPath.cpp in Sources */,
 				00D9F609262856292E0451B8 /* SkScan_AntiPath.cpp in Sources */,
 				BED3C7D88210CB60F6E2E0A2 /* SkScan_Antihair.cpp in Sources */,
@@ -10013,6 +10666,8 @@
 				FE5070F73FD426FECA04EE80 /* SkStrikeForGPU.cpp in Sources */,
 				9D948492D5099C326BC6D336 /* SkStrikeSpec.cpp in Sources */,
 				EFE3261E5203652CD91E1A12 /* SkString.cpp in Sources */,
+				DE0A459B273445A80056DC46 /* SkSVGFilterContext.cpp in Sources */,
+				DE0A44A527343FBE0056DC46 /* font_data.cc in Sources */,
 				FACAB09B35A21C4C71A0A9DD /* SkStringUtils.cpp in Sources */,
 				0A433633F76A378C7FD43C6F /* SkStringView.cpp in Sources */,
 				AE3B4ECA3D94B399E3E94ACA /* SkStroke.cpp in Sources */,
@@ -10022,6 +10677,7 @@
 				F9FF812638345E7A9D7587AA /* SkSwizzle.cpp in Sources */,
 				DE6C8CAB272AF15000F6406A /* hb-ot-cff2-table.cc in Sources */,
 				FD1A7EB2D95CCD9E63083DEA /* SkTSearch.cpp in Sources */,
+				DE0A448D27343FBE0056DC46 /* index_sub_table.cc in Sources */,
 				567F5F590AE2E9512976DCE1 /* SkTaskGroup.cpp in Sources */,
 				2A2BAEA2361180FA7E9419B9 /* SkTextBlob.cpp in Sources */,
 				511EEEFA93FE1C870C94F9ED /* SkTextBlobTrace.cpp in Sources */,
@@ -10030,6 +10686,7 @@
 				11050749B383E8C4F0DF784D /* SkTypeface.cpp in Sources */,
 				63AEEB03F80AB7C560186FB6 /* SkTypefaceCache.cpp in Sources */,
 				74F839798CD2A3B303C479E4 /* SkTypeface_remote.cpp in Sources */,
+				DE0A447827343FBE0056DC46 /* glyph_table_subsetter.cc in Sources */,
 				BD69954C27B9FA155D980DF0 /* SkUnPreMultiply.cpp in Sources */,
 				3219771049E48042275190AA /* SkUtils.cpp in Sources */,
 				4C74FCB94B29086D2E999FF1 /* SkVM.cpp in Sources */,
@@ -10038,6 +10695,7 @@
 				A3F598C0D6C3EF4FF1E30072 /* SkVertices.cpp in Sources */,
 				BBF5EC08E1BB7FA2BB0EF57D /* SkWriteBuffer.cpp in Sources */,
 				AB3D79F36E6D670A6CA39E2A /* SkWriter32.cpp in Sources */,
+				DE0A449027343FBE0056DC46 /* bitmap_glyph_info.cc in Sources */,
 				FA53A4C18EE6DE350779AEA7 /* SkXfermode.cpp in Sources */,
 				1B995548984417985D984461 /* SkXfermodeInterpretation.cpp in Sources */,
 				9224666A6C596E3C15E6BC4D /* SkYUVAInfo.cpp in Sources */,
@@ -10051,6 +10709,7 @@
 				3F08E84B4E22825F8BCE5C7B /* SkColorMatrixFilter.cpp in Sources */,
 				1EB5B2E06E59FD3405D884C4 /* SkCornerPathEffect.cpp in Sources */,
 				9992F87A9A8250A1435FE348 /* SkDashPathEffect.cpp in Sources */,
+				DE0A45A3273445A80056DC46 /* SkSVGRect.cpp in Sources */,
 				A79589CB95C66DAAACD56C91 /* SkDiscretePathEffect.cpp in Sources */,
 				F12E95FCB0E76AB9C69D50B6 /* SkEmbossMask.cpp in Sources */,
 				E3B1E7EBC2CDD340B8C83307 /* SkEmbossMaskFilter.cpp in Sources */,
@@ -10058,6 +10717,8 @@
 				C0FD125D30BB1A103930D164 /* SkLayerDrawLooper.cpp in Sources */,
 				BC14AB5EF4302474627B17A2 /* SkLumaColorFilter.cpp in Sources */,
 				8A0B0C03C19B88E770E06E5B /* SkOpPathEffect.cpp in Sources */,
+				DE0A4599273445A80056DC46 /* SkSVGValue.cpp in Sources */,
+				DE0A448827343FBE0056DC46 /* simple_bitmap_glyph.cc in Sources */,
 				1231D83ADED34D5C13F2D460 /* SkOverdrawColorFilter.cpp in Sources */,
 				8907D30ABD6D9C2267CCEF9F /* SkShaderMaskFilter.cpp in Sources */,
 				50CE9E3AFDE05C934C18132C /* SkTableColorFilter.cpp in Sources */,
@@ -10097,6 +10758,7 @@
 				EDE248BB0D82F36C3E1B0F21 /* GrBufferAllocPool.cpp in Sources */,
 				75E2A053704665E4671D07D0 /* GrCaps.cpp in Sources */,
 				D7790AACA710DAF885A40691 /* GrClientMappedBufferManager.cpp in Sources */,
+				DE0A448727343FBE0056DC46 /* composite_bitmap_glyph.cc in Sources */,
 				DE6C8CC8272AF15000F6406A /* hb-ot-map.cc in Sources */,
 				C941C66B0EEBA00DDCE5340B /* GrColorInfo.cpp in Sources */,
 				E57B619DBB8720868629BE87 /* GrColorSpaceXform.cpp in Sources */,
@@ -10128,6 +10790,7 @@
 				CAADC7D87C856DA711C46B31 /* GrMemoryPool.cpp in Sources */,
 				3EA37802C891E5C367911F80 /* GrMeshDrawTarget.cpp in Sources */,
 				BC8988216ECC74453D3EADF5 /* GrOnFlushResourceProvider.cpp in Sources */,
+				DE0A42E8273363370056DC46 /* jsimd_neon.S in Sources */,
 				375E054E41EA9B24236FDA34 /* GrOpFlushState.cpp in Sources */,
 				8C796F18C1E5BF5D41B7CBEA /* GrOpsRenderPass.cpp in Sources */,
 				5B31A5360CA94408CA5D4021 /* GrPaint.cpp in Sources */,
@@ -10163,8 +10826,11 @@
 				70FC18A41E1F1C8638287545 /* GrStencilSettings.cpp in Sources */,
 				2ACBF5678D692246408B3DB4 /* GrStyle.cpp in Sources */,
 				DA0153C35A7083AEE3CF9DC4 /* GrSubRunAllocator.cpp in Sources */,
+				DE0A448127343FBE0056DC46 /* cmap_table.cc in Sources */,
 				68AE4A77D4BA502A19CDED14 /* GrSurface.cpp in Sources */,
+				DE0A44A727343FBE0056DC46 /* font_output_stream.cc in Sources */,
 				10B17BF6C365BB0BD87D76C5 /* GrSurfaceInfo.cpp in Sources */,
+				DE0A45AD273445A80056DC46 /* SkSVGTransformableNode.cpp in Sources */,
 				260EBD2EF9EA8D4282F2E399 /* GrSurfaceProxy.cpp in Sources */,
 				787A1C96D0D91904820F746F /* GrSwizzle.cpp in Sources */,
 				FDEF3057CC742866AE698151 /* GrTestUtils.cpp in Sources */,
@@ -10175,6 +10841,7 @@
 				5E2F3141F41D0DD618E2CA40 /* GrThreadSafeCache.cpp in Sources */,
 				F12F71ABF057D6B8A14F0AD7 /* GrThreadSafePipelineBuilder.cpp in Sources */,
 				3CC9F10BA99E2A598B928F54 /* GrTransferFromRenderTask.cpp in Sources */,
+				DE0A42FA273430EB0056DC46 /* pngwio.c in Sources */,
 				77DA7A049863DBBEA7F375E7 /* GrUniformDataManager.cpp in Sources */,
 				B0F714B16EE5FB927128454A /* GrUtil.cpp in Sources */,
 				BE06948E50F0BF11909DC55E /* GrVertexChunkArray.cpp in Sources */,
@@ -10185,12 +10852,13 @@
 				5151FCD8EF403D3C49058C35 /* GrYUVATextureProxies.cpp in Sources */,
 				0534009FFF34D707A0F56AB7 /* SkGr.cpp in Sources */,
 				7EFBED1E5951949AB6BF7F10 /* SurfaceContext.cpp in Sources */,
-				DE6C8CCC272AF15000F6406A /* hb-ot-name-language.cc in Sources */,
+				DE0A45A6273445A80056DC46 /* SkSVGFeFlood.cpp in Sources */,
 				9D1A028671768561DC0F54AB /* SurfaceFillContext.cpp in Sources */,
 				D79C56B45B3A2A57CDCC90A2 /* GrBezierEffect.cpp in Sources */,
 				9182FC37CCDA2122190A0F50 /* GrBicubicEffect.cpp in Sources */,
 				25D79589BA2F76FD3B48A778 /* GrBitmapTextGeoProc.cpp in Sources */,
 				82DBA49BEFDF789EA4E621B3 /* GrBlendFragmentProcessor.cpp in Sources */,
+				DE0A448227343FBE0056DC46 /* horizontal_header_table.cc in Sources */,
 				06D99671E84DF9670C46F125 /* GrConvexPolyEffect.cpp in Sources */,
 				12E7854D69EAA904F10F8A57 /* GrCoverageSetOpXP.cpp in Sources */,
 				EBC18228A6B3ECA82DCC1395 /* GrCustomXfermode.cpp in Sources */,
@@ -10209,6 +10877,7 @@
 				AE5A84A933DDAB11EF3A0E39 /* GrYUVtoRGBEffect.cpp in Sources */,
 				C3DCA4CFA7B999FE6FAB5619 /* GrAAConvexTessellator.cpp in Sources */,
 				F9906BA211EC81093788CF14 /* GrAATriangulator.cpp in Sources */,
+				DE0A42FE273430EB0056DC46 /* pngset.c in Sources */,
 				64F70683ABC53CDCF37DAE06 /* GrPathUtils.cpp in Sources */,
 				A21D2B2C36B0BF1C3504C15C /* GrQuad.cpp in Sources */,
 				693CE4F61F3EA50BBE24A95C /* GrQuadUtils.cpp in Sources */,
@@ -10219,6 +10888,7 @@
 				DE1AFBD464AA8E054F75D845 /* GrGLAssembleGLInterfaceAutogen.cpp in Sources */,
 				73701AC4D6AB20A0BB21FB9B /* GrGLAssembleHelpers.cpp in Sources */,
 				732FC0A2C87B6E98857106FD /* GrGLAssembleInterface.cpp in Sources */,
+				DE0A4305273430EB0056DC46 /* pngpread.c in Sources */,
 				A40C8D9D6F0A057755827B80 /* GrGLAssembleWebGLInterfaceAutogen.cpp in Sources */,
 				B3C6153F2908CF6A63708309 /* GrGLAttachment.cpp in Sources */,
 				0056FED921C137B997A47133 /* GrGLBuffer.cpp in Sources */,
@@ -10231,6 +10901,7 @@
 				91FE721DEEAE23B68E6F8246 /* GrGLInterfaceAutogen.cpp in Sources */,
 				C856B2D09DE2E9891DA4BC20 /* GrGLOpsRenderPass.cpp in Sources */,
 				5A1A7BDBA56725921F9BD01D /* GrGLProgram.cpp in Sources */,
+				DE0A45A2273445A80056DC46 /* SkSVGFeColorMatrix.cpp in Sources */,
 				DE6C8CDC272AF15000F6406A /* hb-set.cc in Sources */,
 				75720BC9E425510326892457 /* GrGLProgramDataManager.cpp in Sources */,
 				B2A776DA4CD33E4DEB82E6A4 /* GrGLRenderTarget.cpp in Sources */,
@@ -10248,6 +10919,7 @@
 				807FF5BA28C9F012690D0FC7 /* GrGLSL.cpp in Sources */,
 				AFD67ED8CC663CB9FA09B27F /* GrGLSLBlend.cpp in Sources */,
 				DE6C8CC3272AF15000F6406A /* hb-aat-map.cc in Sources */,
+				DE35710127335AC400CE713C /* jsimd.c in Sources */,
 				E2C79D25AEAF3F907B195DB8 /* GrGLSLFragmentShaderBuilder.cpp in Sources */,
 				E60DD79A4F7CD8D26D0A19AE /* GrGLSLProgramBuilder.cpp in Sources */,
 				37B306981DD9882F0495161C /* GrGLSLProgramDataManager.cpp in Sources */,
@@ -10255,6 +10927,7 @@
 				3036C7BF82EB08F368B4909A /* GrGLSLUniformHandler.cpp in Sources */,
 				0E7D4D2F0B78C5019F1D5A0B /* GrGLSLVarying.cpp in Sources */,
 				DE6C8C9E272AF14F00F6406A /* hb-ot-shape-complex-default.cc in Sources */,
+				DE0A449C27343FBE0056DC46 /* header.cc in Sources */,
 				9AF5B8F76CDE2EB19C5E1EE5 /* GrGLSLVertexGeoBuilder.cpp in Sources */,
 				6856B95408623C8D3FC5953E /* GrGradientBitmapCache.cpp in Sources */,
 				313FA6592C8D7A80930D872D /* GrGradientShader.cpp in Sources */,
@@ -10263,6 +10936,8 @@
 				75141A7928EE53E927E33C15 /* GrMockTypes.cpp in Sources */,
 				60656221FE39F40295AC3EB9 /* AAConvexPathRenderer.cpp in Sources */,
 				970F4CB50786758C9E3B0AAC /* AAHairLinePathRenderer.cpp in Sources */,
+				DE0A430D2734328D0056DC46 /* arm_init.c in Sources */,
+				DE8C26B427345267003E6AAB /* hb-ucd.cc in Sources */,
 				8E6EADA650366B4E5A00676E /* AALinearizingConvexPathRenderer.cpp in Sources */,
 				3C6FA9305526C7D8F30AD51E /* AtlasInstancedHelper.cpp in Sources */,
 				01573C2EE196EA8EA2476C47 /* AtlasPathRenderer.cpp in Sources */,
@@ -10275,6 +10950,7 @@
 				9C2A0B279E0D7ACDDA5E62C3 /* DrawAtlasOp.cpp in Sources */,
 				6AD4C8EBD46D4C09D5FC7E47 /* DrawAtlasPathOp.cpp in Sources */,
 				165898D531204632D557C5DC /* DrawVerticesOp.cpp in Sources */,
+				DE0A45A0273445A80056DC46 /* SkSVGCircle.cpp in Sources */,
 				E2CE07CC416FFA9A72A9A523 /* DrawableOp.cpp in Sources */,
 				85F877D3F6F4F3906A9FD8A2 /* FillRRectOp.cpp in Sources */,
 				FE62EC6DF11DA8E02FD7C8CB /* FillRectOp.cpp in Sources */,
@@ -10338,9 +11014,11 @@
 				C6520BF42F8EB5EF734EF2E4 /* SkSurface.cpp in Sources */,
 				5F6E196D58C93689451A515F /* SkSurface_Gpu.cpp in Sources */,
 				BF0C4066F7C73EA129FD511B /* SkSurface_Raster.cpp in Sources */,
+				DE0A448327343FBE0056DC46 /* name_table.cc in Sources */,
 				308C3F856A1636472BB3FEFD /* SkImageEncoder.cpp in Sources */,
 				D6C7B5A5256D0B95BF925C1C /* SkJPEGWriteUtility.cpp in Sources */,
 				B2E72687CAA32881668EAA98 /* SkJpegEncoder.cpp in Sources */,
+				DE0A4597273445A80056DC46 /* SkSVGShape.cpp in Sources */,
 				0C032468589EC4DA91855D23 /* SkPngEncoder.cpp in Sources */,
 				702C75C126AC2EA313BB340B /* SkWebpEncoder.cpp in Sources */,
 				D557AF8CDDD2B37EAFB76D74 /* SkDiscardableMemoryPool.cpp in Sources */,
@@ -10352,6 +11030,7 @@
 				A307524C6D22A19E4E053578 /* SkDLineIntersection.cpp in Sources */,
 				DE6C8CC0272AF15000F6406A /* hb-ot-tag.cc in Sources */,
 				D98D41A90B6E728357E9A67D /* SkDQuadLineIntersection.cpp in Sources */,
+				DE0A45A4273445A80056DC46 /* SkSVGSVG.cpp in Sources */,
 				093D1A350071EFC54B759BC1 /* SkIntersections.cpp in Sources */,
 				8B7865B9BFCA0A85C485EA27 /* SkOpAngle.cpp in Sources */,
 				BF9818E3295CF7F9EE4A1EF1 /* SkOpBuilder.cpp in Sources */,
@@ -10368,12 +11047,14 @@
 				183A2D3115B769708F2371D1 /* SkPathOpsCubic.cpp in Sources */,
 				6C2D80FF7D3C5A23CADF6C85 /* SkPathOpsCurve.cpp in Sources */,
 				DAD0F1DEC4F519B8D63A68E2 /* SkPathOpsDebug.cpp in Sources */,
+				DE0A44A427343FBE0056DC46 /* byte_array.cc in Sources */,
 				F2D77A1DAB30800CDA654513 /* SkPathOpsLine.cpp in Sources */,
 				45018C968CC8A69678BDAFE4 /* SkPathOpsOp.cpp in Sources */,
 				555FE4A58D1A5D7B806A2C23 /* SkPathOpsQuad.cpp in Sources */,
 				B6739BA29CF7C32D2D969047 /* SkPathOpsRect.cpp in Sources */,
 				66CFFE185C94E5CC2AAFAB10 /* SkPathOpsSimplify.cpp in Sources */,
 				40AB4BF815474929B8C66704 /* SkPathOpsTSect.cpp in Sources */,
+				DE0A4303273430EB0056DC46 /* pngmem.c in Sources */,
 				950564E9901022239EF28752 /* SkPathOpsTightBounds.cpp in Sources */,
 				7349A0B0BAD01C10E0134AF1 /* SkPathOpsTypes.cpp in Sources */,
 				99D8105ED2891BE55EDCB782 /* SkPathOpsWinding.cpp in Sources */,
@@ -10383,7 +11064,9 @@
 				391DD306D1937943F2C88C1E /* SkDeflate.cpp in Sources */,
 				50FD9A75DA603C06CB9E23B9 /* SkJpegInfo.cpp in Sources */,
 				88D65B112844EE9156BDE0AE /* SkKeyedImage.cpp in Sources */,
+				DE0A4598273445A80056DC46 /* SkSVGFeTurbulence.cpp in Sources */,
 				A7AAE69D6C81D6B08A838C39 /* SkPDFBitmap.cpp in Sources */,
+				DE0A447F27343FBE0056DC46 /* font_header_table.cc in Sources */,
 				5BB782401CEEB7B70464939E /* SkPDFDevice.cpp in Sources */,
 				0661EF9BBBF44C58573E4FFF /* SkPDFDocument.cpp in Sources */,
 				C42D026D4E8E15BBE211D61B /* SkPDFFont.cpp in Sources */,
@@ -10425,6 +11108,7 @@
 				F878D6F3B3A288FC3CDEAF9F /* SkImageShader.cpp in Sources */,
 				3C732AEE7C27416D28E732EB /* SkLocalMatrixShader.cpp in Sources */,
 				3FC9C05D8BB780232197BF1A /* SkPerlinNoiseShader.cpp in Sources */,
+				DE0A4588273445A80056DC46 /* SkSVGRenderContext.cpp in Sources */,
 				81410663C36ECF0C4C5ADB59 /* SkPictureShader.cpp in Sources */,
 				B04020440F3CEF4A353F94B1 /* SkShader.cpp in Sources */,
 				D30E4F8A7764E46EC264E7E7 /* SkTransformShader.cpp in Sources */,
@@ -10447,12 +11131,17 @@
 				F34519555736F2D918E9B758 /* SkSLIntrinsicMap.cpp in Sources */,
 				033D11198B50F3357585F637 /* SkSLLexer.cpp in Sources */,
 				864E57C15FFC2DE7FFE27827 /* SkSLMangler.cpp in Sources */,
+				DE0A4307273430EB0056DC46 /* pngrio.c in Sources */,
 				DE6C8CB8272AF15000F6406A /* hb-icu.cc in Sources */,
+				DE0A4300273430EB0056DC46 /* png.c in Sources */,
 				3EF0C3F136D58C8077555A06 /* SkSLOperators.cpp in Sources */,
 				E9DD870752E94C5C75120385 /* SkSLOutputStream.cpp in Sources */,
+				DE0A45A9273445A80056DC46 /* SkSVGStop.cpp in Sources */,
 				30FF75AB27134E25B1DB6C18 /* SkSLPool.cpp in Sources */,
 				DE6C8C93272AF14F00F6406A /* hb-common.cc in Sources */,
+				DE0A4594273445A80056DC46 /* SkSVGNode.cpp in Sources */,
 				8E62DDA2304108D1E6888A69 /* SkSLRehydrator.cpp in Sources */,
+				DE0A44A827343FBE0056DC46 /* writable_font_data.cc in Sources */,
 				38785A56266F9BD29C6F9790 /* SkSLSampleUsage.cpp in Sources */,
 				73A15ED39EFD1380D435E451 /* SkSLString.cpp in Sources */,
 				C5DB2135155DC29F3C20DD45 /* SkSLThreadContext.cpp in Sources */,
@@ -10473,8 +11162,10 @@
 				CF05EF29D2347EAE007EF50A /* DSLCase.cpp in Sources */,
 				19E618AF25708E34C16EFD3B /* DSLCore.cpp in Sources */,
 				3D9623182165616B9959C46A /* DSLExpression.cpp in Sources */,
+				DE0A448927343FBE0056DC46 /* index_sub_table_format3.cc in Sources */,
 				BDB60ABBCAB1F1AE9F32D9A9 /* DSLFunction.cpp in Sources */,
 				C04074129D78A24DE1D63DA9 /* DSLLayout.cpp in Sources */,
+				DE0A449A27343FBE0056DC46 /* glyph_table.cc in Sources */,
 				DEB3A3B8490BBFF7BAC0AE33 /* DSLRuntimeEffects.cpp in Sources */,
 				2B177B73736F044EC2F940E3 /* DSLStatement.cpp in Sources */,
 				4EAD21FECF2085E537F86044 /* DSLSymbols.cpp in Sources */,
@@ -10484,6 +11175,7 @@
 				898CD3A7B893C353B113D110 /* DSLWriter.cpp in Sources */,
 				F72C07486A2E87BA859C2E81 /* SkSLBinaryExpression.cpp in Sources */,
 				31D94BA43CD21469903E08F4 /* SkSLBlock.cpp in Sources */,
+				DE0A449E27343FBE0056DC46 /* memory_input_stream.cc in Sources */,
 				4157799FD91F4139DA73C773 /* SkSLChildCall.cpp in Sources */,
 				F18EE69E1A34DF8D9E380780 /* SkSLConstructor.cpp in Sources */,
 				69EFFE129FEEA435BCB0DC59 /* SkSLConstructorArray.cpp in Sources */,
@@ -10506,15 +11198,16 @@
 				4A2DE21D80822AE6E88A5D85 /* SkSLIndexExpression.cpp in Sources */,
 				C586936435B30FB9D7E889B6 /* SkSLModifiers.cpp in Sources */,
 				CC81202AB57E79C538BF7B22 /* SkSLPostfixExpression.cpp in Sources */,
+				DE0A42FD273430EB0056DC46 /* pngrutil.c in Sources */,
 				2366AF939BC1052719214CAA /* SkSLPrefixExpression.cpp in Sources */,
 				6FC4E8C548F721E8A845DE8E /* SkSLSetting.cpp in Sources */,
 				B12E981C30EF9D521C57F660 /* SkSLSwitchStatement.cpp in Sources */,
+				DE0A448027343FBE0056DC46 /* os2_table.cc in Sources */,
 				C85F5EA279B95260696E7227 /* SkSLSwizzle.cpp in Sources */,
 				D36084B61747DFE8AD704E48 /* SkSLSymbolTable.cpp in Sources */,
 				3ACD4DF78C7EE264B4F324B8 /* SkSLTernaryExpression.cpp in Sources */,
 				8BE0E1BD5771838A03CB3BE5 /* SkSLType.cpp in Sources */,
 				21B6D59085B81C3BAFC9AA0B /* SkSLTypeReference.cpp in Sources */,
-				DE6C8CD7272AF15000F6406A /* hb-warning.cc in Sources */,
 				9539F77F03A8C6586BB4C5B2 /* SkSLVarDeclarations.cpp in Sources */,
 				DE6C8C97272AF14F00F6406A /* hb-ot-shape-complex-hangul.cc in Sources */,
 				13EA9E01EE4678432B3F4157 /* SkSLVariable.cpp in Sources */,
@@ -10534,6 +11227,7 @@
 				801EA5754799504E2C8F185E /* SkCanvasStateUtils.cpp in Sources */,
 				6CF113F256D8C3999CC5245E /* SkCharToGlyphCache.cpp in Sources */,
 				8B7A446BC1C55FA3FF161511 /* SkClipStackUtils.cpp in Sources */,
+				DE0A458A273445A80056DC46 /* SkSVGUse.cpp in Sources */,
 				2AFAEF1C43F93956F8DC42CE /* SkCustomTypeface.cpp in Sources */,
 				035D1C9F2218F5515ECF31CE /* SkDashPath.cpp in Sources */,
 				3546D30981CE27BE7E8FEA32 /* SkEventTracer.cpp in Sources */,
@@ -10541,6 +11235,7 @@
 				DE6C8CA8272AF15000F6406A /* hb-subset-cff2.cc in Sources */,
 				FEDEBFF17C671183B8BBC2EB /* SkJSON.cpp in Sources */,
 				FE68ED606427E9014E7F7776 /* SkJSONWriter.cpp in Sources */,
+				DE0A45A1273445A80056DC46 /* SkSVGPath.cpp in Sources */,
 				4B3593FF86B231B0B11A4797 /* SkMatrix22.cpp in Sources */,
 				533927454C0BCF031D5632B7 /* SkMultiPictureDocument.cpp in Sources */,
 				445B7EF8EB634BE85D8463CD /* SkNWayCanvas.cpp in Sources */,
@@ -10560,6 +11255,7 @@
 				AC0BE513A54F705B384FC5E0 /* SkShaperJSONWriter.cpp in Sources */,
 				7B1483909A052F05950E43CC /* SkTextUtils.cpp in Sources */,
 				5C73950223635A3D6DF86688 /* SkThreadUtils_pthread.cpp in Sources */,
+				DE0A449F27343FBE0056DC46 /* file_input_stream.cc in Sources */,
 				F23BF9E2BB5C4FCCF51F728E /* SkThreadUtils_win.cpp in Sources */,
 				E05C6C2B5831EF3DA1273D43 /* SkUTF.cpp in Sources */,
 				E65BDFE920E8D58B6C32E78C /* SkCTFont.cpp in Sources */,
@@ -10612,23 +11308,29 @@
 				41FAD2E95607ACDF33FBF3BB /* dng_mosaic_info.cpp in Sources */,
 				DE6C8CBF272AF15000F6406A /* hb-ot-shape-normalize.cc in Sources */,
 				0749BBCB8C09AC3A9A5067C4 /* dng_mutex.cpp in Sources */,
+				DE0A42FF273430EB0056DC46 /* pngwtran.c in Sources */,
 				1C135BDFAC2267AD6409E750 /* dng_negative.cpp in Sources */,
 				87759114CE0C5A5E3552FEB2 /* dng_opcode_list.cpp in Sources */,
 				106CBE53697CC17FDBD836C1 /* dng_opcodes.cpp in Sources */,
 				D6AA572A638294C65B0C128D /* dng_orientation.cpp in Sources */,
+				DE0A45AC273445A80056DC46 /* SkSVGFeLighting.cpp in Sources */,
 				AA64D6FDEC99D54CF5849C0B /* dng_parse_utils.cpp in Sources */,
 				4E158D9617D225559CCE7A1D /* dng_pixel_buffer.cpp in Sources */,
 				97DDF3596A600744B575B493 /* dng_point.cpp in Sources */,
 				C2B87239CF79E715F14DC555 /* dng_preview.cpp in Sources */,
+				DE0A459E273445A80056DC46 /* SkSVGEllipse.cpp in Sources */,
 				5DDD5E41C327E7F98B7F0727 /* dng_pthread.cpp in Sources */,
 				CDC176962858B5B5630AEEF2 /* dng_rational.cpp in Sources */,
 				1900485E94BD30925B04EC61 /* dng_read_image.cpp in Sources */,
 				C69532CF6363AAAA97970C67 /* dng_rect.cpp in Sources */,
 				011C8A0F7EAD57C6939BCF21 /* dng_ref_counted_block.cpp in Sources */,
+				DE0A45AF273447EF0056DC46 /* hb-coretext.cc in Sources */,
 				BE16C406B8AEBEF6AFDD9726 /* dng_reference.cpp in Sources */,
+				DE0A459D273445A80056DC46 /* SkSVGDOM.cpp in Sources */,
 				C597551FEB672A684A9C27F8 /* dng_render.cpp in Sources */,
 				C044C6A28B0B870701DCF5E2 /* dng_resample.cpp in Sources */,
 				DFA815A7BD5454ADA057FA97 /* dng_safe_arithmetic.cpp in Sources */,
+				DE8C292D273473F5003E6AAB /* icudt56l_dat.s in Sources */,
 				243C375224E1F927C1DBC157 /* dng_shared.cpp in Sources */,
 				A06AC6F1562CC26636F5F298 /* dng_simple_image.cpp in Sources */,
 				7F19B1A20B5EEE8534532B68 /* dng_spline.cpp in Sources */,
@@ -10637,6 +11339,7 @@
 				16AC784EE37C46EC0BC8E0F6 /* dng_string_list.cpp in Sources */,
 				32E8632EA775B85ED19E9C55 /* dng_tag_types.cpp in Sources */,
 				0FD58FF35FE37DAFF15CDDC1 /* dng_temperature.cpp in Sources */,
+				DE0A458E273445A80056DC46 /* SkSVGRadialGradient.cpp in Sources */,
 				157C13116470EBFAEB576913 /* dng_tile_iterator.cpp in Sources */,
 				2C53F328ECA849DA4C2E93D3 /* dng_tone_curve.cpp in Sources */,
 				AB5BE0F28C74358FE844CAFB /* dng_utils.cpp in Sources */,
@@ -10656,11 +11359,13 @@
 				DE6C8CC2272AF15000F6406A /* hb-subset-cff1.cc in Sources */,
 				80F134B3D485A6548FA3898D /* charstr.cpp in Sources */,
 				9D57EA03DF6D97C2948322C5 /* cmemory.cpp in Sources */,
+				DE0A449627343FBE0056DC46 /* font_data_table.cc in Sources */,
 				E2C0FCB4AD5C729374844DAC /* cstr.cpp in Sources */,
 				5B7F72EC777809EDA7268941 /* cstring.cpp in Sources */,
 				8AC61D2444BE45121DD185DF /* cwchar.cpp in Sources */,
 				4BF1628262A7798E1072C5BF /* dictbe.cpp in Sources */,
 				DE6C8CD5272AF15000F6406A /* hb-subset-input.cc in Sources */,
+				DE0A447727343FBE0056DC46 /* subsetter.cc in Sources */,
 				8AEDCCEFE4ED82E2FF3CEA79 /* dictionarydata.cpp in Sources */,
 				8177E46EA3406B17A96706E8 /* dtintrv.cpp in Sources */,
 				7D5BC419915CC46229F2880A /* edits.cpp in Sources */,
@@ -10681,6 +11386,7 @@
 				49ACE727113F1A5AFF488EAB /* locresdata.cpp in Sources */,
 				333D1A22265A2E4592DFD1B9 /* locutil.cpp in Sources */,
 				76519AD73FECD6F36CBE1109 /* messagepattern.cpp in Sources */,
+				DE0A44A127343FBE0056DC46 /* memory_output_stream.cc in Sources */,
 				28361DCFFDBCB5213F5BE2AF /* normalizer2.cpp in Sources */,
 				3ADABE6F89D85A247B86D227 /* normalizer2impl.cpp in Sources */,
 				6B6C6971B0F5C396360D6349 /* normlzr.cpp in Sources */,
@@ -10696,6 +11402,7 @@
 				4CE1592C8E6422F3212464AA /* rbbidata.cpp in Sources */,
 				7EC5E30A3CE19224633E5F49 /* rbbinode.cpp in Sources */,
 				5AF5FAF81080F2B13A34AB68 /* rbbirb.cpp in Sources */,
+				DE0A42FC273430EB0056DC46 /* pngerror.c in Sources */,
 				BEA131337D4FABF9F1A264BF /* rbbiscan.cpp in Sources */,
 				8E184DF93F6F59C90C382BB8 /* rbbisetb.cpp in Sources */,
 				66443F047CB862D906F59EB0 /* rbbistbl.cpp in Sources */,
@@ -10705,10 +11412,12 @@
 				408C60D29E8AC14B13B845A4 /* resource.cpp in Sources */,
 				471F3B6741CCDAA2B08E5614 /* ruleiter.cpp in Sources */,
 				9882C8B937B390ADB5C4E03C /* schriter.cpp in Sources */,
+				DE0A447627343FBE0056DC46 /* font_factory.cc in Sources */,
 				DF437B6148C53F69E7247202 /* serv.cpp in Sources */,
 				161157376425ED77E3FEBFEE /* servlk.cpp in Sources */,
 				22004EE9C85AC0A5B08AF583 /* servlkf.cpp in Sources */,
 				2D9674B9F4D1D6573FFFD6EC /* servls.cpp in Sources */,
+				DE0A4302273430EB0056DC46 /* pngget.c in Sources */,
 				CF651DE1BA684245C716E7E5 /* servnotf.cpp in Sources */,
 				C0B3FBDD0B6920344ABC5F92 /* servrbf.cpp in Sources */,
 				FC9C0ED2692905797AD5661F /* servslkf.cpp in Sources */,
@@ -10718,12 +11427,14 @@
 				323D52DBE9012D0AC72C1F3C /* stringpiece.cpp in Sources */,
 				A30FC9942CB6E62C2867940B /* stringtriebuilder.cpp in Sources */,
 				934DC885C80937C0DD75BD35 /* uarrsort.cpp in Sources */,
+				DE0A4590273445A80056DC46 /* SkSVGFeComposite.cpp in Sources */,
 				1BD1C0D74A6CC0336060D15B /* ubidi.cpp in Sources */,
 				351C737D014FBD97EFC14FD0 /* ubidi_props.cpp in Sources */,
 				C14119A811AADAB29CACEA8D /* ubidiln.cpp in Sources */,
 				EAC68E219428ED8BC8504F66 /* ubiditransform.cpp in Sources */,
 				3320AFBF2FB04FA409223A08 /* ubidiwrt.cpp in Sources */,
 				BA06D6A5DA2CAAA80C0D35D6 /* ubrk.cpp in Sources */,
+				DE0A459A273445A80056DC46 /* SkSVGClipPath.cpp in Sources */,
 				00535F803151669E8442F055 /* ucase.cpp in Sources */,
 				A858D64BC25214BDE6312AEE /* ucasemap.cpp in Sources */,
 				5E28CBD228D8E01EF4AE66FF /* ucasemap_titlecase_brkiter.cpp in Sources */,
@@ -10738,15 +11449,18 @@
 				ED88C698866C585AE412599B /* ucnv.cpp in Sources */,
 				AE2B2022BBB24E3540CD0556 /* ucnv2022.cpp in Sources */,
 				6DD5D3E6A9F49A49187AA0E7 /* ucnv_bld.cpp in Sources */,
+				DE0A4558273442E00056DC46 /* SkShaper.cpp in Sources */,
 				787AEF20C386F7EF83B44BC9 /* ucnv_cb.cpp in Sources */,
 				4CD01DB3785EA1AC9433CCE0 /* ucnv_cnv.cpp in Sources */,
 				FBA9B6FD41E1E2DBDF1F3374 /* ucnv_ct.cpp in Sources */,
 				A55DC008C9C009BFAF0D31C0 /* ucnv_err.cpp in Sources */,
 				68C4699ADB0ECFF7690FC5A0 /* ucnv_ext.cpp in Sources */,
+				DE0A44A927343FBE0056DC46 /* memory_byte_array.cc in Sources */,
 				3BAD58C234D3F07805831B77 /* ucnv_io.cpp in Sources */,
 				490206F2D596A324355C74B8 /* ucnv_lmb.cpp in Sources */,
 				AC645F1BB5B2F2F9001293B8 /* ucnv_set.cpp in Sources */,
 				36B2D1DF81C25130F6078123 /* ucnv_u16.cpp in Sources */,
+				DE0A449B27343FBE0056DC46 /* loca_table.cc in Sources */,
 				DE6C8CA6272AF15000F6406A /* hb-ot-cff1-table.cc in Sources */,
 				7AD416882E205E99069F7055 /* ucnv_u32.cpp in Sources */,
 				A33035D790FC9E849604D6BB /* ucnv_u7.cpp in Sources */,
@@ -10755,12 +11469,14 @@
 				6230F06155C5CC33D6777669 /* ucnvdisp.cpp in Sources */,
 				B35CC7E485275E82A65D81BA /* ucnvhz.cpp in Sources */,
 				DE6C8CCB272AF15000F6406A /* hb-map.cc in Sources */,
+				DE0A458D273445A80056DC46 /* SkSVGLinearGradient.cpp in Sources */,
 				6FDB1A24C57E55B90CEC30B2 /* ucnvisci.cpp in Sources */,
 				E25351BC6E27A537BB01F99B /* ucnvlat1.cpp in Sources */,
 				0343096EB553143B045B3845 /* ucnvmbcs.cpp in Sources */,
 				49CDB27180FDE001E62704FA /* ucnvscsu.cpp in Sources */,
 				C9BB603FD9A21FF45072EC64 /* ucnvsel.cpp in Sources */,
 				9C0DD73F2E8880E15BB5A16A /* ucol_swp.cpp in Sources */,
+				DE0A4587273445A80056DC46 /* SkSVGLine.cpp in Sources */,
 				4EA03787A1CEFA0B521CBD12 /* ucptrie.cpp in Sources */,
 				75164AA611FED8C212852108 /* ucurr.cpp in Sources */,
 				8D30F0B006700B79D3CEDE07 /* udata.cpp in Sources */,
@@ -10784,6 +11500,7 @@
 				FC183E27CE37F02E47F10237 /* umutablecptrie.cpp in Sources */,
 				C250D7000F8C0071FA055E5A /* umutex.cpp in Sources */,
 				EED202CB474F9ACA44EC2289 /* unames.cpp in Sources */,
+				DE0A45A5273445A80056DC46 /* SkSVGGradient.cpp in Sources */,
 				9E4E0BB2D343BE9D678F739B /* unifiedcache.cpp in Sources */,
 				39FCB7EB45D0A2434B980F82 /* unifilt.cpp in Sources */,
 				90BE13131973022BDE5C530E /* unifunct.cpp in Sources */,
@@ -10821,10 +11538,12 @@
 				81FDFE6ECA2A7EF8538BFCBF /* ustrenum.cpp in Sources */,
 				8AC543A2FEEE498F6A608B16 /* ustrfmt.cpp in Sources */,
 				58087558E99A01854FF8B85D /* ustring.cpp in Sources */,
+				DE0A42FB273430EB0056DC46 /* pngwrite.c in Sources */,
 				1C0DAAEBAF262C570D1073BE /* ustrtrns.cpp in Sources */,
 				8BA9947E6920594BA7A9BE21 /* utext.cpp in Sources */,
 				3C975409B73B38104FFD1DC1 /* utf_impl.cpp in Sources */,
 				DE6C8CC6272AF15000F6406A /* hb-ot-shape.cc in Sources */,
+				DE0A448E27343FBE0056DC46 /* index_sub_table_format1.cc in Sources */,
 				DE6C8CD2272AF15000F6406A /* hb-shape-plan.cc in Sources */,
 				4603BA3C25F5BEB7DCAE1345 /* util.cpp in Sources */,
 				CE8246A577109968994CDF69 /* util_props.cpp in Sources */,
@@ -10836,6 +11555,7 @@
 				5D81EA1C2C21C14E47A01712 /* uts46.cpp in Sources */,
 				D75264705E18859B86BE4270 /* utypes.cpp in Sources */,
 				897220FA985748A91D01D535 /* uvector.cpp in Sources */,
+				DE0A4591273445A80056DC46 /* SkSVGFeOffset.cpp in Sources */,
 				B2788EA0A29610E7206FF46A /* uvectr32.cpp in Sources */,
 				FA11D8D6F6DFB9486D8365A8 /* uvectr64.cpp in Sources */,
 				68739DEA693E2EEA3713F80D /* wintz.cpp in Sources */,
@@ -10859,7 +11579,6 @@
 				EBDA9DB7E2540E9663FA7A6B /* collationcompare.cpp in Sources */,
 				F459DF3947363DB15D6BA347 /* collationdata.cpp in Sources */,
 				CF1126AC1A4A7DFCFA24CE96 /* collationdatabuilder.cpp in Sources */,
-				DE6C8CD8272AF15000F6406A /* hb-subset-glyf.cc in Sources */,
 				B3C5FC34468420861D78915D /* collationdatareader.cpp in Sources */,
 				35D7BB3C367A95B7FB3FF640 /* collationdatawriter.cpp in Sources */,
 				71C012D332EE2C9CED1F8C85 /* collationfastlatin.cpp in Sources */,
@@ -10887,10 +11606,13 @@
 				D7D6F9CFD16612762FCEB2CA /* csrutf8.cpp in Sources */,
 				03EC05FB07353F9BAD8E136C /* curramt.cpp in Sources */,
 				82906C4FCC1618FCEFF4D17D /* currfmt.cpp in Sources */,
+				DE0A448627343FBE0056DC46 /* index_sub_table_format2.cc in Sources */,
+				DE0A458F273445A80056DC46 /* SkSVGText.cpp in Sources */,
 				F451D16AC4C18EF162853F11 /* currpinf.cpp in Sources */,
 				E12BC343928437ABDA0D2752 /* currunit.cpp in Sources */,
 				F030BA951B4281A5D0D6E2AA /* dangical.cpp in Sources */,
 				6EF756354A35315D370B8BBC /* datefmt.cpp in Sources */,
+				DE0A4309273431B20056DC46 /* pngtrans.c in Sources */,
 				A2DBDDC978B47E58CCD200C7 /* dayperiodrules.cpp in Sources */,
 				0D75D2A003F6C7C9B8282609 /* dcfmtsym.cpp in Sources */,
 				EC42DD9E8CCEED355429677B /* decContext.cpp in Sources */,
@@ -10898,8 +11620,10 @@
 				5F7BDD62C4101384491D272C /* decimfmt.cpp in Sources */,
 				DE067F389F6A9832C07B9597 /* double-conversion-bignum-dtoa.cpp in Sources */,
 				5377195A2EEE62DB566F6E00 /* double-conversion-bignum.cpp in Sources */,
+				DE0A4585273445A80056DC46 /* SkSVGFeMorphology.cpp in Sources */,
 				69D09F0D2918C77ADCBFF39E /* double-conversion-cached-powers.cpp in Sources */,
 				BB982F0CB56D313CE0F3B933 /* double-conversion-fast-dtoa.cpp in Sources */,
+				DE0A447D27343FBE0056DC46 /* horizontal_device_metrics_table.cc in Sources */,
 				D0A9DAC4DDFA31F3B92C2F7F /* double-conversion-strtod.cpp in Sources */,
 				ED0638E11ACA978079D2BD14 /* dtfmtsym.cpp in Sources */,
 				EA4B186FE19A76744666B8C4 /* dtitvfmt.cpp in Sources */,
@@ -10909,12 +11633,14 @@
 				FB38348128FB68707B8E38B8 /* erarules.cpp in Sources */,
 				D3F71753845DD5A0811A2B3F /* esctrn.cpp in Sources */,
 				1C84A7DBE5BEC2ED53DEDC82 /* ethpccal.cpp in Sources */,
+				DE0A449727343FBE0056DC46 /* generic_table_builder.cc in Sources */,
 				1D8EA05B6DF14A86B8C8BBB1 /* fmtable.cpp in Sources */,
 				AC6CA65ED78A3A2340F8B928 /* fmtable_cnv.cpp in Sources */,
 				6BFE1EBE59FC6E249F3C6B28 /* format.cpp in Sources */,
 				9B31EFD414ACF0959972BC26 /* fphdlimp.cpp in Sources */,
 				DE6C8CB9272AF15000F6406A /* hb-ot-shape-complex-myanmar.cc in Sources */,
 				632BA8726DBF9B8188A20E1A /* fpositer.cpp in Sources */,
+				DE0A4589273445A80056DC46 /* SkSVGFeLightSource.cpp in Sources */,
 				9282DCADC20524795BFC231A /* funcrepl.cpp in Sources */,
 				9FAE8CE8621E6E25AE736D78 /* gender.cpp in Sources */,
 				C82672BC088D9D082BB5B8FB /* gregocal.cpp in Sources */,
@@ -10923,6 +11649,7 @@
 				62DC7BBFCA0C44ACD630D207 /* indiancal.cpp in Sources */,
 				F63EF3C0B0BD9D83AC390824 /* inputext.cpp in Sources */,
 				CB72AACAB7E65A6D8DB6297C /* islamcal.cpp in Sources */,
+				DE0A448427343FBE0056DC46 /* byte_array_table_builder.cc in Sources */,
 				9A54A42AAC99B499EF15B24E /* japancal.cpp in Sources */,
 				01AE0FFD9A1E5EBCB1C372DF /* listformatter.cpp in Sources */,
 				B7F204E47B68B186E8BDC518 /* measfmt.cpp in Sources */,
@@ -10933,6 +11660,7 @@
 				F25BB711AA0D8A3FCF929346 /* nfrs.cpp in Sources */,
 				4E0C9DA4379EF9C7934B0DC9 /* nfrule.cpp in Sources */,
 				144BD75E5258348F1FADE713 /* nfsubs.cpp in Sources */,
+				DE0A4595273445A80056DC46 /* SkSVGFeGaussianBlur.cpp in Sources */,
 				ECF3415C5230A96C05ADE302 /* nortrans.cpp in Sources */,
 				F330794EB825D17AD2D944AF /* nultrans.cpp in Sources */,
 				6A11903AFCEA54F19E8A59D5 /* number_affixutils.cpp in Sources */,
@@ -10943,6 +11671,7 @@
 				85D4EADD1CB0C62BEED774CD /* number_decimalquantity.cpp in Sources */,
 				E978F860A84C4A317AF8CCF8 /* number_decimfmtprops.cpp in Sources */,
 				259B177B735A1F94C085F989 /* number_fluent.cpp in Sources */,
+				DE0A45A8273445A80056DC46 /* SkSVGImage.cpp in Sources */,
 				DE6C8CA4272AF15000F6406A /* hb-face.cc in Sources */,
 				E8FB7F9A29A51BA25EF6018F /* number_formatimpl.cpp in Sources */,
 				3F054C9BEB2F6D73E7CEEF1D /* number_grouping.cpp in Sources */,
@@ -10951,6 +11680,7 @@
 				E739E4B5F571C20B47087358 /* number_mapper.cpp in Sources */,
 				83C99865BE6642E2360B2919 /* number_modifiers.cpp in Sources */,
 				EF854B1EE66438781418ECF2 /* number_multiplier.cpp in Sources */,
+				DE0A447E27343FBE0056DC46 /* horizontal_metrics_table.cc in Sources */,
 				E63D0F9A447C63A70315B6DD /* number_notation.cpp in Sources */,
 				B730550ADA24BB3E524428B7 /* number_padding.cpp in Sources */,
 				8914EB940674555D871C9FCD /* number_patternmodifier.cpp in Sources */,
@@ -10958,6 +11688,7 @@
 				8977D59E0D20DF22C7F624DC /* number_rounding.cpp in Sources */,
 				BE2A088814E4EF24934ECFAB /* number_scientific.cpp in Sources */,
 				DE6C8CD4272AF15000F6406A /* hb-shaper.cc in Sources */,
+				DE0A459C273445A80056DC46 /* SkSVGFeImage.cpp in Sources */,
 				80F16AFE3982A37A124EBD79 /* number_skeletons.cpp in Sources */,
 				748703420FDDFB07D2BD3AEF /* number_utils.cpp in Sources */,
 				D98273090D2EB3F27A63EC56 /* numfmt.cpp in Sources */,
@@ -10974,10 +11705,12 @@
 				C2F5D5799D280442E7F324F4 /* numrange_fluent.cpp in Sources */,
 				7393096EE40DC0AED81AECFA /* numrange_impl.cpp in Sources */,
 				71F453325E27724EED1E1D3D /* numsys.cpp in Sources */,
+				DE0A448A27343FBE0056DC46 /* index_sub_table_format4.cc in Sources */,
 				117E3E44E38D48FF220586E9 /* olsontz.cpp in Sources */,
 				47F9B17E5B31AA32B52C79A2 /* persncal.cpp in Sources */,
 				EF892534267B2BB1308CBF93 /* plurfmt.cpp in Sources */,
 				1B5B9E11A41646106103BE78 /* plurrule.cpp in Sources */,
+				DE8C292C273473F5003E6AAB /* icudtl_dat.S in Sources */,
 				1651ACC2BED16CFC40E99C41 /* quant.cpp in Sources */,
 				77DC0FA768B3C01BE2053A99 /* quantityformatter.cpp in Sources */,
 				9C4D44DCBA44AFFD6F27A4B8 /* rbnf.cpp in Sources */,
@@ -10996,6 +11729,7 @@
 				CCB6393FCC4757C43BE7A171 /* reldatefmt.cpp in Sources */,
 				BD948F1942727D11F8F61C3D /* reldtfmt.cpp in Sources */,
 				C09E7E26020E51808CE9E639 /* rematch.cpp in Sources */,
+				DE0A4592273445A80056DC46 /* SkSVGPoly.cpp in Sources */,
 				6BE3A93B6496D9798A30469D /* remtrans.cpp in Sources */,
 				181901A8D5589518D8B8A510 /* repattrn.cpp in Sources */,
 				ED36327240B0734D65A79469 /* rulebasedcollator.cpp in Sources */,
@@ -11019,6 +11753,7 @@
 				060217DE831D00C7AF275C70 /* tmutamt.cpp in Sources */,
 				37D3D0B0F8BDF24B15766160 /* tmutfmt.cpp in Sources */,
 				DBD3B8CA13213EC7AEAFAABB /* tolowtrn.cpp in Sources */,
+				DE0A430B273432250056DC46 /* palette_neon_intrinsics.c in Sources */,
 				8AF252530C7E7FBE3043E70B /* toupptrn.cpp in Sources */,
 				1F3157D4EA220E09666EB8AF /* translit.cpp in Sources */,
 				1EC8364444C116483F4FC348 /* transreg.cpp in Sources */,
@@ -11030,6 +11765,7 @@
 				C409F21C199B8FA88E9017CA /* tzrule.cpp in Sources */,
 				DE9140402729F011003A24D8 /* xmltok.c in Sources */,
 				4953E8EBA992F9FAA7629C5E /* tztrans.cpp in Sources */,
+				DE0A45A7273445A80056DC46 /* SkSVGPattern.cpp in Sources */,
 				7A84037767C6EE1DAAC8C51C /* ucal.cpp in Sources */,
 				3DFD629BEB7D333425503863 /* ucln_in.cpp in Sources */,
 				A985EABC1EAA67BABF1E0595 /* ucol.cpp in Sources */,
@@ -11045,7 +11781,9 @@
 				FBBE8E18CAA2A3E8ABB8569A /* ulistformatter.cpp in Sources */,
 				50746B19F16476F3D1EC0B69 /* ulocdata.cpp in Sources */,
 				EF451D49EE6B40E4D6F1105D /* umsg.cpp in Sources */,
+				DE0A459F273445A80056DC46 /* SkSVGAttribute.cpp in Sources */,
 				760CF38F989C4CE253B52298 /* unesctrn.cpp in Sources */,
+				DE0A449427343FBE0056DC46 /* bitmap_glyph.cc in Sources */,
 				CE6964ED752276318BA66EEB /* uni2name.cpp in Sources */,
 				00721EBBA21043F4420B1172 /* unum.cpp in Sources */,
 				D6268D4ACC652DF4AFCB26BA /* unumsys.cpp in Sources */,
@@ -11056,6 +11794,7 @@
 				B2956CB1375AFB902B4DB591 /* usearch.cpp in Sources */,
 				121734F88F72F295E6D0B050 /* uspoof.cpp in Sources */,
 				F8CA47B0A5751D3FFF8A52BA /* uspoof_build.cpp in Sources */,
+				DE0A447927343FBE0056DC46 /* table_subsetter_impl.cc in Sources */,
 				CA9A30B55721F9E5920431F0 /* uspoof_conf.cpp in Sources */,
 				DF67695CE8D26B182627B3F8 /* uspoof_impl.cpp in Sources */,
 				DA2627107B9659C59EF2F58D /* utf16collationiterator.cpp in Sources */,
@@ -11089,8 +11828,10 @@
 				C795D527424F85BBE62E5AF0 /* jctrans.c in Sources */,
 				49AC79B9D558D5A3FBC2B113 /* jdapimin.c in Sources */,
 				BE1B831EC02A14B71AD5457C /* jdapistd.c in Sources */,
+				DE0A4586273445A80056DC46 /* SkSVGAttributeParser.cpp in Sources */,
 				A2BDF26DC9A88A45CF333B9E /* jdarith.c in Sources */,
 				307F002689463BA98D0FB4C4 /* jdatadst-tj.c in Sources */,
+				DE0A448C27343FBE0056DC46 /* ebsc_table.cc in Sources */,
 				C395D70A70091548F8675767 /* jdatasrc-tj.c in Sources */,
 				DD3DD691AA740C6BAF09CAD7 /* jdcoefct.c in Sources */,
 				06AB51BBE7932778246D15C1 /* jdcolor.c in Sources */,
@@ -11103,6 +11844,7 @@
 				892FB9E776A74A5B781D3192 /* jdmerge.c in Sources */,
 				8248D9CD92B12FE309940A13 /* jdphuff.c in Sources */,
 				9DDC3D0885BFF09AD7F9E258 /* jdpostct.c in Sources */,
+				DE0A458B273445A80056DC46 /* SkSVGMask.cpp in Sources */,
 				B9AF98C67854A5AEEA8B501B /* jdsample.c in Sources */,
 				5EA8CA6EA04F12DE8ED561A8 /* jdtrans.c in Sources */,
 				DE9140422729F011003A24D8 /* xmlparse.c in Sources */,
@@ -11120,6 +11862,7 @@
 				3D312DB14712C34DF48D3183 /* jquant1.c in Sources */,
 				834A67E326F4405B8FB1E861 /* jquant2.c in Sources */,
 				DF4BC122D325969937A4AB48 /* jutils.c in Sources */,
+				DE0A449827343FBE0056DC46 /* table_based_table_builder.cc in Sources */,
 				7AA418DFA409ED214B894418 /* rdbmp.c in Sources */,
 				B0940263DA834B5C1C526791 /* rdppm.c in Sources */,
 				A5C956B3E1FCA264CBA48501 /* transupp.c in Sources */,
@@ -11129,6 +11872,8 @@
 				8DC8F85FC54C9A601D162EDA /* alpha_dec.c in Sources */,
 				9C08EB4B42348F25FA51CB97 /* buffer_dec.c in Sources */,
 				0F0636BE61D1793331099F20 /* frame_dec.c in Sources */,
+				DE0A44A627343FBE0056DC46 /* growable_memory_byte_array.cc in Sources */,
+				DE0A447B27343FBE0056DC46 /* table.cc in Sources */,
 				C33C49D1B1E692B9AEE5513B /* idec_dec.c in Sources */,
 				DE6C8CD6272AF15000F6406A /* hb-ot-face.cc in Sources */,
 				A4750800B23F2E57C97D7E16 /* io_dec.c in Sources */,
@@ -11151,6 +11896,7 @@
 				0F56BFE1532C4D791B461E34 /* cost_sse2.c in Sources */,
 				F6CA41B1314C7EEAE9B719E3 /* cpu.c in Sources */,
 				EC7F24703A48B256E6FDB2AC /* dec.c in Sources */,
+				DE8C26B827345590003E6AAB /* hb-number.cc in Sources */,
 				34B7EA21B4161E9973602347 /* dec_clip_tables.c in Sources */,
 				6132FB1EF043147233CE4F26 /* dec_mips32.c in Sources */,
 				1D5E55F9EA81E13C4D5058B4 /* dec_mips_dsp_r2.c in Sources */,
@@ -11177,6 +11923,7 @@
 				DE6C8CB0272AF15000F6406A /* hb-ot-color.cc in Sources */,
 				19B62BCF611FB30B195D24ED /* lossless_enc_mips32.c in Sources */,
 				BA7DB2ED6F61BF5C55B0F56A /* lossless_enc_mips_dsp_r2.c in Sources */,
+				DE0A4556273442E00056DC46 /* SkShaper_primitive.cpp in Sources */,
 				E25E76743A0F78156A73CC2C /* lossless_enc_msa.c in Sources */,
 				12906CF2066AF9D66D948D8A /* lossless_enc_neon.c in Sources */,
 				73341DC63E91E6748CB45BF8 /* lossless_enc_sse2.c in Sources */,
@@ -11184,10 +11931,13 @@
 				DE6C8CDE272AF15000F6406A /* hb-ot-shape-complex-arabic.cc in Sources */,
 				F65992A604BCFB6AEF9187D6 /* lossless_mips_dsp_r2.c in Sources */,
 				4DD7FED2E8FD82D63CE00980 /* lossless_msa.c in Sources */,
+				DE0A449527343FBE0056DC46 /* small_glyph_metrics.cc in Sources */,
 				1769904656AA3D09F04F870D /* lossless_neon.c in Sources */,
+				DE0A4301273430EB0056DC46 /* pngwutil.c in Sources */,
 				D988245964753F5AE17BA5CF /* lossless_sse2.c in Sources */,
 				F82E6AEC709B9B216FDCAFFB /* lossless_sse41.c in Sources */,
 				1CC76983C59CA5DFD6B1E5DC /* rescaler.c in Sources */,
+				DE0A4304273430EB0056DC46 /* pngrtran.c in Sources */,
 				2F39BCEFF05343A1B69338C1 /* rescaler_mips32.c in Sources */,
 				FDB7130B35D5C18A675F7A2B /* rescaler_mips_dsp_r2.c in Sources */,
 				7B97A8B9569972DF9847E509 /* rescaler_msa.c in Sources */,
@@ -11205,6 +11955,7 @@
 				F1AB9BB8516672700B5C3716 /* yuv.c in Sources */,
 				01032F35F9BAD5B5C8E569FC /* yuv_mips32.c in Sources */,
 				77C90DE425CCD8E684410870 /* yuv_mips_dsp_r2.c in Sources */,
+				DE0A447A27343FBE0056DC46 /* tag.cc in Sources */,
 				DD278F1867C5309831487DB3 /* yuv_neon.c in Sources */,
 				282750618B7399EADABC6D1E /* yuv_sse2.c in Sources */,
 				CA032F16C34C59CCE14DE7CF /* yuv_sse41.c in Sources */,
@@ -11222,12 +11973,14 @@
 				F86B37500EE9ECC3647655B6 /* picture_csp_enc.c in Sources */,
 				DAA9E963782D3608BAA52208 /* picture_enc.c in Sources */,
 				DE6C8CA5272AF15000F6406A /* hb-subset-cff-common.cc in Sources */,
+				DE0A4593273445A80056DC46 /* SkSVGFeDisplacementMap.cpp in Sources */,
 				535E829390C1CCACE0885754 /* picture_psnr_enc.c in Sources */,
 				BA2B8DF7709478F39EC9ACD7 /* picture_rescale_enc.c in Sources */,
 				5854AD7735E07BF827DFEA76 /* picture_tools_enc.c in Sources */,
 				CFE50EEA6ADBC946DB5CDA34 /* predictor_enc.c in Sources */,
 				64D06760950219814716F1D8 /* quant_enc.c in Sources */,
 				83262EBB4C36FCD54894194C /* syntax_enc.c in Sources */,
+				DE0A448527343FBE0056DC46 /* glyph_metrics.cc in Sources */,
 				65DB1E03C4AE00C0EF32727C /* token_enc.c in Sources */,
 				AAD202EBC4BC4D49F2B55863 /* tree_enc.c in Sources */,
 				05CDB25D96996CC1A9209F1B /* vp8l_enc.c in Sources */,
@@ -11246,6 +11999,7 @@
 				783CD24F2C4B71FA1848C315 /* quant_levels_utils.c in Sources */,
 				657CD45FCA83ED7F7880438A /* random_utils.c in Sources */,
 				449E1C43BE53B6498836D344 /* rescaler_utils.c in Sources */,
+				DE0A448F27343FBE0056DC46 /* index_sub_table_format5.cc in Sources */,
 				5D005A809FB7A8BE6956F3FA /* thread_utils.c in Sources */,
 				A079A7E227AEE991D09A3EA6 /* utils.c in Sources */,
 				224B998BE200E5201DF1668A /* cached_paged_byte_array.cc in Sources */,
@@ -11254,11 +12008,13 @@
 				B81443C1EF06B2090A45931E /* piex.cc in Sources */,
 				1404A88B140CBA493F5BE1B0 /* tiff_directory.cc in Sources */,
 				53C9F71740A869B28DA27A3B /* tiff_parser.cc in Sources */,
+				DE0A44A227343FBE0056DC46 /* readable_font_data.cc in Sources */,
 				991E5F46582623D8685C0FD7 /* adler32.c in Sources */,
 				DE6C8CBE272AF15000F6406A /* hb-ot-shape-fallback.cc in Sources */,
 				B63B88CD9C9069855491B9B5 /* adler32_simd.c in Sources */,
 				75638E919A6895EADE53B5AF /* compress.c in Sources */,
 				CC9E61A0C7F4F2F8E5298FFE /* inffast_chunk.c in Sources */,
+				DE0A449127343FBE0056DC46 /* big_glyph_metrics.cc in Sources */,
 				83CB7388C876F7086E3A410E /* inflate.c in Sources */,
 				FE43AD3FCC8CB12003C53228 /* cpu_features.c in Sources */,
 				E2DFB7612AFE5B9A2ADCD02E /* crc32.c in Sources */,
@@ -11399,8 +12155,14 @@
 					INFLATE_CHUNK_SIMD_NEON,
 					U_I18N_IMPLEMENTATION,
 					SK_GL,
+					JSIMD_FORCENEON,
+					SFNTLY_NO_EXCEPTION,
+					HAVE_CORETEXT,
+					BMP_SUPPORTED,
+					PPM_SUPPORTED,
 				);
 				HEADER_SEARCH_PATHS = (
+					../../src,
 					../..,
 					../../third_party/externals/icu/source/common,
 					../../third_party/externals/libwebp,
@@ -11413,7 +12175,10 @@
 					../../third_party/externals/harfbuzz/src,
 					../../third_party/externals/libwebp/src,
 					../../third_party/libpng/,
+					../../third_party/externals/sfntly/cpp/src,
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				OTHER_CFLAGS = "-DPNG_ARM_NEON_OPT=0";
 				PRODUCT_NAME = libSkia;
 				SYMROOT = "../../../SkiaLibs/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 			};

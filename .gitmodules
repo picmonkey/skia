@@ -9,7 +9,7 @@
 	url = https://android.googlesource.com/platform/external/expat.git
 [submodule "third_party/externals/harfbuzz"]
 	path = third_party/externals/harfbuzz
-	url = https://skia.googlesource.com/third_party/harfbuzz.git
+	url = https://github.com/harfbuzz/harfbuzz.git
 [submodule "third_party/externals/jsoncpp"]
 	path = third_party/externals/jsoncpp
 	url = https://chromium.googlesource.com/external/github.com/open-source-parsers/jsoncpp.git
@@ -43,3 +43,6 @@
 [submodule "third_party/externals/sfntly"]
 	path = third_party/externals/sfntly
 	url = https://github.com/picmonkey/sfntly.git
+[submodule "third_party/externals/libpng"]
+	path = third_party/externals/libpng
+	url = https://android.googlesource.com/platform/external/libpng

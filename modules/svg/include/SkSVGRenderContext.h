@@ -69,6 +69,7 @@ public:
                        const OBBScope&);
     SkSVGRenderContext(const SkSVGRenderContext&);
     SkSVGRenderContext(const SkSVGRenderContext&, SkCanvas*);
+    SkSVGRenderContext& operator=(const SkSVGRenderContext& other);
     // Establish a new OBB scope.  Normally used when entering a node's render scope.
     SkSVGRenderContext(const SkSVGRenderContext&, const SkSVGNode*);
     ~SkSVGRenderContext();
@@ -115,7 +116,6 @@ public:
     private:
         // noncopyable
         BorrowedNode(const BorrowedNode&)      = delete;
-        BorrowedNode& operator=(BorrowedNode&) = delete;
 
         sk_sp<SkSVGNode>* fOwner;
         sk_sp<SkSVGNode>  fBorrowed;
@@ -156,7 +156,6 @@ private:
     // Stack-only
     void* operator new(size_t)                               = delete;
     void* operator new(size_t, void*)                        = delete;
-    SkSVGRenderContext& operator=(const SkSVGRenderContext&) = delete;
 
     void applyOpacity(SkScalar opacity, uint32_t flags, bool hasFilter);
     void applyFilter(const SkSVGFuncIRI&);

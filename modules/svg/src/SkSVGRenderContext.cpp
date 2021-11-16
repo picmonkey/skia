@@ -186,6 +186,21 @@ SkSVGRenderContext::SkSVGRenderContext(const SkSVGRenderContext& other, const Sk
                          *other.fPresentationContext,
                          OBBScope{node, this}) {}
 
+SkSVGRenderContext& SkSVGRenderContext::operator=(const SkSVGRenderContext& other)
+{
+    // fIDMapper got constructed and doesn't change
+    fLengthContext = other.fLengthContext;
+    fPresentationContext = other.fPresentationContext;
+    fCanvas = other.fCanvas;
+    fCanvasSaveCount = other.fCanvasSaveCount;
+    //fFontMgr.reset(other.fFontMgr),
+    //fResourceProvider = other.fResourceProvider,
+    //fIDMapper = other.fIDMapper,
+    //fOBBScope = other.fOBBScope
+
+    return *this;
+}
+
 SkSVGRenderContext::~SkSVGRenderContext() {
     fCanvas->restoreToCount(fCanvasSaveCount);
 }

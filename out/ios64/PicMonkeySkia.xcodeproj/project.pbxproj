@@ -440,7 +440,6 @@
 		4CE1592C8E6422F3212464AA /* rbbidata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3339A8794A3D720DA3DFED /* rbbidata.cpp */; };
 		4D182C698F32D31F0E9BC97F /* collation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 139812A366E36626D20CB336 /* collation.cpp */; };
 		4D33B2097895D1DF43E7BB9D /* SkYUVPlanesCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7084BBF48C2D229CB8A3F33E /* SkYUVPlanesCache.cpp */; };
-		4D4F17BF3B2BF1E1F9A5E1E4 /* SkFontMgr_mac_ct_factory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF4F1A78F56268065D9B5510 /* SkFontMgr_mac_ct_factory.cpp */; };
 		4D8FC3772B278AB3CC131A87 /* rbt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3950B1728902F162E68672C /* rbt.cpp */; };
 		4DD7FED2E8FD82D63CE00980 /* lossless_msa.c in Sources */ = {isa = PBXBuildFile; fileRef = 06389F91CB54F4443400D458 /* lossless_msa.c */; };
 		4E0C9DA4379EF9C7934B0DC9 /* nfrule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCB82E50C3A6A12693DD4C35 /* nfrule.cpp */; };
@@ -1251,7 +1250,6 @@
 		DD278F1867C5309831487DB3 /* yuv_neon.c in Sources */ = {isa = PBXBuildFile; fileRef = EFDBCA079D4D29DA1158AF5D /* yuv_neon.c */; };
 		DD3DD691AA740C6BAF09CAD7 /* jdcoefct.c in Sources */ = {isa = PBXBuildFile; fileRef = ECD5C46DC80C3D3C39EC5483 /* jdcoefct.c */; };
 		DD6CF38891AA9400D075D9A1 /* GrGLTextureRenderTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE15DC6A9126AD8AFEF49096 /* GrGLTextureRenderTarget.cpp */; };
-		DD9425C60B4B20FE504B1A17 /* SkFontMgr_empty_factory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C8BD0257505228BC087CBF9 /* SkFontMgr_empty_factory.cpp */; };
 		DDA4BADDEC5E39DE0AF74678 /* SkComposeShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9E53C8737B9B64C67AC4E4E3 /* SkComposeShader.cpp */; };
 		DDA53B5EA2BAF37AFDC4DB41 /* uresdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9E9DD206D938F9D64E73FAF8 /* uresdata.cpp */; };
 		DDADAA441E0EB730C58E49D4 /* SkImageImageFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43C836EF935C97E6E7D99D67 /* SkImageImageFilter.cpp */; };
@@ -1439,6 +1437,7 @@
 		DEB3A3B8490BBFF7BAC0AE33 /* DSLRuntimeEffects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4AF56F057B889C2D4051F374 /* DSLRuntimeEffects.cpp */; };
 		DEB6A513CAC0B1D861ED08EB /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = B14CA5C6C0DAAB5D8E120AB2 /* zutil.c */; };
 		DEBBEA204DE442204B563AAA /* utrans.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B718F338D53F92528977F414 /* utrans.cpp */; };
+		DEC98534273C779200E19783 /* SkFontMgr_mac_ct_factory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF4F1A78F56268065D9B5510 /* SkFontMgr_mac_ct_factory.cpp */; };
 		DF21EB5A12D927806946D6CB /* SkImageFilterTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1131A1DAC77C5B5842F1EAFB /* SkImageFilterTypes.cpp */; };
 		DF437B6148C53F69E7247202 /* serv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE2F15024D5CAF47C71833A4 /* serv.cpp */; };
 		DF4BC122D325969937A4AB48 /* jutils.c in Sources */ = {isa = PBXBuildFile; fileRef = 0368900D01F3B45B76A06FE1 /* jutils.c */; };
@@ -3323,7 +3322,6 @@
 		9C363AEFF7E21FA08BBDB5F2 /* AALinearizingConvexPathRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AALinearizingConvexPathRenderer.cpp; path = src/gpu/ops/AALinearizingConvexPathRenderer.cpp; sourceTree = "<group>"; };
 		9C557DCEFE859B96083E0158 /* SkBitmap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkBitmap.h; path = include/core/SkBitmap.h; sourceTree = "<group>"; };
 		9C852FADDC4AF4D51168772F /* SkGlobalInitialization_default.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkGlobalInitialization_default.cpp; path = src/ports/SkGlobalInitialization_default.cpp; sourceTree = "<group>"; };
-		9C8BD0257505228BC087CBF9 /* SkFontMgr_empty_factory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkFontMgr_empty_factory.cpp; path = src/ports/SkFontMgr_empty_factory.cpp; sourceTree = "<group>"; };
 		9C9C1DDA6179E4D8284CC40C /* quant_enc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = quant_enc.c; path = third_party/externals/libwebp/src/enc/quant_enc.c; sourceTree = "<group>"; };
 		9CCFBDF25B6E0B1CDB0D561E /* GrDataUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GrDataUtils.cpp; path = src/gpu/GrDataUtils.cpp; sourceTree = "<group>"; };
 		9CDEB2DE50069C15D5E0BC31 /* dng_mutex.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dng_mutex.cpp; path = third_party/externals/dng_sdk/source/dng_mutex.cpp; sourceTree = "<group>"; };
@@ -6751,7 +6749,6 @@
 			children = (
 				EA29D9890BCCB122E6C3E7AD /* SkDebug_stdio.cpp */,
 				E181D49C13D8C9435672A55A /* SkDiscardableMemory_none.cpp */,
-				9C8BD0257505228BC087CBF9 /* SkFontMgr_empty_factory.cpp */,
 				0FEF4697E662D931372ABAC5 /* SkFontMgr_mac_ct.cpp */,
 				FF4F1A78F56268065D9B5510 /* SkFontMgr_mac_ct_factory.cpp */,
 				9C852FADDC4AF4D51168772F /* SkGlobalInitialization_default.cpp */,
@@ -11086,9 +11083,7 @@
 				78706A412F4696CEB7A5551C /* SkPDFUtils.cpp in Sources */,
 				41900E9569861909D76FBFC8 /* SkDebug_stdio.cpp in Sources */,
 				E5EF599246B330E218364A87 /* SkDiscardableMemory_none.cpp in Sources */,
-				DD9425C60B4B20FE504B1A17 /* SkFontMgr_empty_factory.cpp in Sources */,
 				8322E765CAFBEA8CA85B6451 /* SkFontMgr_mac_ct.cpp in Sources */,
-				4D4F17BF3B2BF1E1F9A5E1E4 /* SkFontMgr_mac_ct_factory.cpp in Sources */,
 				4604FA9BEC3F83AB303E2920 /* SkGlobalInitialization_default.cpp in Sources */,
 				1BA017008E2C690FCACF07B3 /* SkImageEncoder_CG.cpp in Sources */,
 				2FEF067D3ED96DBC8BC2168F /* SkImageGeneratorCG.cpp in Sources */,
@@ -11702,6 +11697,7 @@
 				6EDADB5AE91F27A3B929B725 /* numparse_scientific.cpp in Sources */,
 				1D452FA776790A774C5938B9 /* numparse_symbols.cpp in Sources */,
 				9225C05A2ABDF182AC3AE68C /* numparse_validators.cpp in Sources */,
+				DEC98534273C779200E19783 /* SkFontMgr_mac_ct_factory.cpp in Sources */,
 				C2F5D5799D280442E7F324F4 /* numrange_fluent.cpp in Sources */,
 				7393096EE40DC0AED81AECFA /* numrange_impl.cpp in Sources */,
 				71F453325E27724EED1E1D3D /* numsys.cpp in Sources */,
@@ -12059,7 +12055,7 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		0575E23C837BDA8E6817096A /* ios64 */ = {
+		0575E23C837BDA8E6817096A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12070,9 +12066,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.viewer;
 				PRODUCT_NAME = viewer;
 			};
-			name = ios64;
+			name = Release;
 		};
-		0AF994EF4783B6BF1EDDAF1D /* ios64 */ = {
+		0AF994EF4783B6BF1EDDAF1D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12083,9 +12079,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.fuzz;
 				PRODUCT_NAME = fuzz;
 			};
-			name = ios64;
+			name = Release;
 		};
-		3143B5E7B2AE10D3593AFD13 /* ios64 */ = {
+		3143B5E7B2AE10D3593AFD13 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -12121,9 +12117,9 @@
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = ios64;
+			name = Release;
 		};
-		34F9C812A024EEBEADE80C27 /* ios64 */ = {
+		34F9C812A024EEBEADE80C27 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12134,9 +12130,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.sktexttopdf;
 				PRODUCT_NAME = sktexttopdf;
 			};
-			name = ios64;
+			name = Release;
 		};
-		3C743FBB0CDE1DDEF85BEB4E /* ios64 */ = {
+		3C743FBB0CDE1DDEF85BEB4E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
@@ -12145,7 +12141,6 @@
 				CODE_SIGNING_REQUIRED = NO;
 				EXECUTABLE_PREFIX = "";
 				GCC_C_LANGUAGE_STANDARD = c11;
-				GCC_PREPROCESSOR_DEFINITIONS = "";
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
 					HAVE_ICU,
 					HAVE_ICU_BUILTIN,
@@ -12160,6 +12155,8 @@
 					HAVE_CORETEXT,
 					BMP_SUPPORTED,
 					PPM_SUPPORTED,
+					SK_BUILD_FOR_IOS,
+					SK_RELEASE,
 				);
 				HEADER_SEARCH_PATHS = (
 					../../src,
@@ -12182,9 +12179,9 @@
 				PRODUCT_NAME = libSkia;
 				SYMROOT = "../../../SkiaLibs/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 			};
-			name = ios64;
+			name = Release;
 		};
-		56AFEB6F4FFC673F6321BB4C /* ios64 */ = {
+		56AFEB6F4FFC673F6321BB4C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12195,9 +12192,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.skpinfo;
 				PRODUCT_NAME = skpinfo;
 			};
-			name = ios64;
+			name = Release;
 		};
-		57036EEBBEDDF86B6F661436 /* ios64 */ = {
+		57036EEBBEDDF86B6F661436 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12208,9 +12205,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.blob_cache_sim;
 				PRODUCT_NAME = blob_cache_sim;
 			};
-			name = ios64;
+			name = Release;
 		};
-		57F9B968989E939B7F8E6C8A /* ios64 */ = {
+		57F9B968989E939B7F8E6C8A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12221,9 +12218,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.sorttoy;
 				PRODUCT_NAME = sorttoy;
 			};
-			name = ios64;
+			name = Release;
 		};
-		61446EC2D3323FD81F3709CC /* ios64 */ = {
+		61446EC2D3323FD81F3709CC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12234,9 +12231,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.google.convert-to-nia";
 				PRODUCT_NAME = "convert-to-nia";
 			};
-			name = ios64;
+			name = Release;
 		};
-		6F87762B8FE934BAB1C499AA /* ios64 */ = {
+		6F87762B8FE934BAB1C499AA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12247,9 +12244,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.fm;
 				PRODUCT_NAME = fm;
 			};
-			name = ios64;
+			name = Release;
 		};
-		7A0DB8F76A7AF1030DBC294E /* ios64 */ = {
+		7A0DB8F76A7AF1030DBC294E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12260,9 +12257,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.jitter_gms;
 				PRODUCT_NAME = jitter_gms;
 			};
-			name = ios64;
+			name = Release;
 		};
-		8404D9C4F233ACB5ECA67898 /* ios64 */ = {
+		8404D9C4F233ACB5ECA67898 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12273,9 +12270,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.skpbench;
 				PRODUCT_NAME = skpbench;
 			};
-			name = ios64;
+			name = Release;
 		};
-		8E3CD6E1EA63290DA1CE4A0C /* ios64 */ = {
+		8E3CD6E1EA63290DA1CE4A0C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12286,9 +12283,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.editor;
 				PRODUCT_NAME = editor;
 			};
-			name = ios64;
+			name = Release;
 		};
-		90CFAA3756AD8DC93958C7FA /* ios64 */ = {
+		90CFAA3756AD8DC93958C7FA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12299,9 +12296,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.skdiff;
 				PRODUCT_NAME = skdiff;
 			};
-			name = ios64;
+			name = Release;
 		};
-		92D8310EC847AEA0E9F94D3D /* ios64 */ = {
+		92D8310EC847AEA0E9F94D3D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12312,9 +12309,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.get_images_from_skps;
 				PRODUCT_NAME = get_images_from_skps;
 			};
-			name = ios64;
+			name = Release;
 		};
-		9313C2E003EF355B3DB2E46A /* ios64 */ = {
+		9313C2E003EF355B3DB2E46A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12325,9 +12322,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.pathops_unittest;
 				PRODUCT_NAME = pathops_unittest;
 			};
-			name = ios64;
+			name = Release;
 		};
-		9775D44CC3D9E2EB579E68AA /* ios64 */ = {
+		9775D44CC3D9E2EB579E68AA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12338,9 +12335,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.list_gpu_unit_tests;
 				PRODUCT_NAME = list_gpu_unit_tests;
 			};
-			name = ios64;
+			name = Release;
 		};
-		9F27C84581AC12296C760048 /* ios64 */ = {
+		9F27C84581AC12296C760048 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12351,9 +12348,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.create_test_font;
 				PRODUCT_NAME = create_test_font;
 			};
-			name = ios64;
+			name = Release;
 		};
-		A13DEA0334CF5D1B276A954D /* ios64 */ = {
+		A13DEA0334CF5D1B276A954D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12364,9 +12361,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.remote_demo;
 				PRODUCT_NAME = remote_demo;
 			};
-			name = ios64;
+			name = Release;
 		};
-		AD1A3DF4BAFF37DF64D75D87 /* ios64 */ = {
+		AD1A3DF4BAFF37DF64D75D87 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12377,9 +12374,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.dm;
 				PRODUCT_NAME = dm;
 			};
-			name = ios64;
+			name = Release;
 		};
-		B882E6C3E8E61192DA9E9BFE /* ios64 */ = {
+		B882E6C3E8E61192DA9E9BFE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12390,9 +12387,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.imgcvt;
 				PRODUCT_NAME = imgcvt;
 			};
-			name = ios64;
+			name = Release;
 		};
-		B896436C3371E4A94C8BF58D /* ios64 */ = {
+		B896436C3371E4A94C8BF58D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12403,9 +12400,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.skqp;
 				PRODUCT_NAME = skqp;
 			};
-			name = ios64;
+			name = Release;
 		};
-		C120F9BD41DBD7FD7BA36B09 /* ios64 */ = {
+		C120F9BD41DBD7FD7BA36B09 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12416,9 +12413,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.skp_parser;
 				PRODUCT_NAME = skp_parser;
 			};
-			name = ios64;
+			name = Release;
 		};
-		C3C393A594D568E332174EE3 /* ios64 */ = {
+		C3C393A594D568E332174EE3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12426,9 +12423,9 @@
 				CONFIGURATION_BUILD_DIR = .;
 				PRODUCT_NAME = All;
 			};
-			name = ios64;
+			name = Release;
 		};
-		C8C50243CFDBA8CAA265FA6C /* ios64 */ = {
+		C8C50243CFDBA8CAA265FA6C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12439,9 +12436,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.make_skqp_model;
 				PRODUCT_NAME = make_skqp_model;
 			};
-			name = ios64;
+			name = Release;
 		};
-		C8DA9EA9D10B6C4866750105 /* ios64 */ = {
+		C8DA9EA9D10B6C4866750105 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12452,9 +12449,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.nanobench;
 				PRODUCT_NAME = nanobench;
 			};
-			name = ios64;
+			name = Release;
 		};
-		C9F63B9717FF6651A103F0C0 /* ios64 */ = {
+		C9F63B9717FF6651A103F0C0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12465,9 +12462,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.dump_record;
 				PRODUCT_NAME = dump_record;
 			};
-			name = ios64;
+			name = Release;
 		};
-		D03766A10FC85C1E6025E9DA /* ios64 */ = {
+		D03766A10FC85C1E6025E9DA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12478,9 +12475,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.skottie_example;
 				PRODUCT_NAME = skottie_example;
 			};
-			name = ios64;
+			name = Release;
 		};
-		D4FC038BC04D67E6281E8037 /* ios64 */ = {
+		D4FC038BC04D67E6281E8037 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12491,9 +12488,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.text_editor;
 				PRODUCT_NAME = text_editor;
 			};
-			name = ios64;
+			name = Release;
 		};
-		D54B48F59D0BD052BD3EDDE8 /* ios64 */ = {
+		D54B48F59D0BD052BD3EDDE8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12504,9 +12501,280 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.create_test_font_color;
 				PRODUCT_NAME = create_test_font_color;
 			};
-			name = ios64;
+			name = Release;
 		};
-		EC0F2F5F92DC81377C43AF49 /* ios64 */ = {
+		DE8C292E27349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DE8C292F27349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				"EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*]" = "*.S";
+				EXECUTABLE_PREFIX = "";
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*]" = (
+					HAVE_ICU,
+					HAVE_ICU_BUILTIN,
+					HAVE_EXPAT_CONFIG_H,
+					U_DEFINE_FALSE_AND_TRUE,
+					U_COMMON_IMPLEMENTATION,
+					INFLATE_CHUNK_SIMD_NEON,
+					U_I18N_IMPLEMENTATION,
+					SK_GL,
+					JSIMD_FORCENEON,
+					SFNTLY_NO_EXCEPTION,
+					HAVE_CORETEXT,
+					BMP_SUPPORTED,
+					PPM_SUPPORTED,
+					SK_BUILD_FOR_IOS,
+				);
+				"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*]" = (
+					HAVE_ICU,
+					HAVE_ICU_BUILTIN,
+					HAVE_EXPAT_CONFIG_H,
+					U_DEFINE_FALSE_AND_TRUE,
+					U_COMMON_IMPLEMENTATION,
+					U_I18N_IMPLEMENTATION,
+					SK_GL,
+					JSIMD_FORCENEON,
+					SFNTLY_NO_EXCEPTION,
+					HAVE_CORETEXT,
+					BMP_SUPPORTED,
+					PPM_SUPPORTED,
+					SK_BUILD_FOR_IOS,
+					INFLATE_CHUNK_SIMD_SSE2,
+				);
+				HEADER_SEARCH_PATHS = (
+					../../src,
+					../..,
+					../../third_party/externals/icu/source/common,
+					../../third_party/externals/libwebp,
+					../../third_party/externals/icu/source/i18n,
+					../../third_party/externals/expat,
+					"../../third_party/externals/libjpeg-turbo",
+					"../../third_party/libjpeg-turbo",
+					../../third_party/externals/piex,
+					../../third_party/externals/zlib,
+					../../third_party/externals/harfbuzz/src,
+					../../third_party/externals/libwebp/src,
+					../../third_party/libpng/,
+					../../third_party/externals/sfntly/cpp/src,
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				OTHER_CFLAGS = "-DPNG_ARM_NEON_OPT=0";
+				PRODUCT_NAME = libSkia;
+				SYMROOT = "../../../SkiaLibs/Debug-iphoneos";
+			};
+			name = Debug;
+		};
+		DE8C293027349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CONFIGURATION_BUILD_DIR = .;
+				PRODUCT_NAME = All;
+			};
+			name = Debug;
+		};
+		DE8C293127349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.blob_cache_sim;
+				PRODUCT_NAME = blob_cache_sim;
+			};
+			name = Debug;
+		};
+		DE8C293227349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.google.convert-to-nia";
+				PRODUCT_NAME = "convert-to-nia";
+			};
+			name = Debug;
+		};
+		DE8C293327349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.create_test_font;
+				PRODUCT_NAME = create_test_font;
+			};
+			name = Debug;
+		};
+		DE8C293427349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.create_test_font_color;
+				PRODUCT_NAME = create_test_font_color;
+			};
+			name = Debug;
+		};
+		DE8C293527349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.dm;
+				PRODUCT_NAME = dm;
+			};
+			name = Debug;
+		};
+		DE8C293627349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.dump_record;
+				PRODUCT_NAME = dump_record;
+			};
+			name = Debug;
+		};
+		DE8C293727349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.editor;
+				PRODUCT_NAME = editor;
+			};
+			name = Debug;
+		};
+		DE8C293827349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.fm;
+				PRODUCT_NAME = fm;
+			};
+			name = Debug;
+		};
+		DE8C293927349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.fuzz;
+				PRODUCT_NAME = fuzz;
+			};
+			name = Debug;
+		};
+		DE8C293A27349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.get_images_from_skps;
+				PRODUCT_NAME = get_images_from_skps;
+			};
+			name = Debug;
+		};
+		DE8C293B27349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.imgcvt;
+				PRODUCT_NAME = imgcvt;
+			};
+			name = Debug;
+		};
+		DE8C293C27349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.jitter_gms;
+				PRODUCT_NAME = jitter_gms;
+			};
+			name = Debug;
+		};
+		DE8C293D27349DA4003E6AAB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -12517,7 +12785,215 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.list_gms;
 				PRODUCT_NAME = list_gms;
 			};
-			name = ios64;
+			name = Debug;
+		};
+		DE8C293E27349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.list_gpu_unit_tests;
+				PRODUCT_NAME = list_gpu_unit_tests;
+			};
+			name = Debug;
+		};
+		DE8C293F27349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.make_skqp_model;
+				PRODUCT_NAME = make_skqp_model;
+			};
+			name = Debug;
+		};
+		DE8C294027349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.nanobench;
+				PRODUCT_NAME = nanobench;
+			};
+			name = Debug;
+		};
+		DE8C294127349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.pathops_unittest;
+				PRODUCT_NAME = pathops_unittest;
+			};
+			name = Debug;
+		};
+		DE8C294227349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.remote_demo;
+				PRODUCT_NAME = remote_demo;
+			};
+			name = Debug;
+		};
+		DE8C294327349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.skdiff;
+				PRODUCT_NAME = skdiff;
+			};
+			name = Debug;
+		};
+		DE8C294427349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.skp_parser;
+				PRODUCT_NAME = skp_parser;
+			};
+			name = Debug;
+		};
+		DE8C294527349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.skpbench;
+				PRODUCT_NAME = skpbench;
+			};
+			name = Debug;
+		};
+		DE8C294627349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.skpinfo;
+				PRODUCT_NAME = skpinfo;
+			};
+			name = Debug;
+		};
+		DE8C294727349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.skqp;
+				PRODUCT_NAME = skqp;
+			};
+			name = Debug;
+		};
+		DE8C294827349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.sktexttopdf;
+				PRODUCT_NAME = sktexttopdf;
+			};
+			name = Debug;
+		};
+		DE8C294927349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.sorttoy;
+				PRODUCT_NAME = sorttoy;
+			};
+			name = Debug;
+		};
+		DE8C294A27349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.text_editor;
+				PRODUCT_NAME = text_editor;
+			};
+			name = Debug;
+		};
+		DE8C294B27349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.viewer;
+				PRODUCT_NAME = viewer;
+			};
+			name = Debug;
+		};
+		DE8C294C27349DA4003E6AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.skottie_example;
+				PRODUCT_NAME = skottie_example;
+			};
+			name = Debug;
+		};
+		EC0F2F5F92DC81377C43AF49 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CONFIGURATION_BUILD_DIR = .;
+				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.list_gms;
+				PRODUCT_NAME = list_gms;
+			};
+			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
@@ -12525,250 +13001,281 @@
 		0452EC888B95A15ACC095B6A /* Build configuration list for PBXNativeTarget "pathops_unittest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9313C2E003EF355B3DB2E46A /* ios64 */,
+				9313C2E003EF355B3DB2E46A /* Release */,
+				DE8C294127349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		04D72345AF7339C830879012 /* Build configuration list for PBXNativeTarget "editor" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				8E3CD6E1EA63290DA1CE4A0C /* ios64 */,
+				8E3CD6E1EA63290DA1CE4A0C /* Release */,
+				DE8C293727349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		12E4943E39217F9A0741BEDE /* Build configuration list for PBXNativeTarget "make_skqp_model" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C8C50243CFDBA8CAA265FA6C /* ios64 */,
+				C8C50243CFDBA8CAA265FA6C /* Release */,
+				DE8C293F27349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		168393C1D8B74B3A3F7C7926 /* Build configuration list for PBXNativeTarget "get_images_from_skps" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				92D8310EC847AEA0E9F94D3D /* ios64 */,
+				92D8310EC847AEA0E9F94D3D /* Release */,
+				DE8C293A27349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		19F0C1861DF23CAC6E3235D8 /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C3C393A594D568E332174EE3 /* ios64 */,
+				C3C393A594D568E332174EE3 /* Release */,
+				DE8C293027349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		1B6FBF406EC74096B1EF2E1A /* Build configuration list for PBXNativeTarget "remote_demo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A13DEA0334CF5D1B276A954D /* ios64 */,
+				A13DEA0334CF5D1B276A954D /* Release */,
+				DE8C294227349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		3C6306264332D4A3774EA681 /* Build configuration list for PBXNativeTarget "create_test_font_color" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D54B48F59D0BD052BD3EDDE8 /* ios64 */,
+				D54B48F59D0BD052BD3EDDE8 /* Release */,
+				DE8C293427349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		40DEF6E36217B92193ACD263 /* Build configuration list for PBXNativeTarget "viewer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0575E23C837BDA8E6817096A /* ios64 */,
+				0575E23C837BDA8E6817096A /* Release */,
+				DE8C294B27349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		484111E717FE9F994D22FD00 /* Build configuration list for PBXNativeTarget "nanobench" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C8DA9EA9D10B6C4866750105 /* ios64 */,
+				C8DA9EA9D10B6C4866750105 /* Release */,
+				DE8C294027349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		4A973477C9EA3EAF67217153 /* Build configuration list for PBXNativeTarget "skdiff" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				90CFAA3756AD8DC93958C7FA /* ios64 */,
+				90CFAA3756AD8DC93958C7FA /* Release */,
+				DE8C294327349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		4ADDE4F531A9809DD4727235 /* Build configuration list for PBXNativeTarget "sorttoy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				57F9B968989E939B7F8E6C8A /* ios64 */,
+				57F9B968989E939B7F8E6C8A /* Release */,
+				DE8C294927349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		4B67BD14D73745C81ADBCB7D /* Build configuration list for PBXNativeTarget "list_gpu_unit_tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9775D44CC3D9E2EB579E68AA /* ios64 */,
+				9775D44CC3D9E2EB579E68AA /* Release */,
+				DE8C293E27349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		5B4F6A6FD96BF33777BB8A7B /* Build configuration list for PBXNativeTarget "blob_cache_sim" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				57036EEBBEDDF86B6F661436 /* ios64 */,
+				57036EEBBEDDF86B6F661436 /* Release */,
+				DE8C293127349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		5D929BAA838AF3976C59C1B3 /* Build configuration list for PBXNativeTarget "create_test_font" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9F27C84581AC12296C760048 /* ios64 */,
+				9F27C84581AC12296C760048 /* Release */,
+				DE8C293327349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		5DCAEEEBC0970642C53D46BF /* Build configuration list for PBXNativeTarget "skqp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B896436C3371E4A94C8BF58D /* ios64 */,
+				B896436C3371E4A94C8BF58D /* Release */,
+				DE8C294727349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		6D44D24F7907648F09A58D8E /* Build configuration list for PBXNativeTarget "convert-to-nia" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				61446EC2D3323FD81F3709CC /* ios64 */,
+				61446EC2D3323FD81F3709CC /* Release */,
+				DE8C293227349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		6D79E298822194297AA22A27 /* Build configuration list for PBXNativeTarget "dump_record" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C9F63B9717FF6651A103F0C0 /* ios64 */,
+				C9F63B9717FF6651A103F0C0 /* Release */,
+				DE8C293627349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		6E61C813C2DE5C3CB0EFA82D /* Build configuration list for PBXNativeTarget "fm" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				6F87762B8FE934BAB1C499AA /* ios64 */,
+				6F87762B8FE934BAB1C499AA /* Release */,
+				DE8C293827349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		712FD83782DB178CED8BD853 /* Build configuration list for PBXNativeTarget "dm" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AD1A3DF4BAFF37DF64D75D87 /* ios64 */,
+				AD1A3DF4BAFF37DF64D75D87 /* Release */,
+				DE8C293527349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		778D46B26FDC6FD90FC37C74 /* Build configuration list for PBXNativeTarget "imgcvt" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B882E6C3E8E61192DA9E9BFE /* ios64 */,
+				B882E6C3E8E61192DA9E9BFE /* Release */,
+				DE8C293B27349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		7C7458BFBDC3AFC500AD9A7C /* Build configuration list for PBXNativeTarget "text_editor" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D4FC038BC04D67E6281E8037 /* ios64 */,
+				D4FC038BC04D67E6281E8037 /* Release */,
+				DE8C294A27349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		8F65E4244F54A235C4E86CD1 /* Build configuration list for PBXProject "PicMonkeySkia" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3143B5E7B2AE10D3593AFD13 /* ios64 */,
+				3143B5E7B2AE10D3593AFD13 /* Release */,
+				DE8C292E27349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		9C942908B7BE570C435C6B4B /* Build configuration list for PBXNativeTarget "jitter_gms" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7A0DB8F76A7AF1030DBC294E /* ios64 */,
+				7A0DB8F76A7AF1030DBC294E /* Release */,
+				DE8C293C27349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		ADF3EAC1EE30CC1AE7D79D3C /* Build configuration list for PBXNativeTarget "skottie_example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D03766A10FC85C1E6025E9DA /* ios64 */,
+				D03766A10FC85C1E6025E9DA /* Release */,
+				DE8C294C27349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		B68487D04087FB58580F6D9B /* Build configuration list for PBXNativeTarget "skpbench" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				8404D9C4F233ACB5ECA67898 /* ios64 */,
+				8404D9C4F233ACB5ECA67898 /* Release */,
+				DE8C294527349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		BFA8740248E55DE11B0B6EBE /* Build configuration list for PBXNativeTarget "skpinfo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				56AFEB6F4FFC673F6321BB4C /* ios64 */,
+				56AFEB6F4FFC673F6321BB4C /* Release */,
+				DE8C294627349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		C41EAFE5A93465F4BDE85FA9 /* Build configuration list for PBXNativeTarget "skp_parser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C120F9BD41DBD7FD7BA36B09 /* ios64 */,
+				C120F9BD41DBD7FD7BA36B09 /* Release */,
+				DE8C294427349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		C68C3B48F2E01718E9CFBB59 /* Build configuration list for PBXNativeTarget "list_gms" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EC0F2F5F92DC81377C43AF49 /* ios64 */,
+				EC0F2F5F92DC81377C43AF49 /* Release */,
+				DE8C293D27349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		DEF12467F5419CE7A698FC82 /* Build configuration list for PBXNativeTarget "sources" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3C743FBB0CDE1DDEF85BEB4E /* ios64 */,
+				3C743FBB0CDE1DDEF85BEB4E /* Release */,
+				DE8C292F27349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		E10CD33985B05A8C29A1949C /* Build configuration list for PBXNativeTarget "fuzz" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0AF994EF4783B6BF1EDDAF1D /* ios64 */,
+				0AF994EF4783B6BF1EDDAF1D /* Release */,
+				DE8C293927349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 		FD4D5DBAB5BE233530E3FF51 /* Build configuration list for PBXNativeTarget "sktexttopdf" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				34F9C812A024EEBEADE80C27 /* ios64 */,
+				34F9C812A024EEBEADE80C27 /* Release */,
+				DE8C294827349DA4003E6AAB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 1;
-			defaultConfigurationName = ios64;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

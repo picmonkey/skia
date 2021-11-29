@@ -439,7 +439,7 @@ std::unique_ptr<Program> Compiler::convertProgram(ProgramKind kind,
     settings.fRemoveDeadVariables &= settings.fOptimize;
 
     // Runtime effects always allow narrowing conversions.
-    if (ProgramConfig::IsRuntimeEffect(kind)) {
+    if (ProgramConfig::IsRuntimeEffect(kind) || settings.fForceHighPrecision) {
         settings.fAllowNarrowingConversions = true;
     }
 

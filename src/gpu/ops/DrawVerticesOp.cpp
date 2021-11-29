@@ -314,7 +314,7 @@ DrawVerticesOpImpl::DrawVerticesOpImpl(GrProcessorSet* processorSet,
 
     fVertexCount = info.vertexCount();
     fIndexCount = info.indexCount();
-    fColorArrayType = info.hasColors() ? ColorArrayType::kSkColor
+    fColorArrayType = info.hasColors() ? ColorArrayType::kPremulGrColor
                                        : ColorArrayType::kUnused;
     fLocalCoordsType = info.hasTexCoords() ? LocalCoordsType::kExplicit
                                            : LocalCoordsType::kUsePosition;

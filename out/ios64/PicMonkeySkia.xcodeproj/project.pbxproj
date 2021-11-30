@@ -1372,8 +1372,13 @@
 		DE0A45AF273447EF0056DC46 /* hb-coretext.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A45AE273447EE0056DC46 /* hb-coretext.cc */; };
 		DE0CEF771C1038C60BBB4764 /* SkShaderImageFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43E86FE26FBDE971174AFF76 /* SkShaderImageFilter.cpp */; };
 		DE1AFBD464AA8E054F75D845 /* GrGLAssembleGLInterfaceAutogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 580A876FA0BF5228BCDD41E1 /* GrGLAssembleGLInterfaceAutogen.cpp */; };
-		DE35710127335AC400CE713C /* jsimd.c in Sources */ = {isa = PBXBuildFile; fileRef = DE35710027335AC400CE713C /* jsimd.c */; };
 		DE3588481C63C1761D33141B /* GrAttachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E77A99C42B706EACE1A6CC74 /* GrAttachment.cpp */; };
+		DE4248C02755B443001A0CBB /* jsimd_none.c in Sources */ = {isa = PBXBuildFile; fileRef = DE4248BF2755B443001A0CBB /* jsimd_none.c */; };
+		DE4248C22755B565001A0CBB /* SkOpts_sse42.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE4248C12755B565001A0CBB /* SkOpts_sse42.cpp */; };
+		DE4248C52755B619001A0CBB /* SkOpts_avx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE4248C32755B619001A0CBB /* SkOpts_avx.cpp */; };
+		DE4248C62755B619001A0CBB /* SkOpts_hsw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE4248C42755B619001A0CBB /* SkOpts_hsw.cpp */; };
+		DE4248C82755B63C001A0CBB /* SkOpts_skx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE4248C72755B63C001A0CBB /* SkOpts_skx.cpp */; };
+		DE4248C92755BB04001A0CBB /* jsimd.c in Sources */ = {isa = PBXBuildFile; fileRef = DE35710027335AC400CE713C /* jsimd.c */; };
 		DE6C8C93272AF14F00F6406A /* hb-common.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C46272AF14700F6406A /* hb-common.cc */; };
 		DE6C8C97272AF14F00F6406A /* hb-ot-shape-complex-hangul.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C4A272AF14700F6406A /* hb-ot-shape-complex-hangul.cc */; };
 		DE6C8C99272AF14F00F6406A /* hb-ot-shape-complex-vowel-constraints.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C4C272AF14800F6406A /* hb-ot-shape-complex-vowel-constraints.cc */; };
@@ -4247,8 +4252,12 @@
 		DE2A644B6600589F0CE37E86 /* jccoefct.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jccoefct.c; path = "third_party/externals/libjpeg-turbo/jccoefct.c"; sourceTree = "<group>"; };
 		DE33A123F847CE8CB33BF686 /* dng_iptc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dng_iptc.cpp; path = third_party/externals/dng_sdk/source/dng_iptc.cpp; sourceTree = "<group>"; };
 		DE35710027335AC400CE713C /* jsimd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jsimd.c; path = "third_party/externals/libjpeg-turbo/simd/arm64/jsimd.c"; sourceTree = "<group>"; };
+		DE4248BF2755B443001A0CBB /* jsimd_none.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jsimd_none.c; path = "third_party/externals/libjpeg-turbo/jsimd_none.c"; sourceTree = "<group>"; };
+		DE4248C12755B565001A0CBB /* SkOpts_sse42.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkOpts_sse42.cpp; path = src/opts/SkOpts_sse42.cpp; sourceTree = "<group>"; };
+		DE4248C32755B619001A0CBB /* SkOpts_avx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkOpts_avx.cpp; path = src/opts/SkOpts_avx.cpp; sourceTree = "<group>"; };
+		DE4248C42755B619001A0CBB /* SkOpts_hsw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkOpts_hsw.cpp; path = src/opts/SkOpts_hsw.cpp; sourceTree = "<group>"; };
+		DE4248C72755B63C001A0CBB /* SkOpts_skx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkOpts_skx.cpp; path = src/opts/SkOpts_skx.cpp; sourceTree = "<group>"; };
 		DE5BD0D4F554BF617A4FF013 /* OpsTask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OpsTask.h; path = src/gpu/ops/OpsTask.h; sourceTree = "<group>"; };
-		DE6C8BAB272AEEFC00F6406A /* arm64 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = arm64; path = "third_party/externals/libjpeg-turbo/simd/arm64"; sourceTree = "<group>"; };
 		DE6C8C46272AF14700F6406A /* hb-common.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-common.cc"; path = "third_party/externals/harfbuzz/src/hb-common.cc"; sourceTree = "<group>"; };
 		DE6C8C4A272AF14700F6406A /* hb-ot-shape-complex-hangul.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-hangul.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-hangul.cc"; sourceTree = "<group>"; };
 		DE6C8C4C272AF14800F6406A /* hb-ot-shape-complex-vowel-constraints.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-vowel-constraints.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-vowel-constraints.cc"; sourceTree = "<group>"; };
@@ -5234,6 +5243,7 @@
 		2BC2AAFD51E879B9C4165A91 /* simd */ = {
 			isa = PBXGroup;
 			children = (
+				DE4248BA2755AF01001A0CBB /* x86 */,
 				E0094E1E9227BD9640FE304A /* arm */,
 			);
 			name = simd;
@@ -7231,6 +7241,10 @@
 		BC08A25E837969E720C05874 /* opts */ = {
 			isa = PBXGroup;
 			children = (
+				DE4248C72755B63C001A0CBB /* SkOpts_skx.cpp */,
+				DE4248C32755B619001A0CBB /* SkOpts_avx.cpp */,
+				DE4248C42755B619001A0CBB /* SkOpts_hsw.cpp */,
+				DE4248C12755B565001A0CBB /* SkOpts_sse42.cpp */,
 				79CCC88E5453A18AA0EAC5F9 /* SkBlitMask_opts.h */,
 				538CD2538A2866062EE2F3E9 /* SkBlitRow_opts.h */,
 				DB27BE34984583FEFDD155B5 /* SkChecksum_opts.h */,
@@ -8510,6 +8524,14 @@
 			path = modules/svg/src;
 			sourceTree = "<group>";
 		};
+		DE4248BA2755AF01001A0CBB /* x86 */ = {
+			isa = PBXGroup;
+			children = (
+				DE4248BF2755B443001A0CBB /* jsimd_none.c */,
+			);
+			name = x86;
+			sourceTree = "<group>";
+		};
 		DE8C2929273473F5003E6AAB /* ios */ = {
 			isa = PBXGroup;
 			children = (
@@ -8525,7 +8547,6 @@
 			children = (
 				DE0A42E7273363360056DC46 /* jsimd_neon.S */,
 				DE35710027335AC400CE713C /* jsimd.c */,
-				DE6C8BAB272AEEFC00F6406A /* arm64 */,
 			);
 			name = arm;
 			sourceTree = "<group>";
@@ -10535,6 +10556,7 @@
 				9283ADA887AD951A8EEAD764 /* SkDraw_text.cpp in Sources */,
 				6C087387E53A03D872456701 /* SkDraw_vertices.cpp in Sources */,
 				DCDF2A7F6C44F5A5CB4EA8D8 /* SkDrawable.cpp in Sources */,
+				DE4248C52755B619001A0CBB /* SkOpts_avx.cpp in Sources */,
 				C8014EEE51B6B0B7E8E7DA62 /* SkEdge.cpp in Sources */,
 				3029B611BB9F9286233B7C1B /* SkEdgeBuilder.cpp in Sources */,
 				38C18D1743FC3EBB8357E400 /* SkEdgeClipper.cpp in Sources */,
@@ -10614,6 +10636,7 @@
 				3F28DF95F7D201D9287618DD /* SkPixelRef.cpp in Sources */,
 				C55A4FFF1FC405FC126A700C /* SkPixmap.cpp in Sources */,
 				A5ED7D5F78C88707483EC452 /* SkPoint.cpp in Sources */,
+				DE4248C92755BB04001A0CBB /* jsimd.c in Sources */,
 				DE6C8CB6272AF15000F6406A /* hb-subset-fuzzer.cc in Sources */,
 				362297F37AFB53BCC57BF7EC /* SkPoint3.cpp in Sources */,
 				49E95A7FBA2CA8A1769155DD /* SkPromiseImageTexture.cpp in Sources */,
@@ -10916,7 +10939,6 @@
 				807FF5BA28C9F012690D0FC7 /* GrGLSL.cpp in Sources */,
 				AFD67ED8CC663CB9FA09B27F /* GrGLSLBlend.cpp in Sources */,
 				DE6C8CC3272AF15000F6406A /* hb-aat-map.cc in Sources */,
-				DE35710127335AC400CE713C /* jsimd.c in Sources */,
 				E2C79D25AEAF3F907B195DB8 /* GrGLSLFragmentShaderBuilder.cpp in Sources */,
 				E60DD79A4F7CD8D26D0A19AE /* GrGLSLProgramBuilder.cpp in Sources */,
 				37B306981DD9882F0495161C /* GrGLSLProgramDataManager.cpp in Sources */,
@@ -11160,6 +11182,7 @@
 				DE0A448927343FBE0056DC46 /* index_sub_table_format3.cc in Sources */,
 				BDB60ABBCAB1F1AE9F32D9A9 /* DSLFunction.cpp in Sources */,
 				C04074129D78A24DE1D63DA9 /* DSLLayout.cpp in Sources */,
+				DE4248C02755B443001A0CBB /* jsimd_none.c in Sources */,
 				DE0A449A27343FBE0056DC46 /* glyph_table.cc in Sources */,
 				DEB3A3B8490BBFF7BAC0AE33 /* DSLRuntimeEffects.cpp in Sources */,
 				2B177B73736F044EC2F940E3 /* DSLStatement.cpp in Sources */,
@@ -11287,6 +11310,7 @@
 				CA2652E61AB0277BCD872304 /* dng_host.cpp in Sources */,
 				C4360E8E3FAF2E1369A56D63 /* dng_hue_sat_map.cpp in Sources */,
 				29BF7FCA9206C6F628C9D4E2 /* dng_ifd.cpp in Sources */,
+				DE4248C82755B63C001A0CBB /* SkOpts_skx.cpp in Sources */,
 				6ECCF53697FCFB34C100ADE2 /* dng_image.cpp in Sources */,
 				D3698E3ECE84758D41DB0C9A /* dng_image_writer.cpp in Sources */,
 				B509E17252D8F0CB5AC4DC77 /* dng_info.cpp in Sources */,
@@ -11660,6 +11684,7 @@
 				F330794EB825D17AD2D944AF /* nultrans.cpp in Sources */,
 				6A11903AFCEA54F19E8A59D5 /* number_affixutils.cpp in Sources */,
 				B5FF33C764C8664E9D6C9AA5 /* number_asformat.cpp in Sources */,
+				DE4248C22755B565001A0CBB /* SkOpts_sse42.cpp in Sources */,
 				A7B8DA01AA431B9C8F390AE6 /* number_capi.cpp in Sources */,
 				6F281CDA15DE476DFAEE00B0 /* number_compact.cpp in Sources */,
 				E8A42CD1CBEC1C7CC3605998 /* number_currencysymbols.cpp in Sources */,
@@ -11822,6 +11847,7 @@
 				3479F66E673ACAA30EFC2FF6 /* jcprepct.c in Sources */,
 				880CB089CAC2204054C50C5E /* jcsample.c in Sources */,
 				C795D527424F85BBE62E5AF0 /* jctrans.c in Sources */,
+				DE4248C62755B619001A0CBB /* SkOpts_hsw.cpp in Sources */,
 				49AC79B9D558D5A3FBC2B113 /* jdapimin.c in Sources */,
 				BE1B831EC02A14B71AD5457C /* jdapistd.c in Sources */,
 				DE0A4586273445A80056DC46 /* SkSVGAttributeParser.cpp in Sources */,
@@ -12240,7 +12266,12 @@
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "";
 				CONFIGURATION_BUILD_DIR = .;
-				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				"EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*]" = (
+					SkOpts_hsw.cpp,
+					SkOpts_sse42.cpp,
+					SkOpts_skx.cpp,
+					SkOpts_avx.cpp,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.fm;
 				PRODUCT_NAME = fm;
 			};
@@ -12548,7 +12579,17 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGNING_REQUIRED = NO;
-				"EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*]" = "*.S";
+				"EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*]" = (
+					jsimd_none.c,
+					SkOpts_sse42.cpp,
+					SkOpts_skx.cpp,
+					SkOpts_avx.cpp,
+					SkOpts_hsw.cpp,
+				);
+				"EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*]" = (
+					jsimd_neon.S,
+					jsimd.c,
+				);
 				EXECUTABLE_PREFIX = "";
 				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -12716,7 +12757,14 @@
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "";
 				CONFIGURATION_BUILD_DIR = .;
-				EXCLUDED_SOURCE_FILE_NAMES = "*.*";
+				"EXCLUDED_SOURCE_FILE_NAMES[sdk=*]" = jsimd_neon.S;
+				"EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*]" = (
+					SkOpts_hsw.cpp,
+					SkOpts_sse42.cpp,
+					SkOpts_skx.cpp,
+					SkOpts_avx.cpp,
+					jsimd_none.cpp,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.fm;
 				PRODUCT_NAME = fm;
 			};

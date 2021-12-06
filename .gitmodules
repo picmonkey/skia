@@ -46,3 +46,9 @@
 [submodule "third_party/externals/libpng"]
 	path = third_party/externals/libpng
 	url = https://android.googlesource.com/platform/external/libpng
+[submodule "third_party/externals/oboe"]
+	path = third_party/externals/oboe
+	url = https://github.com/google/oboe
+[submodule "third_party/externals/imgui"]
+	path = third_party/externals/imgui
+	url = https://github.com/ocornut/imgui.git

@@ -8,7 +8,7 @@
 from __future__ import print_function
 
 import collections
-import json
+import simplejson
 import os
 import subprocess
 import sys
@@ -41,7 +41,7 @@ except subprocess.CalledProcessError as e:
 
 desc_json = {}
 try:
-  desc_json = json.loads(desc_json_txt)
+  desc_json = simplejson.loads(desc_json_txt)
 except ValueError:
   print(desc_json_txt)
   raise

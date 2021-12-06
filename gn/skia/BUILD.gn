@@ -139,7 +139,7 @@ config("default") {
     if (is_clang) {
       # crbug.com/1257145
       cflags_cc += [
-        "-std=c++14",
+        "-std=c++17",
         "-Wno-c++17-extensions",
       ]
     } else {

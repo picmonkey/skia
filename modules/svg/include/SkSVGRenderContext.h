@@ -72,7 +72,7 @@ public:
     SkSVGRenderContext& operator=(const SkSVGRenderContext& other);
     // Establish a new OBB scope.  Normally used when entering a node's render scope.
     SkSVGRenderContext(const SkSVGRenderContext&, const SkSVGNode*);
-    ~SkSVGRenderContext();
+    virtual ~SkSVGRenderContext();
 
     const SkSVGLengthContext& lengthContext() const { return *fLengthContext; }
     SkSVGLengthContext* writableLengthContext() { return fLengthContext.writable(); }

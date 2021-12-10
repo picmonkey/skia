@@ -1436,9 +1436,9 @@
 		DE8C26BA2734566A003E6AAB /* hb-ot-metrics.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE8C26B92734566A003E6AAB /* hb-ot-metrics.cc */; };
 		DE8C292C273473F5003E6AAB /* icudtl_dat.S in Sources */ = {isa = PBXBuildFile; fileRef = DE8C292A273473F5003E6AAB /* icudtl_dat.S */; };
 		DE8C292D273473F5003E6AAB /* icudt56l_dat.s in Sources */ = {isa = PBXBuildFile; fileRef = DE8C292B273473F5003E6AAB /* icudt56l_dat.s */; };
-		DE9140402729F011003A24D8 /* xmltok.c in Sources */ = {isa = PBXBuildFile; fileRef = DE91403C2729F010003A24D8 /* xmltok.c */; };
-		DE9140412729F011003A24D8 /* xmlrole.c in Sources */ = {isa = PBXBuildFile; fileRef = DE91403E2729F010003A24D8 /* xmlrole.c */; };
-		DE9140422729F011003A24D8 /* xmlparse.c in Sources */ = {isa = PBXBuildFile; fileRef = DE91403F2729F010003A24D8 /* xmlparse.c */; };
+		DE9F03472762D23E00B2641E /* xmlrole.c in Sources */ = {isa = PBXBuildFile; fileRef = DE9F03442762D23E00B2641E /* xmlrole.c */; };
+		DE9F03482762D23E00B2641E /* xmlparse.c in Sources */ = {isa = PBXBuildFile; fileRef = DE9F03452762D23E00B2641E /* xmlparse.c */; };
+		DE9F03492762D23E00B2641E /* xmltok.c in Sources */ = {isa = PBXBuildFile; fileRef = DE9F03462762D23E00B2641E /* xmltok.c */; };
 		DEB3A3B8490BBFF7BAC0AE33 /* DSLRuntimeEffects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4AF56F057B889C2D4051F374 /* DSLRuntimeEffects.cpp */; };
 		DEB6A513CAC0B1D861ED08EB /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = B14CA5C6C0DAAB5D8E120AB2 /* zutil.c */; };
 		DEBBEA204DE442204B563AAA /* utrans.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B718F338D53F92528977F414 /* utrans.cpp */; };
@@ -4317,10 +4317,9 @@
 		DE8C26B92734566A003E6AAB /* hb-ot-metrics.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-metrics.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-metrics.cc"; sourceTree = "<group>"; };
 		DE8C292A273473F5003E6AAB /* icudtl_dat.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = icudtl_dat.S; sourceTree = "<group>"; };
 		DE8C292B273473F5003E6AAB /* icudt56l_dat.s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = icudt56l_dat.s; sourceTree = "<group>"; };
-		DE91403C2729F010003A24D8 /* xmltok.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xmltok.c; path = third_party/externals/expat/lib/xmltok.c; sourceTree = "<group>"; };
-		DE91403D2729F010003A24D8 /* xmltok.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xmltok.h; path = third_party/externals/expat/lib/xmltok.h; sourceTree = "<group>"; };
-		DE91403E2729F010003A24D8 /* xmlrole.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xmlrole.c; path = third_party/externals/expat/lib/xmlrole.c; sourceTree = "<group>"; };
-		DE91403F2729F010003A24D8 /* xmlparse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xmlparse.c; path = third_party/externals/expat/lib/xmlparse.c; sourceTree = "<group>"; };
+		DE9F03442762D23E00B2641E /* xmlrole.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xmlrole.c; path = third_party/externals/expat/expat/lib/xmlrole.c; sourceTree = "<group>"; };
+		DE9F03452762D23E00B2641E /* xmlparse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xmlparse.c; path = third_party/externals/expat/expat/lib/xmlparse.c; sourceTree = "<group>"; };
+		DE9F03462762D23E00B2641E /* xmltok.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xmltok.c; path = third_party/externals/expat/expat/lib/xmltok.c; sourceTree = "<group>"; };
 		DEB58EC111CB5F2E12FD2AC0 /* SkAntiRun.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkAntiRun.h; path = src/core/SkAntiRun.h; sourceTree = "<group>"; };
 		DED2A96409CC00A914F0422B /* wrbmp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = wrbmp.c; path = "third_party/externals/libjpeg-turbo/wrbmp.c"; sourceTree = "<group>"; };
 		DED797785B188E97B4B4D721 /* numfmt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = numfmt.h; path = third_party/externals/icu/source/i18n/unicode/numfmt.h; sourceTree = "<group>"; };
@@ -6230,10 +6229,9 @@
 		7E2E7A15EBE6910DD5ED256E /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				DE91403F2729F010003A24D8 /* xmlparse.c */,
-				DE91403E2729F010003A24D8 /* xmlrole.c */,
-				DE91403C2729F010003A24D8 /* xmltok.c */,
-				DE91403D2729F010003A24D8 /* xmltok.h */,
+				DE9F03452762D23E00B2641E /* xmlparse.c */,
+				DE9F03442762D23E00B2641E /* xmlrole.c */,
+				DE9F03462762D23E00B2641E /* xmltok.c */,
 			);
 			name = lib;
 			sourceTree = "<group>";
@@ -11288,7 +11286,6 @@
 				FFAD0051929E83ED5E9ED510 /* SkDOM.cpp in Sources */,
 				FE8A71EDBCD0AB0C169759CD /* SkXMLParser.cpp in Sources */,
 				8957CC2E67CB04320F955E40 /* SkXMLWriter.cpp in Sources */,
-				DE9140412729F011003A24D8 /* xmlrole.c in Sources */,
 				CF1B75D6E744C616E20139B2 /* etc1.cpp in Sources */,
 				D77EA62BF2D810719AE4B268 /* dng_1d_function.cpp in Sources */,
 				B07363BF768B357DD11EFE32 /* dng_1d_table.cpp in Sources */,
@@ -11331,6 +11328,7 @@
 				1C135BDFAC2267AD6409E750 /* dng_negative.cpp in Sources */,
 				87759114CE0C5A5E3552FEB2 /* dng_opcode_list.cpp in Sources */,
 				106CBE53697CC17FDBD836C1 /* dng_opcodes.cpp in Sources */,
+				DE9F03492762D23E00B2641E /* xmltok.c in Sources */,
 				D6AA572A638294C65B0C128D /* dng_orientation.cpp in Sources */,
 				DE0A45AC273445A80056DC46 /* SkSVGFeLighting.cpp in Sources */,
 				AA64D6FDEC99D54CF5849C0B /* dng_parse_utils.cpp in Sources */,
@@ -11649,9 +11647,11 @@
 				3C63E3FD3493CDE070252A9D /* dtitvinf.cpp in Sources */,
 				F0B7D9DC10344D573903DE50 /* dtptngen.cpp in Sources */,
 				CD49AADFAE821F9EFB3508C9 /* dtrule.cpp in Sources */,
+				DE9F03472762D23E00B2641E /* xmlrole.c in Sources */,
 				FB38348128FB68707B8E38B8 /* erarules.cpp in Sources */,
 				D3F71753845DD5A0811A2B3F /* esctrn.cpp in Sources */,
 				1C84A7DBE5BEC2ED53DEDC82 /* ethpccal.cpp in Sources */,
+				DE9F03482762D23E00B2641E /* xmlparse.c in Sources */,
 				DE0A449727343FBE0056DC46 /* generic_table_builder.cc in Sources */,
 				1D8EA05B6DF14A86B8C8BBB1 /* fmtable.cpp in Sources */,
 				AC6CA65ED78A3A2340F8B928 /* fmtable_cnv.cpp in Sources */,
@@ -11784,7 +11784,6 @@
 				7704C07B68A88584C2B780D4 /* tznames.cpp in Sources */,
 				C4BEAA653F9754BE3B0F4F09 /* tznames_impl.cpp in Sources */,
 				C409F21C199B8FA88E9017CA /* tzrule.cpp in Sources */,
-				DE9140402729F011003A24D8 /* xmltok.c in Sources */,
 				4953E8EBA992F9FAA7629C5E /* tztrans.cpp in Sources */,
 				DE0A45A7273445A80056DC46 /* SkSVGPattern.cpp in Sources */,
 				7A84037767C6EE1DAAC8C51C /* ucal.cpp in Sources */,
@@ -11869,7 +11868,6 @@
 				DE0A458B273445A80056DC46 /* SkSVGMask.cpp in Sources */,
 				B9AF98C67854A5AEEA8B501B /* jdsample.c in Sources */,
 				5EA8CA6EA04F12DE8ED561A8 /* jdtrans.c in Sources */,
-				DE9140422729F011003A24D8 /* xmlparse.c in Sources */,
 				3E74C1616FC4A00403974E93 /* jerror.c in Sources */,
 				5F11EB93B19D5F1D8F82F5AA /* jfdctflt.c in Sources */,
 				DE6C8CAA272AF15000F6406A /* hb-unicode.cc in Sources */,
@@ -12183,6 +12181,7 @@
 					PPM_SUPPORTED,
 					SK_BUILD_FOR_IOS,
 					SK_RELEASE,
+					HAVE_ARC4RANDOM_BUF,
 				);
 				HEADER_SEARCH_PATHS = (
 					../../src,
@@ -12199,6 +12198,7 @@
 					../../third_party/externals/libwebp/src,
 					../../third_party/libpng/,
 					../../third_party/externals/sfntly/cpp/src,
+					../../third_party/expat/include/expat_config,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				OTHER_CFLAGS = "-DPNG_ARM_NEON_OPT=0";
@@ -12609,6 +12609,7 @@
 					BMP_SUPPORTED,
 					PPM_SUPPORTED,
 					SK_BUILD_FOR_IOS,
+					HAVE_ARC4RANDOM_BUF,
 				);
 				"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*]" = (
 					HAVE_ICU,
@@ -12625,6 +12626,7 @@
 					PPM_SUPPORTED,
 					SK_BUILD_FOR_IOS,
 					INFLATE_CHUNK_SIMD_SSE2,
+					HAVE_ARC4RANDOM_BUF,
 				);
 				HEADER_SEARCH_PATHS = (
 					../../src,
@@ -12641,6 +12643,7 @@
 					../../third_party/externals/libwebp/src,
 					../../third_party/libpng/,
 					../../third_party/externals/sfntly/cpp/src,
+					../../third_party/expat/include/expat_config,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				OTHER_CFLAGS = "-DPNG_ARM_NEON_OPT=0";

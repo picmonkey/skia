@@ -12610,6 +12610,7 @@
 					PPM_SUPPORTED,
 					SK_BUILD_FOR_IOS,
 					HAVE_ARC4RANDOM_BUF,
+					SK_DEBUG,
 				);
 				"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*]" = (
 					HAVE_ICU,
@@ -12627,6 +12628,7 @@
 					SK_BUILD_FOR_IOS,
 					INFLATE_CHUNK_SIMD_SSE2,
 					HAVE_ARC4RANDOM_BUF,
+					SK_DEBUG,
 				);
 				HEADER_SEARCH_PATHS = (
 					../../src,

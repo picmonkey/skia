@@ -504,15 +504,18 @@ static inline bool skpaint_to_grpaint_impl(GrRecordingContext* context,
 
     SkColorFilter* colorFilter = skPaint.getColorFilter();
     if (colorFilter) {
-        if (applyColorFilterToPaintColor) {
-            SkColorSpace* dstCS = dstColorInfo.colorSpace();
-            grPaint->setColor4f(colorFilter->filterColor4f(origColor, dstCS, dstCS).premul());
-        } else {
-            auto [success, fp] = as_CFB(colorFilter)->asFragmentProcessor(std::move(paintFP),
-                                                                          context, dstColorInfo);
-            if (!success) {
+        auto [success, fp] = as_CFB(colorFilter)->asFragmentProcessor(std::move(paintFP),
+                                                                      context, dstColorInfo);
+        if (!success) {
+            if (applyColorFilterToPaintColor) {
+                SkColorSpace* dstCS = dstColorInfo.colorSpace();
+                grPaint->setColor4f(colorFilter->filterColor4f(origColor, dstCS, dstCS).premul());
+            }
+            else{
                 return false;
             }
+        }
+        else {
             paintFP = std::move(fp);
         }
     }

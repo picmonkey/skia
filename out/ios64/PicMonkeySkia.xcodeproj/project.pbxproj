@@ -1254,7 +1254,6 @@
 		DDA53B5EA2BAF37AFDC4DB41 /* uresdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9E9DD206D938F9D64E73FAF8 /* uresdata.cpp */; };
 		DDADAA441E0EB730C58E49D4 /* SkImageImageFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43C836EF935C97E6E7D99D67 /* SkImageImageFilter.cpp */; };
 		DE067F389F6A9832C07B9597 /* double-conversion-bignum-dtoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A071730FBE08FF212226014C /* double-conversion-bignum-dtoa.cpp */; };
-		DE0A42E8273363370056DC46 /* jsimd_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = DE0A42E7273363360056DC46 /* jsimd_neon.S */; };
 		DE0A42FA273430EB0056DC46 /* pngwio.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0A42EC273430E90056DC46 /* pngwio.c */; };
 		DE0A42FB273430EB0056DC46 /* pngwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0A42ED273430E90056DC46 /* pngwrite.c */; };
 		DE0A42FC273430EB0056DC46 /* pngerror.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0A42EE273430E90056DC46 /* pngerror.c */; };
@@ -1370,6 +1369,11 @@
 		DE0A45AC273445A80056DC46 /* SkSVGFeLighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4583273445A80056DC46 /* SkSVGFeLighting.cpp */; };
 		DE0A45AD273445A80056DC46 /* SkSVGTransformableNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE0A4584273445A80056DC46 /* SkSVGTransformableNode.cpp */; };
 		DE0A45AF273447EF0056DC46 /* hb-coretext.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE0A45AE273447EE0056DC46 /* hb-coretext.cc */; };
+		DE0B472227F28320000BBAE0 /* xmlrole.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0B471F27F2831E000BBAE0 /* xmlrole.c */; };
+		DE0B472327F28320000BBAE0 /* xmltok.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0B472027F2831F000BBAE0 /* xmltok.c */; };
+		DE0B472427F28320000BBAE0 /* xmlparse.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0B472127F2831F000BBAE0 /* xmlparse.c */; };
+		DE0B472A27F29666000BBAE0 /* jsimd.c in Sources */ = {isa = PBXBuildFile; fileRef = DE0B472827F29666000BBAE0 /* jsimd.c */; };
+		DE0B472B27F29666000BBAE0 /* jsimd_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = DE0B472927F29666000BBAE0 /* jsimd_neon.S */; };
 		DE0CEF771C1038C60BBB4764 /* SkShaderImageFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43E86FE26FBDE971174AFF76 /* SkShaderImageFilter.cpp */; };
 		DE1AFBD464AA8E054F75D845 /* GrGLAssembleGLInterfaceAutogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 580A876FA0BF5228BCDD41E1 /* GrGLAssembleGLInterfaceAutogen.cpp */; };
 		DE3588481C63C1761D33141B /* GrAttachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E77A99C42B706EACE1A6CC74 /* GrAttachment.cpp */; };
@@ -1378,7 +1382,6 @@
 		DE4248C52755B619001A0CBB /* SkOpts_avx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE4248C32755B619001A0CBB /* SkOpts_avx.cpp */; };
 		DE4248C62755B619001A0CBB /* SkOpts_hsw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE4248C42755B619001A0CBB /* SkOpts_hsw.cpp */; };
 		DE4248C82755B63C001A0CBB /* SkOpts_skx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE4248C72755B63C001A0CBB /* SkOpts_skx.cpp */; };
-		DE4248C92755BB04001A0CBB /* jsimd.c in Sources */ = {isa = PBXBuildFile; fileRef = DE35710027335AC400CE713C /* jsimd.c */; };
 		DE6C8C93272AF14F00F6406A /* hb-common.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C46272AF14700F6406A /* hb-common.cc */; };
 		DE6C8C97272AF14F00F6406A /* hb-ot-shape-complex-hangul.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C4A272AF14700F6406A /* hb-ot-shape-complex-hangul.cc */; };
 		DE6C8C99272AF14F00F6406A /* hb-ot-shape-complex-vowel-constraints.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C4C272AF14800F6406A /* hb-ot-shape-complex-vowel-constraints.cc */; };
@@ -1429,9 +1432,6 @@
 		DE6C8CDC272AF15000F6406A /* hb-set.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C90272AF14F00F6406A /* hb-set.cc */; };
 		DE6C8CDD272AF15000F6406A /* hb-ot-shape-complex-khmer.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C91272AF14F00F6406A /* hb-ot-shape-complex-khmer.cc */; };
 		DE6C8CDE272AF15000F6406A /* hb-ot-shape-complex-arabic.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE6C8C92272AF14F00F6406A /* hb-ot-shape-complex-arabic.cc */; };
-		DE70469927D69AEB00259A70 /* xmltok.c in Sources */ = {isa = PBXBuildFile; fileRef = DE70469627D69AEA00259A70 /* xmltok.c */; };
-		DE70469A27D69AEB00259A70 /* xmlparse.c in Sources */ = {isa = PBXBuildFile; fileRef = DE70469727D69AEA00259A70 /* xmlparse.c */; };
-		DE70469B27D69AEB00259A70 /* xmlrole.c in Sources */ = {isa = PBXBuildFile; fileRef = DE70469827D69AEB00259A70 /* xmlrole.c */; };
 		DE8C26B227345239003E6AAB /* hb-fallback-shape.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE8C26B127345239003E6AAB /* hb-fallback-shape.cc */; };
 		DE8C26B427345267003E6AAB /* hb-ucd.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE8C26B327345267003E6AAB /* hb-ucd.cc */; };
 		DE8C26B6273454DB003E6AAB /* hb-ot-shape-complex-syllabic.cc in Sources */ = {isa = PBXBuildFile; fileRef = DE8C26B5273454DB003E6AAB /* hb-ot-shape-complex-syllabic.cc */; };
@@ -4062,7 +4062,6 @@
 		DDC5BF22FFE264259A1E4F5B /* SkEventTracer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkEventTracer.h; path = include/utils/SkEventTracer.h; sourceTree = "<group>"; };
 		DDD5DC02BA9A8D1C541ECE74 /* SkCoverageMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkCoverageMode.h; path = include/core/SkCoverageMode.h; sourceTree = "<group>"; };
 		DDDA05D032D601E8AEB6585F /* normlzr.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = normlzr.cpp; path = third_party/externals/icu/source/common/normlzr.cpp; sourceTree = "<group>"; };
-		DE0A42E7273363360056DC46 /* jsimd_neon.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = jsimd_neon.S; path = "third_party/externals/libjpeg-turbo/simd/arm64/jsimd_neon.S"; sourceTree = "<group>"; };
 		DE0A42EC273430E90056DC46 /* pngwio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwio.c; path = third_party/externals/libpng/pngwio.c; sourceTree = "<group>"; };
 		DE0A42ED273430E90056DC46 /* pngwrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwrite.c; path = third_party/externals/libpng/pngwrite.c; sourceTree = "<group>"; };
 		DE0A42EE273430E90056DC46 /* pngerror.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngerror.c; path = third_party/externals/libpng/pngerror.c; sourceTree = "<group>"; };
@@ -4246,12 +4245,16 @@
 		DE0A4583273445A80056DC46 /* SkSVGFeLighting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGFeLighting.cpp; sourceTree = "<group>"; };
 		DE0A4584273445A80056DC46 /* SkSVGTransformableNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkSVGTransformableNode.cpp; sourceTree = "<group>"; };
 		DE0A45AE273447EE0056DC46 /* hb-coretext.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-coretext.cc"; path = "third_party/externals/harfbuzz/src/hb-coretext.cc"; sourceTree = "<group>"; };
+		DE0B471F27F2831E000BBAE0 /* xmlrole.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xmlrole.c; path = third_party/externals/expat/expat/lib/xmlrole.c; sourceTree = "<group>"; };
+		DE0B472027F2831F000BBAE0 /* xmltok.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xmltok.c; path = third_party/externals/expat/expat/lib/xmltok.c; sourceTree = "<group>"; };
+		DE0B472127F2831F000BBAE0 /* xmlparse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xmlparse.c; path = third_party/externals/expat/expat/lib/xmlparse.c; sourceTree = "<group>"; };
+		DE0B472827F29666000BBAE0 /* jsimd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsimd.c; sourceTree = "<group>"; };
+		DE0B472927F29666000BBAE0 /* jsimd_neon.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = jsimd_neon.S; sourceTree = "<group>"; };
 		DE1478CDE87B18A5E9D197B9 /* SkTypeface_remote.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkTypeface_remote.h; path = src/core/SkTypeface_remote.h; sourceTree = "<group>"; };
 		DE23960BF3D4F77D648CB205 /* SkDeferredDisplayListRecorder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkDeferredDisplayListRecorder.cpp; path = src/core/SkDeferredDisplayListRecorder.cpp; sourceTree = "<group>"; };
 		DE23C4CDD7EB5B28085E06CA /* SkSLProgramSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SkSLProgramSettings.h; path = src/sksl/SkSLProgramSettings.h; sourceTree = "<group>"; };
 		DE2A644B6600589F0CE37E86 /* jccoefct.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jccoefct.c; path = "third_party/externals/libjpeg-turbo/jccoefct.c"; sourceTree = "<group>"; };
 		DE33A123F847CE8CB33BF686 /* dng_iptc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dng_iptc.cpp; path = third_party/externals/dng_sdk/source/dng_iptc.cpp; sourceTree = "<group>"; };
-		DE35710027335AC400CE713C /* jsimd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jsimd.c; path = "third_party/externals/libjpeg-turbo/simd/arm64/jsimd.c"; sourceTree = "<group>"; };
 		DE4248BF2755B443001A0CBB /* jsimd_none.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jsimd_none.c; path = "third_party/externals/libjpeg-turbo/jsimd_none.c"; sourceTree = "<group>"; };
 		DE4248C12755B565001A0CBB /* SkOpts_sse42.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkOpts_sse42.cpp; path = src/opts/SkOpts_sse42.cpp; sourceTree = "<group>"; };
 		DE4248C32755B619001A0CBB /* SkOpts_avx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkOpts_avx.cpp; path = src/opts/SkOpts_avx.cpp; sourceTree = "<group>"; };
@@ -4309,9 +4312,6 @@
 		DE6C8C90272AF14F00F6406A /* hb-set.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-set.cc"; path = "third_party/externals/harfbuzz/src/hb-set.cc"; sourceTree = "<group>"; };
 		DE6C8C91272AF14F00F6406A /* hb-ot-shape-complex-khmer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-khmer.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-khmer.cc"; sourceTree = "<group>"; };
 		DE6C8C92272AF14F00F6406A /* hb-ot-shape-complex-arabic.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ot-shape-complex-arabic.cc"; path = "third_party/externals/harfbuzz/src/hb-ot-shape-complex-arabic.cc"; sourceTree = "<group>"; };
-		DE70469627D69AEA00259A70 /* xmltok.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xmltok.c; path = third_party/externals/expat/lib/xmltok.c; sourceTree = "<group>"; };
-		DE70469727D69AEA00259A70 /* xmlparse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xmlparse.c; path = third_party/externals/expat/lib/xmlparse.c; sourceTree = "<group>"; };
-		DE70469827D69AEB00259A70 /* xmlrole.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xmlrole.c; path = third_party/externals/expat/lib/xmlrole.c; sourceTree = "<group>"; };
 		DE7644E997EF858B23E5A333 /* sortkey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sortkey.h; path = third_party/externals/icu/source/i18n/unicode/sortkey.h; sourceTree = "<group>"; };
 		DE8C26B127345239003E6AAB /* hb-fallback-shape.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-fallback-shape.cc"; path = "third_party/externals/harfbuzz/src/hb-fallback-shape.cc"; sourceTree = "<group>"; };
 		DE8C26B327345267003E6AAB /* hb-ucd.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "hb-ucd.cc"; path = "third_party/externals/harfbuzz/src/hb-ucd.cc"; sourceTree = "<group>"; };
@@ -5242,6 +5242,7 @@
 		2BC2AAFD51E879B9C4165A91 /* simd */ = {
 			isa = PBXGroup;
 			children = (
+				DE0B472727F29666000BBAE0 /* arm64 */,
 				DE4248BA2755AF01001A0CBB /* x86 */,
 				E0094E1E9227BD9640FE304A /* arm */,
 			);
@@ -6229,9 +6230,9 @@
 		7E2E7A15EBE6910DD5ED256E /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				DE70469727D69AEA00259A70 /* xmlparse.c */,
-				DE70469827D69AEB00259A70 /* xmlrole.c */,
-				DE70469627D69AEA00259A70 /* xmltok.c */,
+				DE0B472127F2831F000BBAE0 /* xmlparse.c */,
+				DE0B471F27F2831E000BBAE0 /* xmlrole.c */,
+				DE0B472027F2831F000BBAE0 /* xmltok.c */,
 			);
 			name = lib;
 			sourceTree = "<group>";
@@ -8522,6 +8523,16 @@
 			path = modules/svg/src;
 			sourceTree = "<group>";
 		};
+		DE0B472727F29666000BBAE0 /* arm64 */ = {
+			isa = PBXGroup;
+			children = (
+				DE0B472827F29666000BBAE0 /* jsimd.c */,
+				DE0B472927F29666000BBAE0 /* jsimd_neon.S */,
+			);
+			name = arm64;
+			path = "third_party/externals/libjpeg-turbo/simd/arm64";
+			sourceTree = "<group>";
+		};
 		DE4248BA2755AF01001A0CBB /* x86 */ = {
 			isa = PBXGroup;
 			children = (
@@ -8543,8 +8554,6 @@
 		E0094E1E9227BD9640FE304A /* arm */ = {
 			isa = PBXGroup;
 			children = (
-				DE0A42E7273363360056DC46 /* jsimd_neon.S */,
-				DE35710027335AC400CE713C /* jsimd.c */,
 			);
 			name = arm;
 			sourceTree = "<group>";
@@ -10634,7 +10643,6 @@
 				3F28DF95F7D201D9287618DD /* SkPixelRef.cpp in Sources */,
 				C55A4FFF1FC405FC126A700C /* SkPixmap.cpp in Sources */,
 				A5ED7D5F78C88707483EC452 /* SkPoint.cpp in Sources */,
-				DE4248C92755BB04001A0CBB /* jsimd.c in Sources */,
 				DE6C8CB6272AF15000F6406A /* hb-subset-fuzzer.cc in Sources */,
 				362297F37AFB53BCC57BF7EC /* SkPoint3.cpp in Sources */,
 				49E95A7FBA2CA8A1769155DD /* SkPromiseImageTexture.cpp in Sources */,
@@ -10782,6 +10790,7 @@
 				E57B619DBB8720868629BE87 /* GrColorSpaceXform.cpp in Sources */,
 				ED64350A33C33CA1A65F6A74 /* GrContextThreadSafeProxy.cpp in Sources */,
 				98A3454CBEA549D603E1A0B7 /* GrContext_Base.cpp in Sources */,
+				DE0B472427F28320000BBAE0 /* xmlparse.c in Sources */,
 				CD90DD2BB65D97B5051E5B73 /* GrCopyRenderTask.cpp in Sources */,
 				18B326F3B827DBE762F4C80E /* GrDDLContext.cpp in Sources */,
 				CCA2F794B1236B7C04D02F8A /* GrDDLTask.cpp in Sources */,
@@ -10808,7 +10817,6 @@
 				CAADC7D87C856DA711C46B31 /* GrMemoryPool.cpp in Sources */,
 				3EA37802C891E5C367911F80 /* GrMeshDrawTarget.cpp in Sources */,
 				BC8988216ECC74453D3EADF5 /* GrOnFlushResourceProvider.cpp in Sources */,
-				DE0A42E8273363370056DC46 /* jsimd_neon.S in Sources */,
 				375E054E41EA9B24236FDA34 /* GrOpFlushState.cpp in Sources */,
 				8C796F18C1E5BF5D41B7CBEA /* GrOpsRenderPass.cpp in Sources */,
 				5B31A5360CA94408CA5D4021 /* GrPaint.cpp in Sources */,
@@ -10996,7 +11004,6 @@
 				DE6C8CC5272AF15000F6406A /* hb-ot-shape-complex-indic.cc in Sources */,
 				F6707DBD467D3B2A24E8B88F /* TriangulatingPathRenderer.cpp in Sources */,
 				39D9BFB267A09BF6F99330E6 /* PathCurveTessellator.cpp in Sources */,
-				DE70469B27D69AEB00259A70 /* xmlrole.c in Sources */,
 				4A5A191A9EA5FB5934A7BFCF /* PathWedgeTessellator.cpp in Sources */,
 				73F18011BCCA7F5DFD939165 /* StrokeFixedCountTessellator.cpp in Sources */,
 				7811C6B2CC178E3558C529C8 /* StrokeHardwareTessellator.cpp in Sources */,
@@ -11072,7 +11079,6 @@
 				B6739BA29CF7C32D2D969047 /* SkPathOpsRect.cpp in Sources */,
 				66CFFE185C94E5CC2AAFAB10 /* SkPathOpsSimplify.cpp in Sources */,
 				40AB4BF815474929B8C66704 /* SkPathOpsTSect.cpp in Sources */,
-				DE70469A27D69AEB00259A70 /* xmlparse.c in Sources */,
 				DE0A4303273430EB0056DC46 /* pngmem.c in Sources */,
 				950564E9901022239EF28752 /* SkPathOpsTightBounds.cpp in Sources */,
 				7349A0B0BAD01C10E0134AF1 /* SkPathOpsTypes.cpp in Sources */,
@@ -11445,6 +11451,7 @@
 				323D52DBE9012D0AC72C1F3C /* stringpiece.cpp in Sources */,
 				A30FC9942CB6E62C2867940B /* stringtriebuilder.cpp in Sources */,
 				934DC885C80937C0DD75BD35 /* uarrsort.cpp in Sources */,
+				DE0B472A27F29666000BBAE0 /* jsimd.c in Sources */,
 				DE0A4590273445A80056DC46 /* SkSVGFeComposite.cpp in Sources */,
 				1BD1C0D74A6CC0336060D15B /* ubidi.cpp in Sources */,
 				351C737D014FBD97EFC14FD0 /* ubidi_props.cpp in Sources */,
@@ -11655,6 +11662,7 @@
 				1D8EA05B6DF14A86B8C8BBB1 /* fmtable.cpp in Sources */,
 				AC6CA65ED78A3A2340F8B928 /* fmtable_cnv.cpp in Sources */,
 				6BFE1EBE59FC6E249F3C6B28 /* format.cpp in Sources */,
+				DE0B472B27F29666000BBAE0 /* jsimd_neon.S in Sources */,
 				9B31EFD414ACF0959972BC26 /* fphdlimp.cpp in Sources */,
 				DE6C8CB9272AF15000F6406A /* hb-ot-shape-complex-myanmar.cc in Sources */,
 				632BA8726DBF9B8188A20E1A /* fpositer.cpp in Sources */,
@@ -11730,6 +11738,7 @@
 				47F9B17E5B31AA32B52C79A2 /* persncal.cpp in Sources */,
 				EF892534267B2BB1308CBF93 /* plurfmt.cpp in Sources */,
 				1B5B9E11A41646106103BE78 /* plurrule.cpp in Sources */,
+				DE0B472227F28320000BBAE0 /* xmlrole.c in Sources */,
 				DE8C292C273473F5003E6AAB /* icudtl_dat.S in Sources */,
 				1651ACC2BED16CFC40E99C41 /* quant.cpp in Sources */,
 				77DC0FA768B3C01BE2053A99 /* quantityformatter.cpp in Sources */,
@@ -11762,6 +11771,7 @@
 				E87BC9A1C33E80500F21B187 /* smpdtfmt.cpp in Sources */,
 				21868502ED6DBBB8366C0C9B /* smpdtfst.cpp in Sources */,
 				077DAABCFC98EA04ADCB70DD /* sortkey.cpp in Sources */,
+				DE0B472327F28320000BBAE0 /* xmltok.c in Sources */,
 				197EE1CA71638191777E86AE /* standardplural.cpp in Sources */,
 				D23B341DB26887F0E7A8EE47 /* strmatch.cpp in Sources */,
 				600C6B39FC223ACFF96EB450 /* strrepl.cpp in Sources */,
@@ -12024,7 +12034,6 @@
 				224B998BE200E5201DF1668A /* cached_paged_byte_array.cc in Sources */,
 				A296CC5AE1A9966E693A4B70 /* range_checked_byte_ptr.cc in Sources */,
 				2B32DF7ED02220E2D54244EB /* image_type_recognition_lite.cc in Sources */,
-				DE70469927D69AEB00259A70 /* xmltok.c in Sources */,
 				B81443C1EF06B2090A45931E /* piex.cc in Sources */,
 				1404A88B140CBA493F5BE1B0 /* tiff_directory.cc in Sources */,
 				53C9F71740A869B28DA27A3B /* tiff_parser.cc in Sources */,
@@ -12182,6 +12191,10 @@
 					SK_BUILD_FOR_IOS,
 					SK_RELEASE,
 					HAVE_ARC4RANDOM_BUF,
+					JPEG_INTERNALS,
+					SK_CODEC_DECODES_PNG,
+					C_ARITH_CODING_SUPPORTED,
+					D_ARITH_CODING_SUPPORTED,
 				);
 				HEADER_SEARCH_PATHS = (
 					../../src,
@@ -12611,6 +12624,10 @@
 					SK_BUILD_FOR_IOS,
 					HAVE_ARC4RANDOM_BUF,
 					SK_DEBUG,
+					JPEG_INTERNALS,
+					SK_CODEC_DECODES_PNG,
+					C_ARITH_CODING_SUPPORTED,
+					D_ARITH_CODING_SUPPORTED,
 				);
 				"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*]" = (
 					HAVE_ICU,
@@ -12629,6 +12646,10 @@
 					INFLATE_CHUNK_SIMD_SSE2,
 					HAVE_ARC4RANDOM_BUF,
 					SK_DEBUG,
+					JPEG_INTERNALS,
+					SK_CODEC_DECODES_PNG,
+					C_ARITH_CODING_SUPPORTED,
+					D_ARITH_CODING_SUPPORTED,
 				);
 				HEADER_SEARCH_PATHS = (
 					../../src,

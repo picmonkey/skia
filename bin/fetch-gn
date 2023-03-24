@@ -11,6 +11,7 @@ import shutil
 import stat
 import sys
 import urllib2
+import ssl
 
 os.chdir(os.path.join(os.path.dirname(__file__), os.pardir))
 
@@ -29,7 +30,11 @@ def sha1_of_file(path):
 
 if sha1_of_file(gn_path) != sha1:
   with open(gn_path, 'wb') as f:
-    f.write(urllib2.urlopen('https://chromium-gn.storage-download.googleapis.com/' + sha1).read())
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+
+    f.write(urllib2.urlopen('https://chromium-gn.storage-download.googleapis.com/' + sha1, context=ctx).read())
 
   os.chmod(gn_path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR |
                     stat.S_IRGRP                | stat.S_IXGRP |
